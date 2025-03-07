@@ -107,7 +107,7 @@ Your warehouse should contain a full history of all updates to _facts_. For exam
 created in `totesys` and then later updated (perhaps the `units_sold` field is changed), you should have _two_
 records in the `fact_sales_order` table. It should be possible to see both the original and changed number
 of `units_sold`. It should be possible to query either the current state of the sale, or get a full history
-of how it has evolved (including deletion if applicable).
+of how it has evolved.
 
 It is _not_ necessary to do this for dimensions (which should not change very much anyway). The warehouse
 should just have the latest version of the dimension values. However, you might want to keep a full
