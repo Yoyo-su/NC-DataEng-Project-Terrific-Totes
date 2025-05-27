@@ -58,17 +58,17 @@ run-black:
 
 ## Run the unit tests
 unit-test:
-	PYTHONPATH=${WD} $(PYTEST) -vv
+	$(PYTEST) -vv
 
 ## Run the coverage check
 check-coverage:
-	PYTHONPATH=${WD} $(PYTEST) --cov=src tests/
+	$(PYTEST) --cov=src tests/
 
 lint:
 	$(FLAKE8) . --max-line-length=150 --exclude=.git,__pycache__,./venv
 
 audit:
-	PYTHONPATH=${WD} $(AUDIT)
+	$(AUDIT)
 
 ## Run all checks
 run-checks: security-test run-black lint unit-test check-coverage audit
