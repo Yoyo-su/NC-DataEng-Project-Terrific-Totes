@@ -46,7 +46,7 @@ dev-setup:
 ifeq ($(CI),true)
 	$(PIP) install bandit black pytest-cov flake8
 else
-	$(call execute_in_env, pip install bandit black pytest-cov flake8)
+	$(call execute_in_env, pip install bandit black pytest-cov flake8 pip-audit)
 endif
 
 security-test:
@@ -67,8 +67,8 @@ check-coverage:
 lint:
 	$(FLAKE8) . --max-line-length=150 --exclude=.git,__pycache__,./venv
 
-pip-audit:
+audit:
 	PYTHONPATH=${WD} $(AUDIT)
 
 ## Run all checks
-run-checks: security-test run-black lint unit-test check-coverage pip-audit
+run-checks: security-test run-black lint unit-test check-coverage audit
