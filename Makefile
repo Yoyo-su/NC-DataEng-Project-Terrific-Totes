@@ -13,12 +13,14 @@ ifeq ($(IS_CI),true)
 	BLACK := black 
 	PYTEST := pytest
 	FLAKE8 := flake8
+	AUDIT := pip-audit
 else
 	PIP := $(ACTIVATE_ENV) && pip
 	BANDIT := $(ACTIVATE_ENV) && bandit
 	BLACK := $(ACTIVATE_ENV) && black 
 	PYTEST := $(ACTIVATE_ENV) && pytest
 	FLAKE8 := $(ACTIVATE_ENV) && flake8
+	AUDIT := $(ACTIVATE_ENV) && pip-audit
 endif
 
 # Utility to run a command inside the virtual environment
@@ -56,14 +58,17 @@ run-black:
 
 ## Run the unit tests
 unit-test:
-	$(PYTEST) -vv
+	PYTHONPATH=${WD} $(PYTEST) -vv
 
 ## Run the coverage check
 check-coverage:
-	$(PYTEST) --cov=src tests/
+	PYTHONPATH=${WD} $(PYTEST) --cov=src tests/
 
 lint:
 	$(FLAKE8) . --max-line-length=150 --exclude=.git,__pycache__,./venv
 
+pip-audit:
+	$(AUDIT)
+
 ## Run all checks
-run-checks: security-test run-black lint unit-test check-coverage 
+run-checks: security-test run-black lint unit-test check-coverage pip-audit
