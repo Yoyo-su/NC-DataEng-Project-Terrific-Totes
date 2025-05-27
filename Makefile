@@ -68,7 +68,7 @@ lint:
 	$(FLAKE8) . --max-line-length=150 --exclude=.git,__pycache__,./venv
 
 pip-audit:
-	$(AUDIT)
+	PYTHONPATH=${WD} $(AUDIT)
 
 ## Run all checks
 run-checks: security-test run-black lint unit-test check-coverage pip-audit
