@@ -28,5 +28,8 @@ jobs:
     - name: Dev setup
       run: make dev-setup
 
+    - name: Set PYTHONPATH
+      run: echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
+
     - name: Run checks
       run: make run-checks
