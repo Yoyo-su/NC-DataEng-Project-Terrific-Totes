@@ -1,15 +1,24 @@
 PROJECT_NAME = FSCIFA-PROJECT
 REGION = eu-west-2
 PYTHON_INTERPRETER = python
-
+WD=$(shell pwd)
+PYTHONPATH=${WD}
 IS_CI = $(CI)
 SHELL := /bin/bash 
 ACTIVATE_ENV := source venv/bin/activate
 
 ifeq ($(IS_CI),true)
 	PIP := pip
+	BANDIT := bandit
+	BLACK := black 
+	PYTEST := pytest
+	FLAKE8 := flake8
 else
 	PIP := $(ACTIVATE_ENV) && pip
+	BANDIT := $(ACTIVATE_ENV) && bandit
+	BLACK := $(ACTIVATE_ENV) && black 
+	PYTEST := $(ACTIVATE_ENV) && pytest
+	FLAKE8 := $(ACTIVATE_ENV) && flake8
 endif
 
 # Utility to run a command inside the virtual environment
@@ -37,3 +46,24 @@ ifeq ($(CI),true)
 else
 	$(call execute_in_env, pip install bandit black pytest-cov flake8)
 endif
+
+security-test:
+	$(BANDIT) -lll ./src/*.py ./tests/*.py
+
+## Run the black code check
+run-black:
+	$(BLACK) ./src/*.py ./tests/*.py
+
+## Run the unit tests
+unit-test:
+	$(PYTEST) -vv
+
+## Run the coverage check
+check-coverage:
+	$(PYTEST) --cov=src tests/
+
+lint:
+	$(FLAKE8) . --max-line-length=150 --exclude=.git,__pycache__,./venv
+
+## Run all checks
+run-checks: security-test run-black lint unit-test check-coverage 
