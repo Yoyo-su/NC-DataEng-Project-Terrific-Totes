@@ -3,7 +3,6 @@ from pg8000.native import Connection
 from dotenv import load_dotenv
 import os
 
-# Create a connect_to_db function to return a database connection object.
 
 def connect_to_db(dotenv_path=".env.dev"):
     try:
@@ -18,7 +17,6 @@ def connect_to_db(dotenv_path=".env.dev"):
     except Exception:
         print("Error connecting to database.")
 
-# Create a close_db function that closes a passed database connection object.
 
 def close_db(db):
     try:
