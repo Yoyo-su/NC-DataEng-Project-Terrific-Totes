@@ -3,6 +3,8 @@ from pg8000.native import Connection
 from dotenv import load_dotenv
 import os
 
+""" Functions for creating and closing database connections """
+
 
 def connect_to_db(dotenv_path=".env.dev"):
     try:

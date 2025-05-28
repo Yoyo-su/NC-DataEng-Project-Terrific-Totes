@@ -1,4 +1,13 @@
 venv
+.env*
+.env
 **/.pycache
 **/__pycache__
-.env*
+**/.terraform.lock.hcl
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+**/*.txt
+.pgpass
+.DS.Store
+.coverage
