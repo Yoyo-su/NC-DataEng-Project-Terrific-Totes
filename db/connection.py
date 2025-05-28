@@ -5,6 +5,7 @@ import os
 
 """ Functions for creating and closing database connections """
 
+
 def connect_to_db(dotenv_path=".env.dev"):
     try:
         load_dotenv(dotenv_path=dotenv_path)
