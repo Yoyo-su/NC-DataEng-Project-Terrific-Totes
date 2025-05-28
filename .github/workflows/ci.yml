@@ -36,3 +36,20 @@ jobs:
 
     - name: Run checks
       run: make run-checks
+
+    - name: Load dev environment variables (credentials for totesys database) and store them in a .env.dev file
+      run: 
+        echo "PG_USER=${{ secrets.PG_USERNAME }}" >> .env.dev
+        echo "PG_PASSWORD=${{ secrets.PG_PASSWORD_TOTESYS }}" >> .env.dev
+        echo "PG_HOST=nc-data-eng-totesys-production.chpsczt8h1nu.eu-west-2.rds.amazonaws.com" >> .env.dev
+        echo "PG_PORT=5432" >> .env.dev
+        echo "COHORT_ID=de_2025_03_17" >> .env.dev
+
+    - name: Load deploy environment variables (credentials for data warehouse) and store them in a .env.deploy file
+      run: 
+        echo "PG_USER=${{ secrets.PG_USERNAME }}" >> .env.deploy
+        echo "PG_PASSWORD=${{ secrets.PG_PASSWORD_WAREHOUSE }}" >> .env.deploy
+        echo "PG_HOST=nc-data-eng-project-dw-prod.chpsczt8h1nu.eu-west-2.rds.amazonaws.com" >> .env.deploy
+        echo "PG_PORT=5432" >> .env.deploy
+        echo "COHORT_ID=de_2025_03_17" >> .env.deploy
+        
