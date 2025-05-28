@@ -14,7 +14,7 @@ def connect_to_db(dotenv_path=".env.dev"):
             password=os.getenv("PG_PASSWORD"),
             database=os.getenv("PG_DATABASE"),
             host=os.getenv("PG_HOST"),
-            port=int(os.getenv("PG_PORT"))
+            port=int(os.getenv("PG_PORT")),
         )
         return db
     except Exception:

@@ -54,7 +54,7 @@ security-test:
 
 ## Run the black code check
 run-black:
-	$(BLACK) ./src/*.py ./tests/*.py
+	$(BLACK) ./src ./tests ./db
 
 ## Run the unit tests
 unit-test:
