@@ -53,3 +53,28 @@ jobs:
         echo "PG_PORT=5432" >> .env.deploy
         echo "COHORT_ID=de_2025_03_17" >> .env.deploy
         
+  deploy-terraform:
+    name: deploy-terraform
+    environment: dev
+    needs: run-tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4.1.0
+        with:
+          aws-access-key-id: ${{ secrets.DEPLOY_USER_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.DEPLOY_USER_AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init
+      - name: Terraform Plan
+        working-directory: terraform
+        run: terraform plan
+      - name: Terraform Apply
+        working-directory: terraform
+        run: terraform apply -auto-approve
