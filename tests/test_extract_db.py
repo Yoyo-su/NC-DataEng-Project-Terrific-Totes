@@ -150,6 +150,7 @@ class TestExtractDB:
         }
         result = extract_db("staff")
         assert expected == result
+
     @pytest.mark.it("Testing raises exception")
     @patch("src.utils.extract_db.connect_to_db")
     def test_extract_db_raises_exception_if_table_doesnt_exist(
@@ -158,5 +159,4 @@ class TestExtractDB:
         mock_conn = Mock()
         mock_connect_to_db.return_value = mock_conn
         with pytest.raises(Exception):
-            result = extract_db("fail")
-        
+            extract_db("fail")

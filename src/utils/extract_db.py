@@ -22,7 +22,6 @@ def extract_db(table_name):
     except Exception as error:
         print(f"Failed to extract from DB: {error}")
         raise error
-    
     finally:
         if conn:
             close_db(conn)
