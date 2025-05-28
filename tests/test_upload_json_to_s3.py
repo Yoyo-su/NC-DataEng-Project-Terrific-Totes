@@ -1,6 +1,5 @@
 from src.utils.insert_into_s3 import upload_json_to_s3
 from moto import mock_aws
-from src.utils.json_dumps import dump_to_json
 import boto3 
 import pytest
 from botocore.exceptions import ClientError

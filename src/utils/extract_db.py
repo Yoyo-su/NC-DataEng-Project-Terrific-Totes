@@ -12,7 +12,7 @@ def extract_db(table_name):
     """
 
     try:
-        conn = connect_to_db(".env.totesys")
+        conn = connect_to_db(".env.dev")
         query = f"SELECT * FROM {table_name}"
         response = conn.run(query)
         columns = [column["name"] for column in conn.columns]
@@ -21,7 +21,8 @@ def extract_db(table_name):
 
     except Exception as error:
         print(f"Failed to extract from DB: {error}")
-
+        raise error
+    
     finally:
         if conn:
             close_db(conn)
