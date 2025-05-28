@@ -5,10 +5,10 @@ def extract_db(table_name):
     """Lambda function that extracts data from a database table and returns it as a formatted dictionary
 
     Args:
-        table_name (string): table to extract data from
+        table_name (string): name of the dbtable to extract data from
 
     Returns:
-        _type_: _description_
+        dict: dictionary with table name as the key and a list  value containing each table row as a dict
     """
 
     try:
