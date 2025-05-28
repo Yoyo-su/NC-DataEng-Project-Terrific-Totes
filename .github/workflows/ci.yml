@@ -31,5 +31,8 @@ jobs:
     - name: Set PYTHONPATH
       run: echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
 
+    - name: check pip-audit
+      run: which pip-audit
+
     - name: Run checks
       run: make run-checks
