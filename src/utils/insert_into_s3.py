@@ -1,5 +1,4 @@
 from botocore.exceptions import ClientError
-import logging
 
 
 def upload_json_to_s3(json_file, bucket_name, key, s3_client):
