@@ -1,11 +1,10 @@
-data "archive_file" "lambda" {
+data "archive_file" "extract_lambda" {
   type             = "zip"
   output_file_mode = "0666"
   source_file      = "${path.module}/../src/extract_lambda.py"
   output_path      = "${path.module}/../function.zip"
   
 }
-
 
 data "archive_file" "dependancy_layer" {
   type             = "zip"
@@ -17,23 +16,20 @@ data "archive_file" "dependancy_layer" {
 data "archive_file" "utils_layer" {
   type             = "zip"
   output_file_mode = "0666"
-  source_dir       = "${path.module}/../src/utils/"
+  source_dir       = "${path.module}/../utils/"
   output_path      = "${path.module}/../utils_layer.zip"
 }
 
-
-
 resource "aws_lambda_function" "extract_lambda" {
-  filename = data.archive_file.lambda.output_path
+  filename = data.archive_file.extract_lambda.output_path
   function_name = var.lambda_name
   description = ""
-  role = aws_iam_role.lambda_role.arn
+  role = aws_iam_role.lambda_extract_role.arn
   handler = "extract_lambda.lambda_handler"
   runtime = var.python_runtime
-  timeout = 10
+  timeout = 30
   layers = [aws_lambda_layer_version.dependancy_layer.arn , aws_lambda_layer_version.utils_layer.arn]
 }
-
 
 resource "aws_lambda_layer_version" "dependancy_layer" {
   layer_name          = "dependancy_layer"
