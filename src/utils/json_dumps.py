@@ -10,4 +10,3 @@ def dump_to_json(data):
     """
     return json.dumps(data, default=str) 
 
-print(type(dump_to_json({'hello':'oops'})))
