@@ -15,7 +15,7 @@ def lambda_handler(event, context):
 
     try:
         s3_client = boto3.client("s3")
-        timestamp = datetime.utcnow().strftime("%B%d%Y-%H:%M:%S")
+        timestamp = datetime.now().isoformat()
         table_list = [
             "address",
             "counterparty",
@@ -35,7 +35,11 @@ def lambda_handler(event, context):
             key = f"{table}/{table}-{timestamp}.json"
             json_data = dump_to_json(table_dict)
             upload_json_to_s3(json_data, "fscifa-raw-data", key, s3_client)
+
         return {"result": "success"}
     except Exception as error:
         print(f"Failed to extract data from database: {error}")
         raise Exception
+
+
+lambda_handler({},{})
