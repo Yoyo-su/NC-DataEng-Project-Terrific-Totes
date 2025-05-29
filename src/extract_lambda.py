@@ -1,7 +1,7 @@
 import boto3
-from src.utils.extract_db import extract_db
-from src.utils.json_dumps import dump_to_json
-from src.utils.insert_into_s3 import upload_json_to_s3
+from utils.extract_db import extract_db
+from utils.json_dumps import dump_to_json
+from utils.insert_into_s3 import upload_json_to_s3
 from datetime import datetime
 
 

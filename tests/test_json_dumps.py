@@ -1,5 +1,5 @@
 import pytest
-from src.utils.json_dumps import dump_to_json
+from utils.json_dumps import dump_to_json
 import json
 
 

@@ -1,6 +1,6 @@
 from unittest.mock import Mock, patch
 import pytest
-from src.utils.extract_db import extract_db
+from utils.extract_db import extract_db
 import datetime
 
 """Tests for the extract_db util function"""
