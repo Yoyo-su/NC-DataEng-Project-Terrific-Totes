@@ -20,7 +20,7 @@ class TestExtractLambda:
         "Testing that our lambda function successfully runs with all util functions integrated"
     )
     @mock_aws
-    @patch("src.utils.extract_db.connect_to_db")
+    @patch("utils.extract_db.connect_to_db")
     def test_lambda_function_returns_success_when_invoked(
         self, mock_connect_to_db, aws_creds
     ):
