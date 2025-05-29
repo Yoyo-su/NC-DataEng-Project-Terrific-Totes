@@ -9,5 +9,4 @@ def dump_to_json(data):
     Returns:
         a json file
     """
-    return json.dumps(data, default=str) 
-
+    return json.dumps(data, default=str)

@@ -65,7 +65,7 @@ check-coverage:
 	$(PYTEST) --cov=src tests/
 
 lint:
-	$(FLAKE8) . --max-line-length=150 --exclude=.git,__pycache__,./venv
+	$(FLAKE8) . --max-line-length=150 --exclude=.git,__pycache__,./venv,./layer
 
 audit:
 	$(AUDIT)

@@ -11,3 +11,4 @@ venv
 .pgpass
 .DS.Store
 .coverage
+*.pytest_cache

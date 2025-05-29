@@ -74,13 +74,16 @@ class TestInsertIntoS3:
     @mock_aws
     def test_json_stored_in_correct_location(aws_creds):
         s3_client = boto3.client("s3")
-        s3_client.create_bucket(Bucket="test-bucket",CreateBucketConfiguration = {"LocationConstraint": 'eu-west-2'})
-        table_name = 'test-table-4'
-        sample_data_4 = json.dumps({'foo':'bar','foo2':{'bar2':'bar3'}})
-        timestamp = datetime.utcnow().strftime('%B%d%Y-%H:%M:%S')
-        test_key = f'{table_name}/{timestamp}.json'
-        upload_json_to_s3(sample_data_4,'test-bucket',test_key,s3_client) 
-        assert s3_client.list_objects_v2(Bucket="test-bucket")['Contents'][0]['Key'] == test_key
-       
-
-
+        s3_client.create_bucket(
+            Bucket="test-bucket",
+            CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
+        )
+        table_name = "test-table-4"
+        sample_data_4 = json.dumps({"foo": "bar", "foo2": {"bar2": "bar3"}})
+        timestamp = datetime.utcnow().strftime("%B%d%Y-%H:%M:%S")
+        test_key = f"{table_name}/{timestamp}.json"
+        upload_json_to_s3(sample_data_4, "test-bucket", test_key, s3_client)
+        assert (
+            s3_client.list_objects_v2(Bucket="test-bucket")["Contents"][0]["Key"]
+            == test_key
+        )
