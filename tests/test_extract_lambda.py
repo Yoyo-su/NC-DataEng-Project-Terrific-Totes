@@ -1,6 +1,7 @@
 from src.extract_lambda import lambda_handler
 import pytest
 import os
+from unittest.mock import Mock, patch
 from moto import mock_aws
 import boto3
 
@@ -19,7 +20,14 @@ class TestExtractLambda:
         "Testing that our lambda function successfully runs with all util functions integrated"
     )
     @mock_aws
-    def test_lambda_function_returns_success_when_invoked(aws_creds):
+    @patch("src.utils.extract_db.connect_to_db")
+    def test_lambda_function_returns_success_when_invoked(
+        self, mock_connect_to_db, aws_creds
+    ):
+        mock_conn = Mock()
+        mock_conn.run.return_value = []
+        mock_conn.columns = []
+        mock_connect_to_db.return_value = mock_conn
         s3_client = boto3.client("s3")
         s3_client.create_bucket(
             Bucket="fscifa-raw-data",
