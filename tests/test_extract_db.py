@@ -6,11 +6,6 @@ import datetime
 """Tests for the extract_db util function"""
 
 
-@pytest.fixture()
-def db_conn():
-    pass
-
-
 class TestExtractDB:
     @pytest.mark.it("Testing returns dictionary with expected key and value as list")
     @patch("src.utils.extract_db.connect_to_db")
