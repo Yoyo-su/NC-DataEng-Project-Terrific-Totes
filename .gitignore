@@ -10,5 +10,7 @@ venv
 **/*.txt
 .pgpass
 .DS.Store
+address**
+payments**
 .coverage
 *.pytest_cache
