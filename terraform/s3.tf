@@ -1,3 +1,4 @@
+# s3 bucket for injested data
 resource "aws_s3_bucket" "ingestion_bucket" {
   bucket = "fscifa-raw-data"
 
@@ -7,6 +8,7 @@ resource "aws_s3_bucket" "ingestion_bucket" {
   }
 }
 
+# s3 bucket for processed data
 resource "aws_s3_bucket" "ready_bucket" {
   bucket = "fscifa-processed-data"
 
@@ -16,6 +18,7 @@ resource "aws_s3_bucket" "ready_bucket" {
   }
 }
 
+# s3 bucket for storing lambda functions
 resource "aws_s3_bucket" "lambda_bucket" {
   bucket = "fscifa-lamdba"
 
