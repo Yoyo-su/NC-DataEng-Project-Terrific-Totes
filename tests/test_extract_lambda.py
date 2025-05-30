@@ -5,6 +5,8 @@ from unittest.mock import Mock, patch
 from moto import mock_aws
 import boto3
 
+""" Tests for Extract_lambda funtion"""
+
 
 @pytest.fixture
 def aws_creds():

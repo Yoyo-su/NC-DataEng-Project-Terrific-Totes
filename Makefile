@@ -64,9 +64,11 @@ unit-test:
 check-coverage:
 	$(PYTEST) --cov=src tests/
 
+## Run lint
 lint:
 	$(FLAKE8) . --max-line-length=150 --exclude=.git,__pycache__,./venv,./layer
 
+## Run audit
 audit:
 	$(AUDIT)
 

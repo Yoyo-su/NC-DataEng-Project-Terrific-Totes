@@ -2,7 +2,7 @@ import pytest
 from utils.json_dumps import dump_to_json
 import json
 
-
+""" Tests for json_dump function"""
 class TestJsonDumps:
     @pytest.mark.it(
         "Testing an empty dictionary returns a json string of an empty dictionary"
