@@ -30,14 +30,24 @@ def bucket(aws_creds, s3_resource):
             Bucket="test_ingest_bucket",
             CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
         )
-        return s3_resource.Bucket("test_ingest_bucket")
+        bucket = s3_resource.Bucket("test_ingest_bucket")
+        with open("last_updated.txt", "w") as file:
+            file.write("2025-05-29T11:06:18.399084")
+        bucket.upload_file(
+            "last_updated.txt",
+            "last_updated.txt",
+        )
+        return bucket
 
 
 class TestFindFilesWithSpecifiedTableName:
+
     @pytest.mark.it(
         "when passed a bucket containing one file with the specified table name, returns a list containing that filename"
     )
     def test_returns_list_of_one_file(self, bucket):
+        with open("address-2025-05-29T11:06:18.399084.json", "w") as file:
+            file.write('{"example": "data"}')
         bucket.upload_file(
             "address-2025-05-29T11:06:18.399084.json",
             "address-2025-05-29T11:06:18.399084.json",
@@ -109,6 +119,16 @@ class TestFindFilesWithSpecifiedTableName:
 
 
 class TestFindMostRecentFile:
+
+    @pytest.mark.it(
+        """when passed a bucket that contains a file with the specified table name, but with a different date/time to
+        the last date/time in last_updated.txt, raises exception with appropriate message"""
+    )
+    def test_no_updated_data_for_specified_table(self, bucket):
+        test_list = ["address-2025-05-28T11:06:18.399084.json"]
+        with pytest.raises(Exception, match=r"No new data for table, address"):
+            find_most_recent_file(test_list, "address", "test_ingest_bucket")
+
     @pytest.mark.it(
         "when passed an empty list, raises IndexError with appropriate message"
     )
@@ -118,68 +138,90 @@ class TestFindMostRecentFile:
             IndexError,
             match=r"No file containing table, address is found in the s3 bucket",
         ):
-            find_most_recent_file(test_list, "address")
+            find_most_recent_file(test_list, "address", "test_ingest_bucket")
 
     @pytest.mark.it(
-        "when passed a list containing only one filename, returns that filename"
+        """when passed a bucket that does not contain a last_updated.txt file, raises
+        FileNotFoundError with appropriate message"""
     )
-    def test_single_filename(self):
+    def test_raises_exception_when_no_last_updated_txt_file_in_bucket(self, bucket):
+        last_updated = bucket.Object("last_updated.txt")
+        last_updated.delete()
         test_list = ["address-2025-05-29T11:06:18.399084.json"]
+        with pytest.raises(
+            FileNotFoundError,
+            match=r"File not found 404: there is no last_updated.txt file saved in the s3 bucket 'fscifa-raw-data'",
+        ):
+            find_most_recent_file(test_list, "address", "test_ingest_bucket")
+
+    @pytest.mark.it(
+        """"when there is only one json file in the bucket, that has the table name being searched for, and the same
+        date/time as the last updated date/time specified in the last_updated.txt, find_most_recent_file returns that
+        json file name"""
+    )
+    def test_date_time_last_updated_same_as_json_filename(self, bucket):
+        test_files = ["address-2025-05-29T11:06:18.399084.json"]
+        result = find_most_recent_file(test_files, "address", "test_ingest_bucket")
+        assert result == "address-2025-05-29T11:06:18.399084.json"
+
+    @pytest.mark.it(
+        """when passed a list containing two filenames, and the most
+                    recent file has the same date/time as in the last line of
+                    last_updated.txt, returns that file name"""
+    )
+    def test_two_filenames(self, bucket):
+        test_list = [
+            "address-2025-05-29T11:06:18.399084.json",
+            "address-2025-03-29T11:06:18.399084.json",
+        ]
         assert (
-            find_most_recent_file(test_list, "address")
+            find_most_recent_file(test_list, "address", "test_ingest_bucket")
             == "address-2025-05-29T11:06:18.399084.json"
         )
 
-    @pytest.mark.it("when passed a list containing two filenames, returns most recent")
-    def test_two_filenames(self):
-        test_list = [
-            "address-2025-05-29T11:06:18.399084.json",
-            "address-2025-06-29T11:06:18.399084.json",
-        ]
-        assert (
-            find_most_recent_file(test_list, "address")
-            == "address-2025-06-29T11:06:18.399084.json"
-        )
-
     @pytest.mark.it(
-        "when passed a list containing multiple of the same filenames, returns only one"
+        """when passed a list containing multiple of the same filenames, all with the same
+          date/time as in the last line of last_updated.txt, returns this file name once"""
     )
-    def test_two_of_the_same_filenames(self):
+    def test_two_of_the_same_filenames(self, bucket):
         test_list = [
             "address-2025-05-29T11:06:18.399084.json",
             "address-2025-05-29T11:06:18.399084.json",
         ]
         assert (
-            find_most_recent_file(test_list, "address")
+            find_most_recent_file(test_list, "address", "test_ingest_bucket")
             == "address-2025-05-29T11:06:18.399084.json"
         )
 
     @pytest.mark.it(
-        "when passed a list containing many filenames, on same date, returns one with most recent time"
+        """when passed a list containing many filenames, on same date, at different times,
+        returns one with most recent time, where this is the same as the date/time on
+        the last line of last_updated.txt"""
     )
-    def test_two_filenames_same_date_different_time(self):
+    def test_two_filenames_same_date_different_time(self, bucket):
         test_list = [
+            "address-2025-05-29T10:06:18.399084.json",
             "address-2025-05-29T11:06:18.399084.json",
-            "address-2025-05-29T11:08:18.399084.json",
         ]
         assert (
-            find_most_recent_file(test_list, "address")
-            == "address-2025-05-29T11:08:18.399084.json"
+            find_most_recent_file(test_list, "address", "test_ingest_bucket")
+            == "address-2025-05-29T11:06:18.399084.json"
         )
 
     @pytest.mark.it(
-        "when passed a list containing multiple filenames on different days in the same month, returns most recent"
+        """when passed a list containing multiple filenames on different days in the same month, returns most recent,
+        where this most recent date/time is the same as the date/time on the last line of last_updated.txt"""
     )
-    def test_multiple_filenames_different_days_in_same_month(self):
+    def test_multiple_filenames_different_days_in_same_month(self, bucket):
         test_list = [
             "address-2025-05-29T11:06:18.399084.json",
             "address-2025-05-26T11:06:18.399084.json",
-            "address-2025-05-30T11:06:18.399084.json",
+            "address-2025-05-14T11:06:18.399084.json",
             "address-2025-05-09T11:06:18.399084.json",
         ]
         assert (
-            find_most_recent_file(test_list, "address")
-            == "address-2025-05-30T11:06:18.399084.json"
+            find_most_recent_file(test_list, "address", "test_ingest_bucket")
+            == "address-2025-05-29T11:06:18.399084.json"
         )
 
 
@@ -199,9 +241,9 @@ class TestLoadMostRecentDataFromJson:
                 '{"address": [{"address_id": 2, "address_line_1": "93 High Street"}]}'
             )
         bucket.upload_file(test_file_1, "address-2025-05-29T11:06:18.399084.json")
-        bucket.upload_file(test_file_2, "address-2025-06-29T11:06:18.399084.json")
+        bucket.upload_file(test_file_2, "address-2025-01-29T11:06:18.399084.json")
 
         assert (
             load_data_from_most_recent_json("address", "test_ingest_bucket")
-            == "address-2025-06-29T11:06:18.399084.json"
+            == "address-2025-05-29T11:06:18.399084.json"
         )
