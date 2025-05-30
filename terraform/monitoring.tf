@@ -5,8 +5,9 @@ resource "aws_sns_topic" "lambda_alerts" {
 resource "aws_sns_topic_subscription" "error_emails_subscription" {
   topic_arn = aws_sns_topic.lambda_alerts.arn
   protocol  = "email"
-  endpoint  = "frederickfrmoller@gmail.com"
+  endpoint  = "fscifa@googlegroups.com"
 }
+
 
 resource "aws_cloudwatch_metric_alarm" "lambda_alarm" {
   alarm_name                = "extract-lambda-error-alarm"
