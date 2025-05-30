@@ -49,7 +49,8 @@ def find_most_recent_file(files, table_name, bucket_name):
         )
     except ClientError as err:
         if (
-            err.response["Error"]["Code"] == "404" or err.response["Error"]["Code"] == "NoSuchKey"
+            err.response["Error"]["Code"] == "404"
+            or err.response["Error"]["Code"] == "NoSuchKey"
         ):
             raise FileNotFoundError(
                 "File not found 404: there is no last_updated.txt file saved in the s3 bucket 'fscifa-raw-data'"

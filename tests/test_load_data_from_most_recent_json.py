@@ -175,7 +175,8 @@ class TestFindMostRecentFile:
             "address-2025-03-29T11:06:18.399084.json",
         ]
         assert (
-            find_most_recent_file(test_list, "address", "test_ingest_bucket") == "address-2025-05-29T11:06:18.399084.json"
+            find_most_recent_file(test_list, "address", "test_ingest_bucket")
+            == "address-2025-05-29T11:06:18.399084.json"
         )
 
     @pytest.mark.it(
@@ -188,7 +189,8 @@ class TestFindMostRecentFile:
             "address-2025-05-29T11:06:18.399084.json",
         ]
         assert (
-            find_most_recent_file(test_list, "address", "test_ingest_bucket") == "address-2025-05-29T11:06:18.399084.json"
+            find_most_recent_file(test_list, "address", "test_ingest_bucket")
+            == "address-2025-05-29T11:06:18.399084.json"
         )
 
     @pytest.mark.it(
@@ -202,7 +204,8 @@ class TestFindMostRecentFile:
             "address-2025-05-29T11:06:18.399084.json",
         ]
         assert (
-            find_most_recent_file(test_list, "address", "test_ingest_bucket") == "address-2025-05-29T11:06:18.399084.json"
+            find_most_recent_file(test_list, "address", "test_ingest_bucket")
+            == "address-2025-05-29T11:06:18.399084.json"
         )
 
     @pytest.mark.it(
@@ -217,7 +220,8 @@ class TestFindMostRecentFile:
             "address-2025-05-09T11:06:18.399084.json",
         ]
         assert (
-            find_most_recent_file(test_list, "address", "test_ingest_bucket") == "address-2025-05-29T11:06:18.399084.json"
+            find_most_recent_file(test_list, "address", "test_ingest_bucket")
+            == "address-2025-05-29T11:06:18.399084.json"
         )
 
 
@@ -240,5 +244,6 @@ class TestLoadMostRecentDataFromJson:
         bucket.upload_file(test_file_2, "address-2025-01-29T11:06:18.399084.json")
 
         assert (
-            load_data_from_most_recent_json("address", "test_ingest_bucket") == "address-2025-05-29T11:06:18.399084.json"
+            load_data_from_most_recent_json("address", "test_ingest_bucket")
+            == "address-2025-05-29T11:06:18.399084.json"
         )
