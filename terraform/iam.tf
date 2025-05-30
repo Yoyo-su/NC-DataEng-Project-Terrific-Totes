@@ -63,6 +63,7 @@ resource "aws_iam_policy" "lambda_sns_policy" {
   policy = data.aws_iam_policy_document.terraform_sns_cloudwatch_permissions.json 
 }
 
+
 resource "aws_iam_policy_attachment" "lambda_sns_policy_attachment" {
   name       = "lambda_cloudwatch_sns_policy_attachment"
   roles      = [aws_iam_role.lambda_extract_role.name]
