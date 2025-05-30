@@ -2,7 +2,7 @@
 data "archive_file" "extract_lambda" {
   type             = "zip"
   output_file_mode = "0666"
-  source_file      = "${path.module}/../src/extract_lambda_sample.py"
+  source_file      = "${path.module}/../src/extract_lambda.py"
   output_path      = "${path.module}/../function.zip"
   
 }
@@ -22,7 +22,7 @@ resource "aws_lambda_function" "extract_lambda" {
   function_name = var.lambda_name
   description = ""
   role = aws_iam_role.lambda_extract_role.arn
-  handler = "extract_lambda_sample.lambda_handler"
+  handler = "extract_lambda.lambda_handler"
   runtime = var.python_runtime
   timeout = 30
   layers = [aws_lambda_layer_version.dependancy_layer.arn]
