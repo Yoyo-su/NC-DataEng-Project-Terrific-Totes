@@ -9,6 +9,8 @@ import json
 from datetime import datetime
 
 """"Tests for insert_into_s3 function"""
+
+
 @pytest.fixture
 def aws_creds():
     os.environ["AWS_ACCESS_KEY_ID"] = "Test"
