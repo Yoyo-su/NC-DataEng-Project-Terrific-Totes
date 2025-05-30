@@ -31,9 +31,6 @@ jobs:
     - name: Set PYTHONPATH
       run: echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
 
-    - name: Run terraform fmt and fix
-      run: terraform fmt -recursive
-
     - name: check pip-audit
       run: which pip-audit
 
@@ -58,6 +55,9 @@ jobs:
           aws-region: eu-west-2
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v3
+
+      - name: Run terraform fmt and fix
+        run: terraform fmt -recursive
       - name: Terraform Init
         working-directory: terraform
         run: terraform init
