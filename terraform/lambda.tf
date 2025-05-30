@@ -24,7 +24,7 @@ resource "aws_lambda_function" "extract_lambda" {
   role = aws_iam_role.lambda_extract_role.arn
   handler = "extract_lambda_sample.lambda_handler"
   runtime = var.python_runtime
-  timeout = 120
+  timeout = 30
   layers = [aws_lambda_layer_version.dependancy_layer.arn]
   environment {
     variables = {

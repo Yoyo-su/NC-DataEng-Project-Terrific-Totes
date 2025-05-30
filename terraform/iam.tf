@@ -40,3 +40,30 @@ resource "aws_iam_policy_attachment" "lambda_s3_policy" {
   roles      = [aws_iam_role.lambda_extract_role.name]
   policy_arn = aws_iam_policy.extract_lambda_s3_write_policy.arn
 }
+
+data "aws_iam_policy_document" "terraform_sns_cloudwatch_permissions" {
+  statement {
+    actions = [
+      "cloudwatch:PutMetricAlarm",
+      "cloudwatch:DescribeAlarms",
+      "sns:CreateTopic",
+      "sns:Subscribe",
+      "sns:SetTopicAttributes",
+      "sns:Publish",
+      "lambda:GetFunctionConfiguration",
+      "lambda:ListFunctions"
+    ]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_policy" "lambda_sns_policy" {
+  name = "lambda_cloudwatch_sns_policy"
+  policy = data.aws_iam_policy_document.terraform_sns_cloudwatch_permissions.json 
+}
+
+resource "aws_iam_policy_attachment" "lambda_sns_policy_attachment" {
+  name       = "lambda_cloudwatch_sns_policy_attachment"
+  roles      = [aws_iam_role.lambda_extract_role.name]
+  policy_arn = aws_iam_policy.lambda_sns_policy.arn
+}
