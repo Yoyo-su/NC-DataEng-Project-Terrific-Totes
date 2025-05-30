@@ -14,7 +14,7 @@ resource "aws_iam_role" "lambda_extract_role" {
   })
 }
 
-resource "aws_iam_policy" "s3_write_policy" {
+resource "aws_iam_policy" "extract_lambda_s3_write_policy" {
   name = "s3-policy-extract-lambda-write"
   policy      = data.aws_iam_policy_document.allow_extraction_lambda_access_s3_injestion.json
 }
@@ -38,5 +38,5 @@ data "aws_iam_policy_document" "allow_extraction_lambda_access_s3_injestion" {
 resource "aws_iam_policy_attachment" "lambda_s3_policy" {
   name       = "lambda_s3_policy"
   roles      = [aws_iam_role.lambda_extract_role.name]
-  policy_arn = aws_iam_policy.s3_write_policy.arn
+  policy_arn = aws_iam_policy.extract_lambda_s3_write_policy.arn
 }

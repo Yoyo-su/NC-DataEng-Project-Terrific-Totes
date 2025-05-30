@@ -6,9 +6,10 @@ import os
 """ Functions for creating and closing database connections """
 load_dotenv()
 
+
 def connect_to_db():
     try:
-        
+
         db = Connection(
             user=os.getenv("PG_USER"),
             password=os.getenv("PG_PASSWORD"),
@@ -26,4 +27,3 @@ def close_db(db):
         db.close()
     except Exception:
         print("Error closing database connection.")
-

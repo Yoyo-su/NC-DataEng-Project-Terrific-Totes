@@ -8,12 +8,12 @@ from botocore.exceptions import ClientError
 import json
 
 """ Functions for creating and closing database connections """
-load_dotenv() 
+load_dotenv()
 
 
 def connect_to_db():
     try:
-        
+
         db = Connection(
             user=os.getenv("PG_USER"),
             password=os.getenv("PG_PASSWORD"),
