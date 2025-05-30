@@ -86,6 +86,5 @@ class TestInsertIntoS3:
         test_key = f"{table_name}/{timestamp}.json"
         upload_json_to_s3(sample_data_4, "test-bucket", test_key, s3_client)
         assert (
-            s3_client.list_objects_v2(Bucket="test-bucket")["Contents"][0]["Key"]
-            == test_key
+            s3_client.list_objects_v2(Bucket="test-bucket")["Contents"][0]["Key"] == test_key
         )
