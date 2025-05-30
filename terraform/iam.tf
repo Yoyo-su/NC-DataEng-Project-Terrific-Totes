@@ -58,7 +58,6 @@ data "aws_iam_policy_document" "terraform_sns_cloudwatch_permissions" {
   }
 }
 
-
 resource "aws_iam_policy" "lambda_sns_policy" {
   name = "lambda_cloudwatch_sns_policy"
   policy = data.aws_iam_policy_document.terraform_sns_cloudwatch_permissions.json 
