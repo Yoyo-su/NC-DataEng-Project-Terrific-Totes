@@ -6,11 +6,14 @@ from datetime import datetime
 from botocore.exceptions import ClientError
 import json
 
-""" Functions for creating and closing database connections """
+""" EXTRACT LAMBDA: Includes extract lambda handler and util functions """
+
+
 load_dotenv()
 
 
 def connect_to_db():
+    """Open connection to DB"""
     try:
 
         db = Connection(
@@ -26,6 +29,7 @@ def connect_to_db():
 
 
 def close_db(db):
+    """Close connection to db"""
     try:
         db.close()
     except Exception:
@@ -110,6 +114,16 @@ def extract_db(table_name, last_updated=None):
 
 
 def upload_json_to_s3(json_file, bucket_name, key, s3_client):
+    """
+    Util function that uploads a json file to an s3 bucket
+
+    Args:
+        json_file (json): json to be uploaded
+        bucket_name (string): bucket to upload to
+        key (string): filepath to save to
+        s3_client (boto): boto3 s3 client connection
+    """
+
     try:
         s3_client.put_object(Body=json_file, Bucket=bucket_name, Key=key)
         print(f"Successfully uploaded {key} to s3://{bucket_name}/{key}")
@@ -127,4 +141,5 @@ def dump_to_json(data):
     Returns:
         a json file
     """
+
     return json.dumps(data, default=str)
