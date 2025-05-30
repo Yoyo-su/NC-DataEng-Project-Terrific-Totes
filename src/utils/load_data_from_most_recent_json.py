@@ -1,6 +1,5 @@
-import json
 import boto3
-from botocore.exceptions import ClientError
+from datetime import datetime
 
 
 def load_data_from_most_recent_json(table_name, bucket_name):
@@ -8,21 +7,19 @@ def load_data_from_most_recent_json(table_name, bucket_name):
     This function:
     - looks through the json files in the ingestion s3 bucket with a given table name
     - selects the most recent file starting with this table name
-    - reads the data from this json file and loads it to a list of Python dictionaries, and returns this list
+
     These functionalities are implemented using dependency injection.
 
     Arguments: table_name which is a table name from the original OLTP database
 
-    Returns: list of dictionaries, with each dictionary representing a record from a given table of the OLTP database
-
+    Returns: a string containing the name of the most recent file with specified table_name
     """
     files = find_files_with_specified_table_name(table_name, bucket_name)
-    most_recent_file = find_most_recent_file(files)
-    data = read_file_and_turn_it_to_list_dict(table_name, bucket_name, most_recent_file)
-    return data
+    most_recent_file = find_most_recent_file(files, table_name)
+    return most_recent_file
 
 
-"""The below functions are used as dependencies, injectected within load_data_from_most_recent_json:"""
+"""The below functions are used as dependencies, injected within load_data_from_most_recent_json:"""
 
 
 def find_files_with_specified_table_name(table_name, bucket_name):
@@ -32,24 +29,21 @@ def find_files_with_specified_table_name(table_name, bucket_name):
     return files
 
 
-def find_most_recent_file(files):
-    if len(files) > 0:
-        most_recent_file = sorted(files, reverse=True)[0]
-        return most_recent_file
-    else:
-        return None
-
-
-def read_file_and_turn_it_to_list_dict(table_name, bucket_name, most_recent_file):
-    resource = boto3.resource("s3")
-    bucket = resource.Bucket(bucket_name)
+def find_most_recent_file(files, table_name,bucket_name):
     try:
-        bucket.download_file(most_recent_file, most_recent_file)
-        with open(most_recent_file, "r") as file:
-            data = json.load(file)[table_name]
-            data_dict = [item for item in data]
-        return data_dict
-    except ValueError:
-        return [{}]
-    except ClientError:
-        return [{}]
+        most_recent_file = sorted(files, reverse=True)[0]
+        file_date_time = most_recent_file[len(table_name)+1:-5]
+        resource = boto3.resource("s3")
+        bucket = resource.Bucket(bucket_name)
+        bucket.download_file("last_updated.txt", "last_updated.txt")
+        with open("last_updated.txt", "r") as file:
+            last_update = file.readline()
+        if last_update == file_date_time:
+            return most_recent_file
+        else:
+            raise Exception(f"No new data for table, {table_name}")
+    except IndexError:
+        raise IndexError(
+            f"No file containing table, {table_name} is found in the s3 bucket"
+        )
+    
