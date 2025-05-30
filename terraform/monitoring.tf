@@ -6,9 +6,6 @@ resource "aws_sns_topic_subscription" "error_emails_subscription" {
   topic_arn = aws_sns_topic.lambda_alerts.arn
   protocol  = "email"
   endpoint  = "frederickfrmoller@gmail.com"
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 resource "aws_cloudwatch_metric_alarm" "lambda_alarm" {
