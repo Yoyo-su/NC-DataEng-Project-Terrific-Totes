@@ -4,4 +4,5 @@ pg8000
 dotenv
 boto3
 moto
+pandas
 
