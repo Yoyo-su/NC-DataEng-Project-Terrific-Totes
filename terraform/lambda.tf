@@ -2,7 +2,7 @@
 data "archive_file" "extract_lambda" {
   type             = "zip"
   output_file_mode = "0666"
-  source_file      = "${path.module}/../src/extract_lambda.py"
+  source_file      = "${path.module}/../src/extract_lambda_sample.py"
   output_path      = "${path.module}/../function.zip"
   
 }
@@ -15,13 +15,6 @@ data "archive_file" "dependancy_layer" {
   output_path      = "${path.module}/../dependancy_layer.zip"
 }
 
-# zip util functions for lambda functions
-data "archive_file" "utils_layer" {
-  type             = "zip"
-  output_file_mode = "0666"
-  source_dir       = "${path.module}/../utils/"
-  output_path      = "${path.module}/../utils_layer.zip"
-}
 
 # define extract lambda function
 resource "aws_lambda_function" "extract_lambda" {
@@ -29,10 +22,19 @@ resource "aws_lambda_function" "extract_lambda" {
   function_name = var.lambda_name
   description = ""
   role = aws_iam_role.lambda_extract_role.arn
-  handler = "extract_lambda.lambda_handler"
+  handler = "extract_lambda_sample.lambda_handler"
   runtime = var.python_runtime
-  timeout = 30
-  layers = [aws_lambda_layer_version.dependancy_layer.arn , aws_lambda_layer_version.utils_layer.arn]
+  timeout = 120
+  layers = [aws_lambda_layer_version.dependancy_layer.arn]
+  environment {
+    variables = {
+      PG_HOST     = var.pg_host
+      PG_PORT     = var.pg_port
+      PG_USER     = var.pg_user
+      PG_PASSWORD = var.pg_password
+      PG_DATABASE = var.pg_database
+    }
+  }
 }
 
 # define python dependancies layer
@@ -42,9 +44,4 @@ resource "aws_lambda_layer_version" "dependancy_layer" {
   filename            = data.archive_file.dependancy_layer.output_path
 }
 
-# define util functions layer
-resource "aws_lambda_layer_version" "utils_layer" {
-  layer_name          = "utils_layer"
-  compatible_runtimes = [var.python_runtime]
-  filename            = data.archive_file.utils_layer.output_path
-}
+

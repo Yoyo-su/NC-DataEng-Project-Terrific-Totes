@@ -4,11 +4,11 @@ from dotenv import load_dotenv
 import os
 
 """ Functions for creating and closing database connections """
+load_dotenv()
 
-
-def connect_to_db(dotenv_path=".env.dev"):
+def connect_to_db():
     try:
-        load_dotenv(dotenv_path=dotenv_path)
+        
         db = Connection(
             user=os.getenv("PG_USER"),
             password=os.getenv("PG_PASSWORD"),
@@ -26,3 +26,4 @@ def close_db(db):
         db.close()
     except Exception:
         print("Error closing database connection.")
+

@@ -1,3 +1,4 @@
+from traceback import extract_tb
 from db.connection import connect_to_db, close_db
 
 
@@ -12,7 +13,7 @@ def extract_db(table_name, last_updated=None):
     """
 
     try:
-        conn = connect_to_db(".env.dev")
+        conn = connect_to_db()
         if not last_updated:
             query = f"SELECT * FROM {table_name};"
         else:
@@ -28,3 +29,5 @@ def extract_db(table_name, last_updated=None):
     finally:
         if conn:
             close_db(conn)
+
+print(extract_db("address"))
