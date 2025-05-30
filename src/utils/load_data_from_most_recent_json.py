@@ -32,7 +32,7 @@ def find_files_with_specified_table_name(table_name, bucket_name):
 def find_most_recent_file(files, table_name, bucket_name):
     try:
         most_recent_file = sorted(files, reverse=True)[0]
-        file_date_time = most_recent_file[len(table_name) + 1: -5]
+        file_date_time = most_recent_file[len(table_name) + 1 : -5]
         resource = boto3.resource("s3")
         bucket = resource.Bucket(bucket_name)
         bucket.download_file("last_updated.txt", "last_updated.txt")

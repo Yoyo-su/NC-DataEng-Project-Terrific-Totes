@@ -66,7 +66,7 @@ check-coverage:
 
 ## Run lint
 lint:
-	$(FLAKE8) . --max-line-length=150 --exclude=.git,__pycache__,./venv,./layer
+	$(FLAKE8) . --max-line-length=150 --exclude=.git,__pycache__,./venv,./layer --ignore=E203
 
 ## Run audit
 audit:
