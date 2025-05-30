@@ -8,7 +8,8 @@ from botocore.exceptions import ClientError
 import json
 
 """ Functions for creating and closing database connections """
-load_dotenv()
+load_dotenv() 
+
 
 def connect_to_db():
     try:
