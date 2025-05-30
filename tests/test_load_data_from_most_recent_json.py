@@ -71,8 +71,8 @@ class TestFindFilesWithSpecifiedTableName:
         assert result[0] == "address-2025-05-29T11:06:18.399084.json"
 
     @pytest.mark.it(
-        """when passed a bucket containing two files, both with the specified table name, returns 
-                    a list containing both filenames, with the most recent first in the list"""
+        """when passed a bucket containing two files, both with the specified table name, returns
+    a list containing both filenames, with the most recent first in the list"""
     )
     def test_finds_correct_file_in_bucket_with_multiple_files_of_same_table_name(
         self, bucket
