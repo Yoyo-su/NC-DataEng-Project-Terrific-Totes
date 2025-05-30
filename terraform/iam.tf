@@ -41,6 +41,7 @@ resource "aws_iam_policy_attachment" "lambda_s3_policy" {
   policy_arn = aws_iam_policy.extract_lambda_s3_write_policy.arn
 }
 
+
 data "aws_iam_policy_document" "terraform_sns_cloudwatch_permissions" {
   statement {
     actions = [
