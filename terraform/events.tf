@@ -1,4 +1,4 @@
-# scheduler that will trigger the Lambda every 30 minutes
+# scheduler that will trigger the ETL pipeline every 30 minutes
  resource "aws_cloudwatch_event_rule" "lambda_execution_schedule" {
   name = "every-thirty-minutes"
     description = "Fires every thirty minutes"
