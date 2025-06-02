@@ -7,7 +7,9 @@ def load_data_from_most_recent_json(table_name, bucket_name):
     This function:
     - looks through the json files in the ingestion s3 bucket with a given table name
     - selects the most recent file starting with this table name
-
+    - compares the date/time in this file with the date/time in the last_updated.txt 
+    - if date/time are the same, returns string of the filename
+    - else raises Exception informing the user that there is no new data for this table since the last update 
     These functionalities are implemented using dependency injection.
 
     Arguments: table_name which is a table name from the original OLTP database
@@ -56,4 +58,4 @@ def find_most_recent_file(files, table_name, bucket_name):
                 "File not found 404: there is no last_updated.txt file saved in the s3 bucket 'fscifa-raw-data'"
             )
         else:
-            raise
+            raise ClientError
