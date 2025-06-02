@@ -37,8 +37,8 @@ def find_most_recent_file(files, table_name, bucket_name):
         file_date_time = most_recent_file[len(table_name) + 1 : -5]
         resource = boto3.resource("s3")
         bucket = resource.Bucket(bucket_name)
-        bucket.download_file("last_updated.txt", "last_updated.txt")
-        with open("last_updated.txt", "r") as file:
+        bucket.download_file("last_updated.txt", "tests/data/last_updated.txt")
+        with open("tests/data/last_updated.txt", "r") as file:
             last_update = file.readlines()[-1]
         print(file_date_time == last_update)
         if last_update == file_date_time:
