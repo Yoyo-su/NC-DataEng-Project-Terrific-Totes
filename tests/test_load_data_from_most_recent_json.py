@@ -46,10 +46,10 @@ class TestFindFilesWithSpecifiedTableName:
         "when passed a bucket containing one file with the specified table name, returns a list containing that filename"
     )
     def test_returns_list_of_one_file(self, bucket):
-        with open("address-2025-05-29T11:06:18.399084.json", "w") as file:
+        with open("tests/data/address-2025-05-29T11:06:18.399084.json", "w") as file:
             file.write('{"example": "data"}')
         bucket.upload_file(
-            "address-2025-05-29T11:06:18.399084.json",
+            "tests/data/address-2025-05-29T11:06:18.399084.json",
             "address-2025-05-29T11:06:18.399084.json",
         )
 
@@ -63,16 +63,16 @@ class TestFindFilesWithSpecifiedTableName:
     def test_finds_correct_file_in_bucket_with_multiple_files_of_different_table_names(
         self, bucket
     ):
-        with open("address-2025-05-29T11:06:18.399084.json", "w") as file:
+        with open("tests/data/address-2025-05-29T11:06:18.399084.json", "w") as file:
             file.write('{"example": "data"}')
-        with open("payments-2025-05-29T11:06:18.399084.json", "w") as file:
+        with open("tests/data/payments-2025-05-29T11:06:18.399084.json", "w") as file:
             file.write('{"example": "data"}')
         bucket.upload_file(
-            "address-2025-05-29T11:06:18.399084.json",
+            "tests/data/address-2025-05-29T11:06:18.399084.json",
             "address-2025-05-29T11:06:18.399084.json",
         )
         bucket.upload_file(
-            "payments-2025-05-29T11:06:18.399084.json",
+            "tests/data/payments-2025-05-29T11:06:18.399084.json",
             "payments-2025-05-29T11:06:18.399084.json",
         )
         result = find_files_with_specified_table_name("address", "test_ingest_bucket")
@@ -86,16 +86,16 @@ class TestFindFilesWithSpecifiedTableName:
     def test_finds_correct_file_in_bucket_with_multiple_files_of_same_table_name(
         self, bucket
     ):
-        with open("address-2025-05-29T11:06:18.399084.json", "w") as file:
+        with open("tests/data/address-2025-05-29T11:06:18.399084.json", "w") as file:
             file.write('{"example": "data"}')
-        with open("address-2025-06-29T11:06:18.399084.json", "w") as file:
+        with open("tests/data/address-2025-06-29T11:06:18.399084.json", "w") as file:
             file.write('{"example": "data"}')
         bucket.upload_file(
-            "address-2025-05-29T11:06:18.399084.json",
+            "tests/data/address-2025-05-29T11:06:18.399084.json",
             "address-2025-05-29T11:06:18.399084.json",
         )
         bucket.upload_file(
-            "address-2025-06-29T11:06:18.399084.json",
+            "tests/data/address-2025-06-29T11:06:18.399084.json",
             "address-2025-06-29T11:06:18.399084.json",
         )
         result = find_files_with_specified_table_name("address", "test_ingest_bucket")
@@ -108,10 +108,10 @@ class TestFindFilesWithSpecifiedTableName:
                     returns an empty list"""
     )
     def test_returns_empty_list_when_passed_with_table_name_not_in_bucket(self, bucket):
-        with open("address-2025-05-29T11:06:18.399084.json", "w") as file:
+        with open("tests/data/address-2025-05-29T11:06:18.399084.json", "w") as file:
             file.write('{"example": "data"}')
         bucket.upload_file(
-            "address-2025-05-29T11:06:18.399084.json",
+            "tests/data/address-2025-05-29T11:06:18.399084.json",
             "address-2025-06-29T11:06:18.399084.json",
         )
         result = find_files_with_specified_table_name("payments", "test_ingest_bucket")
@@ -230,8 +230,8 @@ class TestLoadMostRecentDataFromJson:
         """test that previously tested dependency injection functions work when put together"""
     )
     def test_load_data_from_most_recent_json(self, bucket):
-        test_file_1 = "address-2025-05-29T11:06:18.399084.json"
-        test_file_2 = "address-2025-06-29T11:06:18.399084.json"
+        test_file_1 = "tests/data/address-2025-05-29T11:06:18.399084.json"
+        test_file_2 = "tests/data/address-2025-06-29T11:06:18.399084.json"
         with open(test_file_1, "w") as file:
             file.write(
                 '{"address": [{"address_id": 1, "address_line_1": "6826 Herzog Via"}]}'
