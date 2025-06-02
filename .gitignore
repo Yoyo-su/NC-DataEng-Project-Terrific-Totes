@@ -17,4 +17,3 @@ payments**
 last_updated.txt
 *.zip
 tests/data/**
-tests/data
