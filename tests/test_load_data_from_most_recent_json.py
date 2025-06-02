@@ -8,6 +8,14 @@ from src.utils.load_data_from_most_recent_json import (
     load_data_from_most_recent_json,
 )
 
+"""
+Tests for load_data_from_most_recent_json util function.
+- tests use a mock s3 bucket
+- some tests create local files which will be stored in tests/data
+- all files in tests/data won't be committed to GitHub
+
+"""
+
 
 @pytest.fixture
 def aws_creds():
@@ -31,10 +39,10 @@ def bucket(aws_creds, s3_resource):
             CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
         )
         bucket = s3_resource.Bucket("test_ingest_bucket")
-        with open("last_updated.txt", "w") as file:
+        with open("tests/data/last_updated.txt", "w") as file:
             file.write("2025-05-29T11:06:18.399084")
         bucket.upload_file(
-            "last_updated.txt",
+            "tests/data/last_updated.txt",
             "last_updated.txt",
         )
         return bucket

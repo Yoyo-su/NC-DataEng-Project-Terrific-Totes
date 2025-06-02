@@ -5,6 +5,14 @@ from moto import mock_aws
 import boto3
 import os
 
+"""
+Tests for json_to_pd_dataframe util function.
+- tests use a mock s3 bucket
+- some tests create local files which will be stored in tests/data
+- all files in tests/data won't be committed to GitHub
+
+"""
+
 
 @pytest.fixture
 def aws_creds():
@@ -65,7 +73,7 @@ class TestJsonToPDdataframe:
         "when passed a json file with one record returns dataframe with one row"
     )
     def test_returns_dataframe_with_one_row(self, bucket):
-        test_file_1 = "address-2025-06-29T11:06:18.399084.json"
+        test_file_1 = "tests/data/address-2025-06-29T11:06:18.399084.json"
         with open(test_file_1, "w") as file:
             file.write(
                 '{"address": [{"address_id": 1, "address_line_1": "6826 Herzog Via"}]}'
@@ -81,7 +89,7 @@ class TestJsonToPDdataframe:
         "when passed a json file with two records returns dataframe with two rows"
     )
     def test_returns_dataframe_with_multiple_rows(self, bucket):
-        test_file_1 = "address-2025-06-29T11:06:18.399084.json"
+        test_file_1 = "tests/data/address-2025-06-29T11:06:18.399084.json"
         with open(test_file_1, "w") as file:
             file.write(
                 '{"address": [{"address_id": 1, "address_line_1": "6826 Herzog Via"},{"address_id": 2, "address_line_1": "93 High Street"}]}'
