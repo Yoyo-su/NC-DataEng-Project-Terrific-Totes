@@ -1,4 +1,3 @@
-
 from db.connection import connect_to_db, close_db
 
 

@@ -16,3 +16,4 @@ payments**
 *.pytest_cache
 last_updated.txt
 *.zip
+test_staff.parquet
