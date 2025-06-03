@@ -27,11 +27,16 @@ def find_most_recent_json_filename(table_name, bucket_name):
 def find_files_with_specified_table_name(table_name, bucket_name):
     s3 = boto3.resource("s3")
     bucket = s3.Bucket(bucket_name)
-    files = [
-        obj.key.split("/")[1]
-        for obj in bucket.objects.filter(Prefix=table_name)
-        if obj.key.split("/")[1]
-    ]
+    files = []
+    for obj in bucket.objects.filter(Prefix=table_name):
+        print(obj.key.split("/"))
+        if "" not in obj.key.split("/"):
+            files.append(obj.key.split("/")[1])
+    # files = [
+    #     obj.key.split("/")[1]
+    #     for obj in bucket.objects.filter(Prefix=table_name)
+    #     if "" not in obj.key.split("/")
+    # ]
     print(files)
     return files
 
