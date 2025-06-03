@@ -2,10 +2,10 @@ import os
 import pytest
 from moto import mock_aws
 import boto3
-from src.utils.load_data_from_most_recent_json import (
+from src.utils.find_most_recent_json_filename import (
     find_files_with_specified_table_name,
     find_most_recent_file,
-    load_data_from_most_recent_json,
+    find_most_recent_json_filename
 )
 
 """
@@ -252,6 +252,6 @@ class TestLoadMostRecentDataFromJson:
         bucket.upload_file(test_file_2, "address-2025-01-29T11:06:18.399084.json")
 
         assert (
-            load_data_from_most_recent_json("address", "test_ingest_bucket")
+            find_most_recent_json_filename("address", "test_ingest_bucket")
             == "address-2025-05-29T11:06:18.399084.json"
         )

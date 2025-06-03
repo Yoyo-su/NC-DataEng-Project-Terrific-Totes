@@ -2,7 +2,7 @@ import boto3
 from botocore.exceptions import ClientError
 
 
-def load_data_from_most_recent_json(table_name, bucket_name):
+def find_most_recent_json_filename(table_name, bucket_name):
     """
     This function:
     - looks through the json files in the ingestion s3 bucket with a given table name
@@ -25,8 +25,8 @@ def load_data_from_most_recent_json(table_name, bucket_name):
 
 
 def find_files_with_specified_table_name(table_name, bucket_name):
-    resource = boto3.resource("s3")
-    bucket = resource.Bucket(bucket_name)
+    s3 = boto3.resource("s3")
+    bucket = s3.Bucket(bucket_name)
     files = [obj.key for obj in bucket.objects.all() if obj.key.startswith(table_name)]
     return files
 
@@ -35,12 +35,9 @@ def find_most_recent_file(files, table_name, bucket_name):
     try:
         most_recent_file = sorted(files, reverse=True)[0]
         file_date_time = most_recent_file[len(table_name) + 1 : -5]
-        resource = boto3.resource("s3")
-        bucket = resource.Bucket(bucket_name)
-        bucket.download_file("last_updated.txt", "tests/data/last_updated.txt")
-        with open("tests/data/last_updated.txt", "r") as file:
-            last_update = file.readlines()[-1]
-        print(file_date_time == last_update)
+        s3 = boto3.resource("s3")
+        last_updated_file = s3.Object(bucket_name,"last_updated.txt")
+        last_update = last_updated_file.get()["Body"].read().decode("utf-8")
         if last_update == file_date_time:
             return most_recent_file
         else:
