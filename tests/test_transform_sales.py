@@ -1,6 +1,6 @@
 import pytest
 import pandas as pd
-from src.transform_sales import make_fact_sales_order_table, make_dim_date
+from src.utils.transform_sales import make_fact_sales_order_table, make_dim_date
 
 test_dict = {
     "sales_order_id": [7, 1],
