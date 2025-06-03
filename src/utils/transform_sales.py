@@ -1,15 +1,13 @@
-from copy import deepcopy
 import pandas as pd
+from src.utils.find_most_recent_json_filename import find_most_recent_json_filename
+from src.utils.json_to_pd_dataframe import json_to_pd_dataframe
 
 
-def make_fact_sales_order_table(df_sales):
+def transform_fact_sales_order():
     """
     This function takes in an OLTP-style dataframe describing company sales.
     It outputs a fact table, which will occupy the centre of an OLAP-style star-schema database,
     ready to be converted to parquet and sent to a 'processed' S3 bucket.
-
-    Arguments:
-        - df_sales (pd.DataFrame).
 
     Returns:
         - pd.DataFrame: a Pandas dataframe in star schema.
@@ -18,7 +16,10 @@ def make_fact_sales_order_table(df_sales):
         - Exception: a generic exception if an error occurs.
     """
     try:
-        fact_sales_order = deepcopy(df_sales)
+        most_recent_file = find_most_recent_json_filename("sales", "fscifa-raw-data")
+        fact_sales_order = json_to_pd_dataframe(
+            most_recent_file, "sales", "fscifa-raw-data"
+        )
 
         fact_sales_order["created_date"] = pd.to_datetime(
             fact_sales_order["created_at"]
@@ -64,7 +65,7 @@ def make_fact_sales_order_table(df_sales):
         raise err
 
 
-def make_dim_date(fact_sales_order):
+def transform_dim_date(fact_sales_order):
     """
     This function takes in THE RESULT OF make_fact_sales_order_table(df_sales), i.e., a fact table for sales data
     It outputs a dimension table of date data
