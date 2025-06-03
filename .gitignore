@@ -18,3 +18,5 @@ last_updated.txt
 *.zip
 tests/data/**.txt
 tests/data/**.json
+
+test_staff.parquet
