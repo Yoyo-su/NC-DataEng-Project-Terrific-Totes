@@ -18,14 +18,13 @@ def json_to_pd_dataframe(most_recent_file: str, table_name, bucket_name):
 
     """
     try:
-        resource = boto3.resource("s3")
-        bucket = resource.Bucket(bucket_name)
-        bucket.download_file(most_recent_file, most_recent_file)
-        with open(most_recent_file, "r") as file:
-            data = json.load(file)
-            result = pd.DataFrame(data=data[table_name])
-        print(result)
-        return result
+        s3 = boto3.resource("s3")
+        s3_file_path = f"{table_name}/{most_recent_file}"
+        last_updated_file = s3.Object(bucket_name, s3_file_path)
+        updated_data = last_updated_file.get()["Body"].read().decode("utf-8")
+        data = json.loads(updated_data)
+        data_df = pd.json_normalize(data[table_name])
+        return data_df
     except Exception:
         if not most_recent_file.startswith(table_name):
             raise Exception(
