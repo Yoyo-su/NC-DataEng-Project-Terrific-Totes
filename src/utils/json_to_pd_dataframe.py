@@ -19,7 +19,6 @@ def json_to_pd_dataframe(most_recent_file: str, table_name, bucket_name):
     """
     try:
         s3 = boto3.resource("s3")
-        bucket = s3.Bucket(bucket_name)
         s3_file_path = f"{table_name}/{most_recent_file}"
         last_updated_file = s3.Object(bucket_name, s3_file_path)
         updated_data = last_updated_file.get()["Body"].read().decode("utf-8")
