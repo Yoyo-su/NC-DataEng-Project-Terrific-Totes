@@ -5,4 +5,4 @@ dotenv
 boto3
 moto
 pandas
-
+forex-python
