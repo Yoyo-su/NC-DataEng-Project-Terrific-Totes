@@ -5,7 +5,7 @@ import boto3
 from src.utils.find_most_recent_json_filename import (
     find_files_with_specified_table_name,
     find_most_recent_file,
-    find_most_recent_json_filename
+    find_most_recent_json_filename,
 )
 
 """
@@ -41,11 +41,10 @@ def bucket(aws_creds, s3_resource):
         bucket = s3_resource.Bucket("test_ingest_bucket")
         with open("tests/data/last_updated.txt", "w") as file:
             file.write("2025-05-29T11:06:18.399084")
-        bucket.upload_file(
-            "tests/data/last_updated.txt",
-            "last_updated.txt",
-        )
-        return bucket
+        bucket.upload_file("tests/data/last_updated.txt", "last_updated.txt")
+        bucket.put_object(Key="address/")
+        bucket.put_object(Key="payments/")
+        yield bucket
 
 
 class TestFindFilesWithSpecifiedTableName:
@@ -58,7 +57,7 @@ class TestFindFilesWithSpecifiedTableName:
             file.write('{"example": "data"}')
         bucket.upload_file(
             "tests/data/address-2025-05-29T11:06:18.399084.json",
-            "address-2025-05-29T11:06:18.399084.json",
+            "address/address-2025-05-29T11:06:18.399084.json",
         )
 
         result = find_files_with_specified_table_name("address", "test_ingest_bucket")
@@ -77,11 +76,11 @@ class TestFindFilesWithSpecifiedTableName:
             file.write('{"example": "data"}')
         bucket.upload_file(
             "tests/data/address-2025-05-29T11:06:18.399084.json",
-            "address-2025-05-29T11:06:18.399084.json",
+            "address/address-2025-05-29T11:06:18.399084.json",
         )
         bucket.upload_file(
             "tests/data/payments-2025-05-29T11:06:18.399084.json",
-            "payments-2025-05-29T11:06:18.399084.json",
+            "payments/payments-2025-05-29T11:06:18.399084.json",
         )
         result = find_files_with_specified_table_name("address", "test_ingest_bucket")
         assert len(result) == 1
@@ -100,11 +99,11 @@ class TestFindFilesWithSpecifiedTableName:
             file.write('{"example": "data"}')
         bucket.upload_file(
             "tests/data/address-2025-05-29T11:06:18.399084.json",
-            "address-2025-05-29T11:06:18.399084.json",
+            "address/address-2025-05-29T11:06:18.399084.json",
         )
         bucket.upload_file(
             "tests/data/address-2025-06-29T11:06:18.399084.json",
-            "address-2025-06-29T11:06:18.399084.json",
+            "address/address-2025-06-29T11:06:18.399084.json",
         )
         result = find_files_with_specified_table_name("address", "test_ingest_bucket")
         assert len(result) == 2
@@ -120,7 +119,7 @@ class TestFindFilesWithSpecifiedTableName:
             file.write('{"example": "data"}')
         bucket.upload_file(
             "tests/data/address-2025-05-29T11:06:18.399084.json",
-            "address-2025-06-29T11:06:18.399084.json",
+            "address/address-2025-06-29T11:06:18.399084.json",
         )
         result = find_files_with_specified_table_name("payments", "test_ingest_bucket")
         assert result == []
@@ -248,8 +247,12 @@ class TestLoadMostRecentDataFromJson:
             file.write(
                 '{"address": [{"address_id": 2, "address_line_1": "93 High Street"}]}'
             )
-        bucket.upload_file(test_file_1, "address-2025-05-29T11:06:18.399084.json")
-        bucket.upload_file(test_file_2, "address-2025-01-29T11:06:18.399084.json")
+        bucket.upload_file(
+            test_file_1, "address/address-2025-05-29T11:06:18.399084.json"
+        )
+        bucket.upload_file(
+            test_file_2, "address/address-2025-01-29T11:06:18.399084.json"
+        )
 
         assert (
             find_most_recent_json_filename("address", "test_ingest_bucket")

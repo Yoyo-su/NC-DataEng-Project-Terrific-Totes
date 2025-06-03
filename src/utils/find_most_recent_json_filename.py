@@ -27,7 +27,12 @@ def find_most_recent_json_filename(table_name, bucket_name):
 def find_files_with_specified_table_name(table_name, bucket_name):
     s3 = boto3.resource("s3")
     bucket = s3.Bucket(bucket_name)
-    files = [obj.key for obj in bucket.objects.all() if obj.key.startswith(table_name)]
+    files = [
+        obj.key.split("/")[1]
+        for obj in bucket.objects.filter(Prefix=table_name)
+        if obj.key.split("/")[1]
+    ]
+    print(files)
     return files
 
 
@@ -36,7 +41,7 @@ def find_most_recent_file(files, table_name, bucket_name):
         most_recent_file = sorted(files, reverse=True)[0]
         file_date_time = most_recent_file[len(table_name) + 1 : -5]
         s3 = boto3.resource("s3")
-        last_updated_file = s3.Object(bucket_name,"last_updated.txt")
+        last_updated_file = s3.Object(bucket_name, "last_updated.txt")
         last_update = last_updated_file.get()["Body"].read().decode("utf-8")
         if last_update == file_date_time:
             return most_recent_file
