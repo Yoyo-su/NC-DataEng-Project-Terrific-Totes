@@ -36,7 +36,8 @@ def bucket(aws_creds, s3_resource):
             CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
         )
         bucket = s3_resource.Bucket("test_ingest_bucket")
-        return bucket
+        bucket.put_object(Key="address/")
+        yield bucket
 
 
 class TestJsonToPDdataframe:
@@ -73,13 +74,17 @@ class TestJsonToPDdataframe:
         "when passed a json file with one record returns dataframe with one row"
     )
     def test_returns_dataframe_with_one_row(self, bucket):
-        test_file_1 = "tests/data/address-2025-06-29T11:06:18.399084.json"
-        with open(test_file_1, "w") as file:
+        with open("tests/data/address-2025-06-29T11:06:18.399084.json", "w") as file:
             file.write(
                 '{"address": [{"address_id": 1, "address_line_1": "6826 Herzog Via"}]}'
             )
-        bucket.upload_file(test_file_1, test_file_1)
-        result = json_to_pd_dataframe(test_file_1, "address", "test_ingest_bucket")
+        bucket.upload_file(
+            "tests/data/address-2025-06-29T11:06:18.399084.json",
+            "address/address-2025-06-29T11:06:18.399084.json",
+        )
+        result = json_to_pd_dataframe(
+            "address-2025-06-29T11:06:18.399084.json", "address", "test_ingest_bucket"
+        )
         assert isinstance(result, pd.DataFrame)
         assert len(result) == 1
         assert result["address_id"][0] == 1
@@ -89,13 +94,17 @@ class TestJsonToPDdataframe:
         "when passed a json file with two records returns dataframe with two rows"
     )
     def test_returns_dataframe_with_multiple_rows(self, bucket):
-        test_file_1 = "tests/data/address-2025-06-29T11:06:18.399084.json"
-        with open(test_file_1, "w") as file:
+        with open("tests/data/address-2025-06-29T11:06:18.399084.json", "w") as file:
             file.write(
                 '{"address": [{"address_id": 1, "address_line_1": "6826 Herzog Via"},{"address_id": 2, "address_line_1": "93 High Street"}]}'
             )
-        bucket.upload_file(test_file_1, test_file_1)
-        result = json_to_pd_dataframe(test_file_1, "address", "test_ingest_bucket")
+        bucket.upload_file(
+            "tests/data/address-2025-06-29T11:06:18.399084.json",
+            "address/address-2025-06-29T11:06:18.399084.json",
+        )
+        result = json_to_pd_dataframe(
+            "address-2025-06-29T11:06:18.399084.json", "address", "test_ingest_bucket"
+        )
         assert isinstance(result, pd.DataFrame)
         assert len(result) == 2
         assert result["address_id"][0] == 1
