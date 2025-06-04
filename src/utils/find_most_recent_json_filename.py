@@ -25,6 +25,18 @@ def find_most_recent_json_filename(table_name, bucket_name):
 
 
 def find_files_with_specified_table_name(table_name, bucket_name):
+
+    """
+    This function:
+    - Retrieves a list of files in a specified s3 bucket (bucket_name) whose names contain the specified table_name
+
+    Arguments:
+    - table_name (str): name contained within the name of the file you're searching for
+    - bucket_name (str): the name of the s3 bucket you're searching in
+    
+    Returns:
+    - list[str]: A list of filenames in the s3 bucket containing table_name
+    """
     s3 = boto3.resource("s3")
     bucket = s3.Bucket(bucket_name)
     files = []
@@ -42,6 +54,19 @@ def find_files_with_specified_table_name(table_name, bucket_name):
 
 
 def find_most_recent_file(files, table_name, bucket_name):
+    """
+    This function:
+    - returns the name of the most recent file in a given s3 bucket whose name contains table_name 
+
+    Arguments:
+    - files (List[str]): list of filenames
+    - table_name (str): name contained within the name of the file you're searching for
+    - bucket_name (str): the name of the s3 bucket you're searching in
+
+    Returns:
+    - str: The name of the most recent file whose name contains table_name
+
+    """
     try:
         most_recent_file = sorted(files, reverse=True)[0]
         file_date_time = most_recent_file[len(table_name) + 1 : -5]
