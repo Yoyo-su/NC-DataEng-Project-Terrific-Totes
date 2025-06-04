@@ -1,12 +1,12 @@
 from datetime import datetime
 """Saves a dataframe to parquet file
 
-Args:
-- df: dataframe of transformed table
-- table_name: name of the dimensions /fact table
-- compression: One of ["snappy", "gzip", "brotli", "none"] user choice
-returns:
-    The path of the parquet file"""
+    Args:
+    - df: dataframe of transformed table
+    - table_name: name of the dimensions /fact table
+    - compression: One of ["snappy", "gzip", "brotli", "none"] user choice
+    returns:
+        The path of the parquet file"""
 
 
 def dataframe_to_parquet(df, table_name, compression: str = "snappy"):
