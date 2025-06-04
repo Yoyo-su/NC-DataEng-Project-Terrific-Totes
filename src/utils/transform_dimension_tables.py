@@ -64,9 +64,7 @@ def transform_dim_currency():
             most_recent_file, "currency", "fscifa-raw-data"
         )
         currency_df.drop(["last_updated", "created_at"], axis=1, inplace=True)
-        currency_df["currency_name"] = currency_df['currency_code'].apply(find_currency_name_by_currency_code)
+        currency_df["currency_name"] = currency_df["currency_code"].apply(
+            find_currency_name_by_currency_code
+        )
         return currency_df
-
-
-
-
