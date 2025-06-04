@@ -8,6 +8,21 @@ from forex_python.converter import CurrencyCodes
 
 
 def transform_dim_location():
+    """
+    This function:
+    - calls find_most_recent_json_filename
+    - check whether this returns a file name string (which will be the case if new data has been added to the address table in the totesys database)
+    - if an exception is raised, transform_dim_location returns nothing (because there is no new data to be transformed)
+    - otherwise, json_to_pd_dataframe is invoked, which returns a dataframe for new address data, location_df
+    - within location_df, the address_id column is renamed to location_id, to match specification
+    - within location_df, columns, "created_at" and "last_updated" are dropped, to match specification
+    - transformed location_df (dataframe) is returned
+
+    Arguments: no arguments.
+
+    Returns: nothing (if no new location data), or a dataframe containing new, transformed location data.
+
+    """
     most_recent_file = find_most_recent_json_filename("address", "fscifa-raw-data")
     if most_recent_file:
         location_df = json_to_pd_dataframe(
@@ -19,6 +34,23 @@ def transform_dim_location():
 
 
 def transform_dim_counterparty():
+    """
+    This function:
+    - calls find_most_recent_json_filename
+    - check whether this returns a file name string (will be the case if new data has been added to the counterparty table in the totesys database)
+    - if an exception is raised, transform_dim_counterparty returns nothing (because there is no new data to be transformed)
+    - otherwise, json_to_pd_dataframe is invoked, which returns a dataframe for new counterparty data, counterparty_df
+    - columns, "created_at", "last_updated", "delivery_contact", "commercial_contact" dropped from counterparty_df, to match specification
+    - counterparty_df is left merged with location_df (by invoking transform_dim_location), to obtain location data for the counterparty
+    - columns, "location_id", "legal_address_id", dropped from counterparty_df, to match specification
+    - for loop is used to rename particular columns to match specification
+    - transformed counterparty_df (dataframe) is returned
+
+    Arguments: no arguments.
+
+    Returns: nothing (if no new counterparty data), or a dataframe containing new, transformed counterparty data.
+
+    """
     most_recent_file = find_most_recent_json_filename("counterparty", "fscifa-raw-data")
     if most_recent_file:
         counterparty_df = json_to_pd_dataframe(
@@ -56,11 +88,30 @@ def transform_dim_counterparty():
 
 
 def find_currency_name_by_currency_code(code):
+    """
+    This function uses the forex-python.converter module to return the correct currency name, when passed with a given currency code.
+
+    """
     c = CurrencyCodes()
     return c.get_currency_name(code)
 
 
 def transform_dim_currency():
+    """
+    This function:
+    - calls find_most_recent_json_filename
+    - check whether this returns a file name string (which will be the case if new data has been added to the currency table in the totesys database)
+    - if an exception is raised, transform_dim_currency returns nothing (because there is no new data to be transformed)
+    - otherwise, json_to_pd_dataframe is invoked, which returns a dataframe for new currency data, currency_df
+    - columns, "last_updated" and "created_at" dropped from currency_df, to match specification
+    - new column, "currency_name" created, filled by calling the function, find_currency_name_by_currency_code, for each row
+    - transformed currency_df (dataframe) is returned
+
+    Arguments: no arguments.
+
+    Returns: nothing (if no new currency data), or a dataframe containing new, transformed currency data.
+
+    """
     most_recent_file = find_most_recent_json_filename("currency", "fscifa-raw-data")
     if most_recent_file:
         currency_df = json_to_pd_dataframe(
@@ -75,10 +126,11 @@ def transform_dim_currency():
 
 def get_department_data():
     files = find_files_with_specified_table_name("department", "fscifa-raw-data")
-    department_df = json_to_pd_dataframe(files[1], "department", "fscifa-raw-data")
-    for i in range(2, len(files)):
+    print(files)
+    department_df = json_to_pd_dataframe(files[0], "department", "fscifa-raw-data")
+    for i in range(1, len(files)):
         additional_df = json_to_pd_dataframe(files[i], "department", "fscifa-raw-data")
-        department_df.append(additional_df)
+        department_df = pd.concat([department_df, additional_df], axis=0)
     return department_df
 
 

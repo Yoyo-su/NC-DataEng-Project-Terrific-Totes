@@ -14,7 +14,10 @@ def find_most_recent_json_filename(table_name, bucket_name):
 
     Arguments: table_name which is a table name from the original OLTP database
 
-    Returns: a string containing the name of the most recent file with specified table_name
+    Returns: if new data is found in the s3 "fscifa-raw-data" bucket for the given table_name,
+    returns a string containing the name of the most recent file with specified table_name,
+    otherwise raises an appropriate exception.
+
     """
     files = find_files_with_specified_table_name(table_name, bucket_name)
     most_recent_file = find_most_recent_file(files, table_name, bucket_name)
@@ -25,7 +28,6 @@ def find_most_recent_json_filename(table_name, bucket_name):
 
 
 def find_files_with_specified_table_name(table_name, bucket_name):
-
     """
     This function:
     - Retrieves a list of files in a specified s3 bucket (bucket_name) whose names contain the specified table_name
@@ -33,7 +35,7 @@ def find_files_with_specified_table_name(table_name, bucket_name):
     Arguments:
     - table_name (str): name contained within the name of the file you're searching for
     - bucket_name (str): the name of the s3 bucket you're searching in
-    
+
     Returns:
     - list[str]: A list of filenames in the s3 bucket containing table_name
     """
@@ -49,7 +51,7 @@ def find_files_with_specified_table_name(table_name, bucket_name):
 def find_most_recent_file(files, table_name, bucket_name):
     """
     This function:
-    - returns the name of the most recent file in a given s3 bucket whose name contains table_name 
+    - returns the name of the most recent file in a given s3 bucket whose name contains table_name
 
     Arguments:
     - files (List[str]): list of filenames
