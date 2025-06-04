@@ -5,6 +5,7 @@ from src.utils.transform_dimension_tables import (
     transform_dim_currency,
     transform_dim_staff,
     transform_dim_design,
+    get_department_data,
 )
 from moto import mock_aws
 import boto3
@@ -240,6 +241,29 @@ class TestTransformDimCurrency:
         assert result["currency_name"][0] == "British pound"
         assert result["currency_name"][1] == "European Euro"
         assert result["currency_name"][2] == "United States dollar"
+
+
+class TestGetDepartmentData:
+    @pytest.mark.it(
+        "test that get_department_data returns a dataframe with correct columns"
+    )
+    def test_returns_department_df_with_correct_columns(self, bucket):
+        result = get_department_data()
+        assert len(list(result.columns)) == 6
+        assert "department_id" in list(result.columns)
+        assert "department_name" in list(result.columns)
+        assert "location" in list(result.columns)
+        assert "manager" in list(result.columns)
+        assert "created_at" in list(result.columns)
+        assert "last_updated" in list(result.columns)
+
+    @pytest.mark.it(
+        "test that get_department_data returns a non-empty dataframe with 2 rows"
+    )
+    def test_department_df_not_empty(self, bucket):
+        result = get_department_data()
+        assert not result.empty
+        assert len(result) == 2
 
 
 class TestTransformDimStaff:
