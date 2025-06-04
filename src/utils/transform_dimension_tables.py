@@ -111,3 +111,15 @@ def transform_dim_staff():
     )
 
     return merge_staff_to_department_df
+
+
+def transform_dim_design():
+    most_recent_file = find_most_recent_json_filename("design", "fscifa-raw-data")
+    if most_recent_file:
+        design_df = json_to_pd_dataframe(most_recent_file, "design", "fscifa-raw-data")
+    design_df.drop(
+        ["created_at", "last_updated"],
+        axis=1,
+        inplace=True,
+    )
+    return design_df
