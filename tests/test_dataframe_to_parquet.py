@@ -2,6 +2,7 @@ import pytest
 import pandas as pd
 from src.utils.dataframe_to_parquet import dataframe_to_parquet
 from unittest.mock import Mock, patch
+from datetime import datetime
 
 
 @pytest.fixture
@@ -19,9 +20,12 @@ def mock_df():
     "Checks whether dataframe to parquet file function returns correct path"
 )
 @patch("pandas.DataFrame.to_parquet")
-def test_df_to_parquet_successful_creation_asserting_by_path(mock_to_parquet, mock_df):
+@patch("src.utils.dataframe_to_parquet.datetime")
+def test_df_to_parquet_successful_creation_asserting_by_path(mock_datetime,mock_to_parquet, mock_df):
+    fixed_time = datetime(2025, 6, 4, 10,13,0)
+    mock_datetime.now.return_value = fixed_time
     table_name = "test_staff"
-    path = f"{table_name}.parquet"
+    path = f"{table_name}-{fixed_time.isoformat()}.parquet"
 
     result = dataframe_to_parquet(mock_df, table_name)  # returning path from util func
     mock_to_parquet.assert_called_once_with(
@@ -31,10 +35,12 @@ def test_df_to_parquet_successful_creation_asserting_by_path(mock_to_parquet, mo
 
 
 @pytest.mark.it("writes DataFrame to Parquet and reads it back without data loss")
-def test_df_to_parquet_successful_creation_by_reading_parquet_file(mock_df):
+@patch("src.utils.dataframe_to_parquet.datetime")
+def test_df_to_parquet_successful_creation_by_reading_parquet_file(mock_datetime, mock_df):
+    fixed_time = datetime(2025, 6, 4, 10,13,0)
+    mock_datetime.now.return_value = fixed_time
     table_name = "test_staff"
-    path = f"{table_name}.parquet"
-
+    path = f"{table_name}-{fixed_time.isoformat()}.parquet"
     dataframe_to_parquet(mock_df, table_name)
     df_parquet = pd.read_parquet(path)
     pd.testing.assert_frame_equal(mock_df, df_parquet)
