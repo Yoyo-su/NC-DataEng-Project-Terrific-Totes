@@ -1,5 +1,8 @@
 import pandas as pd
-from src.utils.find_most_recent_json_filename import find_most_recent_json_filename
+from src.utils.find_most_recent_json_filename import (
+    find_most_recent_json_filename,
+    find_files_with_specified_table_name,
+)
 from src.utils.json_to_pd_dataframe import json_to_pd_dataframe
 from forex_python.converter import CurrencyCodes
 
@@ -68,3 +71,43 @@ def transform_dim_currency():
             find_currency_name_by_currency_code
         )
         return currency_df
+
+
+def get_department_data():
+    files = find_files_with_specified_table_name("department", "fscifa-raw-data")
+    department_df = json_to_pd_dataframe(files[1], "department", "fscifa-raw-data")
+    for i in range(2, len(files)):
+        additional_df = json_to_pd_dataframe(files[i], "department", "fscifa-raw-data")
+        department_df.append(additional_df)
+    return department_df
+
+
+def transform_dim_staff():
+    most_recent_file = find_most_recent_json_filename("staff", "fscifa-raw-data")
+    if most_recent_file:
+        staff_df = json_to_pd_dataframe(most_recent_file, "staff", "fscifa-raw-data")
+    department_df = get_department_data()
+
+    department_df.drop(
+        ["manager", "created_at", "last_updated"],
+        axis=1,
+        inplace=True,
+    )
+
+    staff_df.drop(
+        ["created_at", "last_updated"],
+        axis=1,
+        inplace=True,
+    )
+
+    merge_staff_to_department_df = pd.merge(
+        staff_df, department_df, on="department_id", how="left"
+    )
+
+    merge_staff_to_department_df.drop(
+        ["department_id"],
+        axis=1,
+        inplace=True,
+    )
+
+    return merge_staff_to_department_df

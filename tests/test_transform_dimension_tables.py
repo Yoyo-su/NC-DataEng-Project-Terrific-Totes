@@ -3,6 +3,7 @@ from src.utils.transform_dimension_tables import (
     transform_dim_location,
     transform_dim_counterparty,
     transform_dim_currency,
+    transform_dim_staff,
 )
 from moto import mock_aws
 import boto3
@@ -36,6 +37,7 @@ def bucket(aws_creds, s3_resource):
         bucket.put_object(Key="counterparty/")
         bucket.put_object(Key="currency/")
         bucket.put_object(Key="staff/")
+        bucket.put_object(Key="department/")
         bucket.put_object(Key="design/")
         # add last_updated txt to the mock bucket:
         with open("tests/data/last_updated.txt", "w") as file:
@@ -102,6 +104,58 @@ def bucket(aws_creds, s3_resource):
             "tests/data/currency-2025-05-29T11:06:18.399084.json",
             "currency/currency-2025-05-29T11:06:18.399084.json",
         )
+
+        # add test staff data to the mock bucket:
+        test_staff_data = """{"staff": [
+                        {"staff_id": 1,
+                        "first_name": "Amy",
+                        "last_name": "Smith",
+                        "department_id": 1,
+                        "email_address": "amy@gmail.com",
+                        "created_at": "2025-05-29T11:05:00.399084",
+                        "last_updated": "2025-05-29T11:05:30.399084"}
+                       ]
+                    }"""
+        with open("tests/data/staff-2025-05-29T11:06:18.399084.json", "w") as file:
+            file.write(test_staff_data)
+        bucket.upload_file(
+            "tests/data/staff-2025-05-29T11:06:18.399084.json",
+            "staff/staff-2025-05-29T11:06:18.399084.json",
+        )
+
+        # add test department data to the mock bucket:
+        test_department_data_1 = """{"department": [
+                        {"department_id": 1,
+                        "department_name": "Sales",
+                        "location": "London",
+                        "manager": "John Carter",
+                        "created_at": "2025-05-29T11:05:00.399084",
+                        "last_updated": "2025-05-29T11:05:30.399084"}
+                       ]
+                    }"""
+        with open("tests/data/department-2025-05-29T11:06:18.399084.json", "w") as file:
+            file.write(test_department_data_1)
+        bucket.upload_file(
+            "tests/data/department-2025-05-29T11:06:18.399084.json",
+            "department/department-2025-05-29T11:06:18.399084.json",
+        )
+
+        test_department_data_2 = """{"department": [
+                        {"department_id": 2,
+                        "department_name": "Logistics",
+                        "location": "Newport",
+                        "manager": "Rose Dawson",
+                        "created_at": "2025-05-29T10:05:00.399084",
+                        "last_updated": "2025-05-29T10:05:30.399084"}
+                       ]
+                    }"""
+        with open("tests/data/department-2025-05-29T10:06:18.399084.json", "w") as file:
+            file.write(test_department_data_2)
+        bucket.upload_file(
+            "tests/data/department-2025-05-29T10:06:18.399084.json",
+            "department/department-2025-05-29T10:06:18.399084.json",
+        )
+
         return bucket
 
 
@@ -168,3 +222,22 @@ class TestTransformDimCurrency:
         assert result["currency_name"][0] == "British pound"
         assert result["currency_name"][1] == "European Euro"
         assert result["currency_name"][2] == "United States dollar"
+
+
+class TestTransformDimStaff:
+    @pytest.mark.it(
+        "test that transform_dim_staff returns a dataframe with correct columns"
+    )
+    def test_returns_staff_df_with_correct_columns(self, bucket):
+        result = transform_dim_staff()
+        assert len(list(result.columns)) == 6
+        assert "staff_id" in list(result.columns)
+        assert "first_name" in list(result.columns)
+        assert "last_name" in list(result.columns)
+        assert "department_name" in list(result.columns)
+        assert "location" in list(result.columns)
+        assert "email_address" in list(result.columns)
+
+    @pytest.mark.it("test that transform_dim_staff returns a dataframe containing data")
+    def test_staff_df_not_empty(self, bucket):
+        assert not transform_dim_staff().empty
