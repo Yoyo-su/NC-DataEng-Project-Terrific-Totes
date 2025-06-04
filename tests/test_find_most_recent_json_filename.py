@@ -230,25 +230,24 @@ class TestFindMostRecentFile:
             find_most_recent_file(test_list, "address", "test_ingest_bucket")
             == "address-2025-05-29T11:06:18.399084.json"
         )
-        
-    @pytest.mark.it(
-        """"when given a parquet file type, returns parquet file"""
-    )
+
+    @pytest.mark.it(""""when given a parquet file type, returns parquet file""")
     def test_returns_most_recent_parquet_if_parquet_filetype_specified(self, bucket):
         test_files = ["address-2025-05-29T11:06:18.399084.parquet"]
-        result = find_most_recent_file(test_files, "address", "test_ingest_bucket", "parquet")
+        result = find_most_recent_file(
+            test_files, "address", "test_ingest_bucket", "parquet"
+        )
         assert result == "address-2025-05-29T11:06:18.399084.parquet"
-        
+
     @pytest.mark.it(
         """"when given a parquet file type, raises error if no parquet files"""
     )
     def test_raises_error_if_wrong_filetype_given(self, bucket):
         test_files = ["address-2025-05-29T11:06:18.399084.json"]
         with pytest.raises(Exception):
-            find_most_recent_file(test_files, "address", "test_ingest_bucket", "parquet")
-        
-
-
+            find_most_recent_file(
+                test_files, "address", "test_ingest_bucket", "parquet"
+            )
 
 
 class TestLoadMostRecentDataFromJson:
@@ -277,5 +276,3 @@ class TestLoadMostRecentDataFromJson:
             find_most_recent_json_filename("address", "test_ingest_bucket")
             == "address-2025-05-29T11:06:18.399084.json"
         )
-        
-        

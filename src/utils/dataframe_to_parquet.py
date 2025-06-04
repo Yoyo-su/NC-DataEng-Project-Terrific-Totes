@@ -1,5 +1,4 @@
 def dataframe_to_parquet(df, table_name, compression: str = "snappy"):
-    
     """Saves a dataframe to parquet file
 
     Args:
