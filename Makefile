@@ -58,7 +58,7 @@ run-black:
 
 ## Run the unit tests
 unit-test:
-	$(PYTEST) -vv
+	$(PYTEST) -vv --ignore=layer/python
 
 ## Run the coverage check
 check-coverage:
