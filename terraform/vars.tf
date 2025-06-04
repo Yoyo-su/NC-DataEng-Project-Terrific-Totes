@@ -1,6 +1,11 @@
-variable "lambda_name" {
+variable "extract_lambda" {
   type    = string
-  default = "lambda_handler"
+  default = "extract_lambda_handler"
+}
+variable "transform_lambda" {
+  type    = string
+  default = "transform_lambda_handler"
+  
 }
 
 variable "python_runtime" {

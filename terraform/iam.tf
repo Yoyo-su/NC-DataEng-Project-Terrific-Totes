@@ -19,6 +19,9 @@ resource "aws_iam_policy" "extract_lambda_s3_write_policy" {
   policy      = data.aws_iam_policy_document.allow_extraction_lambda_access_s3_injestion.json
 }
 
+
+
+
 data "aws_iam_policy_document" "allow_extraction_lambda_access_s3_injestion" {
   statement {
 
@@ -29,10 +32,11 @@ data "aws_iam_policy_document" "allow_extraction_lambda_access_s3_injestion" {
     ]
 
     resources = [
-      aws_s3_bucket.ingestion_bucket.arn,
+      
       "${aws_s3_bucket.ingestion_bucket.arn}/*",
     ]
   }
+  
 }
 
 resource "aws_iam_policy_attachment" "lambda_s3_policy" {
@@ -40,7 +44,27 @@ resource "aws_iam_policy_attachment" "lambda_s3_policy" {
   roles      = [aws_iam_role.lambda_extract_role.name]
   policy_arn = aws_iam_policy.extract_lambda_s3_write_policy.arn
 }
+data "aws_iam_policy_document" "lambda_logging" {
+  statement {
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
 
+    resources = ["arn:aws:logs:*:*:*"]
+  }
+}
+resource "aws_iam_policy" "lambda_logging" {
+  name        = "LambdaCustomLoggingPolicy"
+  description = "Custom policy for Lambda to log to CloudWatch"
+  policy      = data.aws_iam_policy_document.lambda_logging.json
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_custom_logging" {
+  role       = aws_iam_role.lambda_extract_role.name
+  policy_arn = aws_iam_policy.lambda_logging.arn
+}
 
 data "aws_iam_policy_document" "terraform_sns_cloudwatch_permissions" {
   statement {

@@ -21,6 +21,6 @@ resource "aws_cloudwatch_metric_alarm" "lambda_alarm" {
   alarm_description         = "Alarm for when extract lambda fails"
   alarm_actions = [aws_sns_topic.lambda_alerts.arn]
   dimensions = {
-    FunctionName = var.lambda_name 
+    FunctionName = var.extract_lambda
   }
 }

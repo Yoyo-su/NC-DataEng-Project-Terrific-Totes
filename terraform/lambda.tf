@@ -19,7 +19,7 @@ data "archive_file" "dependancy_layer" {
 # define extract lambda function
 resource "aws_lambda_function" "extract_lambda" {
   filename = data.archive_file.extract_lambda.output_path
-  function_name = var.lambda_name
+  function_name = var.extract_lambda
   description = "Extraction"
   role = aws_iam_role.lambda_extract_role.arn
   handler = "extract_lambda.lambda_handler"
