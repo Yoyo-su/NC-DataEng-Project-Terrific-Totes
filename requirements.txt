@@ -7,4 +7,3 @@ moto
 pandas
 forex-python
 pyarrow
-duckdb
