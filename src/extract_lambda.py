@@ -37,11 +37,17 @@ def close_db(db):
 
 
 def lambda_handler(event, context):
-    """Lambda handler that extracts data from dbtables and puts each table as a json inside an S3 bucket
+    """Lambda handler that extracts data from a list of database tables (dbtables) and puts each table as a json inside an S3 bucket
 
     Args:
-        event (_type_): _description_ ##TODO
-        context (_type_): _description_ ##TODO
+        event (dict): an event given by AWS (unused but required by AWS)
+        context (dict): an AWS Lambda context object (unused but required by AWS)
+
+    Return:
+        dict: A dictionary to indicate successful completion, of the form {"result": "success"}
+
+    Raises:
+        Exception: if the extraction or the upload fails
     """
 
     try:
