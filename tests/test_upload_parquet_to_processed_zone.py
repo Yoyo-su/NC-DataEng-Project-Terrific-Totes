@@ -4,6 +4,7 @@ import boto3
 from src.utils.upload_parquet_to_processed_zone import upload_parquet_to_processed_zone
 from datetime import datetime
 
+
 @pytest.fixture
 def s3_client():
     with mock_aws():
@@ -12,7 +13,7 @@ def s3_client():
 
 @pytest.mark.it("Upload parquet files to s3 successfully")
 def test_upload_parquet_to_s3(s3_client):
-    fixed_time = datetime(2025, 6, 4, 10,13,0)
+    fixed_time = datetime(2025, 6, 4, 10, 13, 0)
     table_name = "test_staff"
     path = f"{table_name}-{fixed_time.isoformat()}.parquet"
     s3_client.create_bucket(
@@ -30,7 +31,7 @@ def test_upload_parquet_to_s3(s3_client):
 
 @pytest.mark.it("Testing error handling when upload parquet files to s3 ")
 def test_upload_parquet_to_s3_error_handling_without_creating_bucket(s3_client):
-    fixed_time = datetime(2025, 6, 4, 10,13,0)
+    fixed_time = datetime(2025, 6, 4, 10, 13, 0)
     table_name = "test_staff"
     path = f"{table_name}-{fixed_time.isoformat()}.parquet"
     key = f"{table_name}/{path}"
@@ -44,7 +45,7 @@ def test_upload_parquet_to_s3_error_handling_without_creating_bucket(s3_client):
     "Checks if the uploaded Parquet file exists in the S3 bucket with the correct key"
 )
 def test_upload_parquet_to_s3_using_list_objects(s3_client):
-    fixed_time = datetime(2025, 6, 4, 10,13,0)
+    fixed_time = datetime(2025, 6, 4, 10, 13, 0)
     table_name = "test_staff"
     path = f"{table_name}-{fixed_time.isoformat()}.parquet"
     s3_client.create_bucket(
