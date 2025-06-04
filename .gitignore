@@ -18,4 +18,4 @@ last_updated.txt
 *.zip
 tests/data/**.txt
 tests/data/**.json
-tests/data/**.parquet
+**.parquet
