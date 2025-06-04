@@ -152,7 +152,7 @@ class TestTransformDimCounterparty:
 
 
 class TestTransformDimCurrency:
-    @pytest.mark.xfail(
+    @pytest.mark.it(
         "test that transform_dim_currency returns a dataframe with correct columns"
     )
     def test_returns_currency_df_with_correct_columns(self, bucket):
@@ -162,11 +162,9 @@ class TestTransformDimCurrency:
         assert "currency_code" in list(result.columns)
         assert "currency_name" in list(result.columns)
 
-    @pytest.mark.xfail(
-        "test that transform_dim_currency contains correct currency_name"
-    )
+    @pytest.mark.it("test that transform_dim_currency contains correct currency_name")
     def test_returns_correct_currency_name(self, bucket):
         result = transform_dim_currency()
-        for i, row in enumerate(result["currency_code"], 1):
-            if row == "GBP":
-                assert result["currency_name"][i] == "British pound"
+        assert result["currency_name"][0] == "British pound"
+        assert result["currency_name"][1] == "European Euro"
+        assert result["currency_name"][2] == "United States dollar"
