@@ -4,6 +4,7 @@ from src.utils.transform_dimension_tables import (
     transform_dim_counterparty,
     transform_dim_currency,
     transform_dim_staff,
+    transform_dim_design,
 )
 from moto import mock_aws
 import boto3
@@ -156,6 +157,23 @@ def bucket(aws_creds, s3_resource):
             "department/department-2025-05-29T10:06:18.399084.json",
         )
 
+        # add test design data to the mock bucket:
+        test_design_data = """{"design": [
+                        {"design_id": 1,
+                        "created_at": "2025-05-29T11:05:00.399084",
+                        "last_updated": "2025-05-29T11:05:30.399084",
+                        "design_name": "Summer sunset",
+                        "file_location": "Desktop/Design",
+                        "file_name": "Summer_sunset.jpg"}
+                       ]
+                    }"""
+        with open("tests/data/design-2025-05-29T11:06:18.399084.json", "w") as file:
+            file.write(test_design_data)
+        bucket.upload_file(
+            "tests/data/design-2025-05-29T11:06:18.399084.json",
+            "design/design-2025-05-29T11:06:18.399084.json",
+        )
+
         return bucket
 
 
@@ -241,3 +259,22 @@ class TestTransformDimStaff:
     @pytest.mark.it("test that transform_dim_staff returns a dataframe containing data")
     def test_staff_df_not_empty(self, bucket):
         assert not transform_dim_staff().empty
+
+
+class TestTransformDimDesign:
+    @pytest.mark.it(
+        "test that transform_dim_design returns a dataframe with correct columns"
+    )
+    def test_returns_staff_df_with_correct_columns(self, bucket):
+        result = transform_dim_design()
+        assert len(list(result.columns)) == 4
+        assert "design_id" in list(result.columns)
+        assert "design_name" in list(result.columns)
+        assert "file_location" in list(result.columns)
+        assert "file_name" in list(result.columns)
+
+    @pytest.mark.it(
+        "test that transform_dim_design returns a dataframe containing data"
+    )
+    def test_design_df_not_empty(self, bucket):
+        assert not transform_dim_design().empty
