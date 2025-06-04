@@ -52,6 +52,11 @@ def transform_dim_counterparty():
         return merge_location_to_counterparty_df
 
 
+def find_currency_name_by_currency_code(code):
+    c = CurrencyCodes()
+    return c.get_currency_name(code)
+
+
 def transform_dim_currency():
     most_recent_file = find_most_recent_json_filename("currency", "fscifa-raw-data")
     if most_recent_file:
@@ -59,9 +64,9 @@ def transform_dim_currency():
             most_recent_file, "currency", "fscifa-raw-data"
         )
         currency_df.drop(["last_updated", "created_at"], axis=1, inplace=True)
-        c = CurrencyCodes()
-        currency_df["currency_name"]
-        for i, code in enumerate(currency_df["currency_code"]):
-            currency_df["currency_name"][i] = c.get_currency_name(currency_code=code)
-        print(currency_df)
+        currency_df["currency_name"] = currency_df['currency_code'].apply(find_currency_name_by_currency_code)
         return currency_df
+
+
+
+
