@@ -5,7 +5,7 @@
     schedule_expression = "rate(30 minutes)"
 }
 
-resource "aws_cloudwatch_event_target" "check_quote_handler_every_five_minutes" {
+resource "aws_cloudwatch_event_target" "check_extract_handler_every_thirty_minutes" {
     rule = "${aws_cloudwatch_event_rule.lambda_execution_schedule.name}"
     target_id = "extract_lambda"
     arn = "${aws_lambda_function.extract_lambda.arn}"
