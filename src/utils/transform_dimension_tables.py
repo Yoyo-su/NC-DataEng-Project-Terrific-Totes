@@ -37,7 +37,7 @@ def transform_dim_counterparty():
     """
     This function:
     - calls find_most_recent_json_filename
-    - check whether this returns a file name string (which will be the case if new data has been added to the counterparty table in the totesys database)
+    - check whether this returns a file name string (will be the case if new data has been added to the counterparty table in the totesys database)
     - if an exception is raised, transform_dim_counterparty returns nothing (because there is no new data to be transformed)
     - otherwise, json_to_pd_dataframe is invoked, which returns a dataframe for new counterparty data, counterparty_df
     - columns, "created_at", "last_updated", "delivery_contact", "commercial_contact" dropped from counterparty_df, to match specification
