@@ -4,7 +4,7 @@ from src.utils.find_most_recent_json_filename import (
     find_files_with_specified_table_name,
 )
 from src.utils.json_to_pd_dataframe import json_to_pd_dataframe
-from forex_python.converter import CurrencyCodes
+from src.utils.find_currency_name_by_currency_code import find_currency_name_by_currency_code
 
 
 def transform_dim_location():
@@ -85,15 +85,6 @@ def transform_dim_counterparty():
                     inplace=True,
                 )
         return merge_location_to_counterparty_df
-
-
-def find_currency_name_by_currency_code(code):
-    """
-    This function uses the forex-python.converter module to return the correct currency name, when passed with a given currency code.
-
-    """
-    c = CurrencyCodes()
-    return c.get_currency_name(code)
 
 
 def transform_dim_currency():
