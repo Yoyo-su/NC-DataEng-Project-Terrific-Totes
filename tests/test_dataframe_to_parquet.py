@@ -29,7 +29,7 @@ def test_df_to_parquet_successful_creation_asserting_by_path(mock_datetime,mock_
 
     result = dataframe_to_parquet(mock_df, table_name)  # returning path from util func
     mock_to_parquet.assert_called_once_with(
-        path, engine="pyarrow", compression="snappy"
+        path, engine="fastparquet", compression="gzip"
     )
     assert result == path
 
