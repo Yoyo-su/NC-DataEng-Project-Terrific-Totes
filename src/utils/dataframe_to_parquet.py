@@ -1,4 +1,5 @@
 from datetime import datetime
+
 """Saves a dataframe to parquet file
 
     Args:
@@ -9,7 +10,7 @@ from datetime import datetime
         The path of the parquet file"""
 
 
-def dataframe_to_parquet(df, table_name, compression: str = "snappy"):
+def dataframe_to_parquet(df, table_name, compression: str = "gzip"):
     timestamp = datetime.now().isoformat()
     valid_compressions = ["snappy", "gzip", "brotli", "none"]
     if compression not in valid_compressions:
@@ -20,7 +21,7 @@ def dataframe_to_parquet(df, table_name, compression: str = "snappy"):
                         "none"=> No Compression, larger file size but fastest to read/ write  """
     try:
         path = f"{table_name}-{timestamp}.parquet"
-        df.to_parquet(path, engine="pyarrow", compression=compression)  #
+        df.to_parquet(path, engine="fastparquet", compression=compression)  #
         return path
 
     except Exception as e:

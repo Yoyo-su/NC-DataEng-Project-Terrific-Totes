@@ -1,7 +1,7 @@
 # Role and policy for Extract Lambda to Read/Write S3 Injestion bucket
 
-resource "aws_iam_role" "lambda_extract_role" {
-  name = "lambda_extract_role"
+resource "aws_iam_role" "lambda_role" {
+  name = "lambda_role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [{
@@ -14,35 +14,52 @@ resource "aws_iam_role" "lambda_extract_role" {
   })
 }
 
-resource "aws_iam_policy" "extract_lambda_s3_write_policy" {
-  name = "s3-policy-extract-lambda-write"
-  policy      = data.aws_iam_policy_document.allow_extraction_lambda_access_s3_injestion.json
+resource "aws_iam_policy" "lambda_s3_access_policy" {
+  name = "s3-policy-lambda-access"
+  policy      = data.aws_iam_policy_document.allow_lambda_access_s3.json
 }
 
 
 
 
-data "aws_iam_policy_document" "allow_extraction_lambda_access_s3_injestion" {
+data "aws_iam_policy_document" "allow_lambda_access_s3" {
   statement {
-
     effect = "Allow"
     actions = [
-      "s3:PutObject",
-      "s3:GetObject",
+      "s3:ListBucket"
     ]
-
     resources = [
-      
-      "${aws_s3_bucket.ingestion_bucket.arn}/*",
+      aws_s3_bucket.ingestion_bucket.arn
     ]
   }
-  
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject"
+    ]
+    resources = [
+      "${aws_s3_bucket.ingestion_bucket.arn}/*"
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:PutObject"
+    ]
+    resources = [
+      "${aws_s3_bucket.ready_bucket.arn}/*"
+    ]
+  }
 }
+
 
 resource "aws_iam_policy_attachment" "lambda_s3_policy" {
   name       = "lambda_s3_policy"
-  roles      = [aws_iam_role.lambda_extract_role.name]
-  policy_arn = aws_iam_policy.extract_lambda_s3_write_policy.arn
+  roles      = [aws_iam_role.lambda_role.name]
+  policy_arn = aws_iam_policy.lambda_s3_access_policy.arn
 }
 data "aws_iam_policy_document" "lambda_logging" {
   statement {
@@ -62,7 +79,7 @@ resource "aws_iam_policy" "lambda_logging" {
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_custom_logging" {
-  role       = aws_iam_role.lambda_extract_role.name
+  role       = aws_iam_role.lambda_role.name
   policy_arn = aws_iam_policy.lambda_logging.arn
 }
 
@@ -90,6 +107,35 @@ resource "aws_iam_policy" "lambda_sns_policy" {
 
 resource "aws_iam_policy_attachment" "lambda_sns_policy_attachment" {
   name       = "lambda_cloudwatch_sns_policy_attachment"
-  roles      = [aws_iam_role.lambda_extract_role.name]
+  roles      = [aws_iam_role.lambda_role.name]
   policy_arn = aws_iam_policy.lambda_sns_policy.arn
+}
+
+data "aws_iam_policy_document" "lambda_s3_code_bucket" {
+  statement {
+    sid     = "AllowS3GetPutAccess"
+    effect  = "Allow"
+
+    actions = [
+      "s3:GetObject",
+      "s3:GetObjectVersion",
+      "s3:PutObject",
+      "s3:PutObjectAcl"
+    ]
+
+    resources = [
+      "arn:aws:s3:::${aws_s3_bucket.code_bucket.bucket}/*"
+    ]
+  }
+}
+
+resource "aws_iam_policy" "lambda_access_code_bucket_policy" {
+  name = "code_bucket_policy"
+  policy = data.aws_iam_policy_document.lambda_s3_code_bucket.json
+}
+
+resource "aws_iam_policy_attachment" "lambda_code_bucket_policy_attachment" {
+  name       = "lambda_code_bucket_policy_attachment"
+  roles      = [aws_iam_role.lambda_role.name]
+  policy_arn = aws_iam_policy.lambda_access_code_bucket_policy.arn
 }

@@ -6,4 +6,5 @@ boto3
 moto
 pandas
 forex-python
-pyarrow
+fastparquet
+
