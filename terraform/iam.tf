@@ -139,3 +139,53 @@ resource "aws_iam_policy_attachment" "lambda_code_bucket_policy_attachment" {
   roles      = [aws_iam_role.lambda_role.name]
   policy_arn = aws_iam_policy.lambda_access_code_bucket_policy.arn
 }
+
+
+
+
+
+
+
+
+
+
+resource "aws_iam_role" "lambda_load_role" {
+  name = "lambda_load_role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Action = "sts:AssumeRole",
+      Effect = "Allow",
+      Principal = {
+        Service = "lambda.amazonaws.com"
+      }
+    }]
+  })
+}
+
+data "aws_iam_policy_document" "allow_load_lambda_to_read_processed_bucket" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:GetObject",
+      "s3:ListBucket"
+    ]
+    resources = ["${aws_s3_bucket.ready_bucket.arn}", 
+    "${aws_s3_bucket.ready_bucket.arn}/*"]
+  }
+}
+
+resource "aws_iam_policy" "load_lambda_read_policy" {
+  name = "s3-let-lambda-read-bucket-pls"
+  policy = data.aws_iam_policy_document.allow_load_lambda_to_read_processed_bucket.json
+}
+
+resource "aws_iam_role_policy_attachment" "load_lambda_s3_attachment" {
+  role      = aws_iam_role.lambda_load_role.name
+  policy_arn = aws_iam_policy.load_lambda_read_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_load_logging" {
+  role      = aws_iam_role.lambda_load_role.name
+  policy_arn = aws_iam_policy.lambda_sns_policy.arn
+}

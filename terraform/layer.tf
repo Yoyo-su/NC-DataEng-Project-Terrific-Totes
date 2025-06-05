@@ -77,7 +77,7 @@ resource "null_resource" "zip_forex_parquet_layer" {
     time = timestamp()
   }
 
-  depends_on = [null_resource.create_forex_parquet_dependencies]
+  # depends_on = [null_resource.create_forex_parquet_dependencies]
 }
 
 # Extract Layer Archive
@@ -101,7 +101,7 @@ data "archive_file" "forex_parquet_layer_zip" {
   type        = "zip"
   output_path = "${path.module}/../packages/layers/forex_parquet_layer.zip"
   source_dir  = "${path.module}/../dependencies_pandas/"
-  depends_on = [ null_resource.create_forex_parquet_dependencies ]
+  # depends_on = [ null_resource.create_forex_parquet_dependencies ]
 }
 
 resource "aws_lambda_layer_version" "extract_layer" {

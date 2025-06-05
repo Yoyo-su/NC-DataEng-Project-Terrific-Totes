@@ -24,3 +24,19 @@ resource "aws_cloudwatch_metric_alarm" "lambda_alarm" {
     FunctionName = var.extract_lambda
   }
 }
+
+resource "aws_cloudwatch_metric_alarm" "lambda_load_alarm" {
+  alarm_name                = "load-lambda-error-alarm"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 1
+  metric_name               = "Errors"
+  namespace                 = "AWS/Lambda"
+  period                    = 60
+  statistic                 = "Sum"
+  threshold                 = 1
+  alarm_description         = "Alarm for when load lambda fails"
+  alarm_actions = [aws_sns_topic.lambda_alerts.arn]
+  dimensions = {
+    FunctionName = var.load_lambda
+  }
+}
