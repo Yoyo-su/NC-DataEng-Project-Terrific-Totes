@@ -83,9 +83,9 @@ resource "aws_lambda_function" "load_lambda" {
   source_code_hash = filebase64sha256("${path.module}/../packages/${var.load_lambda}/function.zip")
 
   layers = [
-    aws_lambda_layer_version.pandas_layer.arn,
+    "arn:aws:lambda:eu-west-2:336392948345:layer:AWSSDKPandas-Python313:2"
   ]
-  depends_on = [aws_s3_object.lambda_code, aws_s3_object.pandas_layer_object]
+  depends_on = [aws_s3_object.lambda_code]
 }
 
 
