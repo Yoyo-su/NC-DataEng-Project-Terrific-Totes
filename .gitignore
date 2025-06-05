@@ -19,3 +19,5 @@ last_updated.txt
 tests/data/**.txt
 tests/data/**.json
 **.parquet
+dependencies*/
+packages
