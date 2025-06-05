@@ -46,5 +46,5 @@ def lambda_handler(event, context):
             parquet_df = fetch_parquet(table, bucket)
             parquet_to_sql(table, parquet_df)
     except Exception as error:
-        print(f"Failed to extract data from database: {error}")
+        print(f"Failed to update database: {error}")
         raise Exception
