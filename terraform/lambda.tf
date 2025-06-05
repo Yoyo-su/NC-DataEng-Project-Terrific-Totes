@@ -10,6 +10,13 @@ data "archive_file" "transform_lambda" {
   source_file = "${path.module}/../src/transform_lambda.py"
 }
 
+data "archive_file" "load_lambda" {
+  type        = "zip"
+  output_path = "${path.module}/../packages/transform_lambda/function.zip"
+  source_file = "${path.module}/../src/transform_lambda.py"
+}
+
+
 resource "aws_lambda_function" "extract_lambda" {
   function_name = var.extract_lambda
   role          = aws_iam_role.lambda_role.arn
@@ -52,6 +59,28 @@ resource "aws_lambda_function" "transform_lambda" {
   timeout = 120
 
   source_code_hash = filebase64sha256("${path.module}/../packages/${var.transform_lambda}/function.zip")
+
+  layers = [
+    "arn:aws:lambda:eu-west-2:336392948345:layer:AWSSDKPandas-Python313:2"
+  ]
+  depends_on = [aws_s3_object.lambda_code]
+}
+
+
+
+# define load lambda
+resource "aws_lambda_function" "load_lambda" {
+  function_name = var.load_lambda
+  role          = aws_iam_role.lambda_load_role.arn
+
+  s3_bucket = aws_s3_object.lambda_code[var.load_lambda].bucket
+  s3_key    = aws_s3_object.lambda_code[var.load_lambda].key
+
+  runtime = var.python_runtime
+  handler = "${var.load_lambda}.lambda_handler"
+  timeout = 120
+
+  source_code_hash = filebase64sha256("${path.module}/../packages/${var.load_lambda}/function.zip")
 
   layers = [
     "arn:aws:lambda:eu-west-2:336392948345:layer:AWSSDKPandas-Python313:2"
