@@ -43,3 +43,11 @@ resource "aws_s3_object" "extract_layer_object" {
   depends_on = [null_resource.zip_extract_layer]
 }
 
+resource "aws_s3_object" "utils_layer_object" {
+  bucket = aws_s3_bucket.code_bucket.bucket
+  key    = "layers/utils_layer.zip"
+  source = "${path.module}/../packages/layers/utils_layer.zip"
+
+  #depends_on = [null_resource.zip_utils_layer]
+}
+
