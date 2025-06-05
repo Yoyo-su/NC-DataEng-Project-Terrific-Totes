@@ -37,7 +37,7 @@ def bucket(aws_creds, s3_resource):
 
         # add test sales data to the mock bucket:
         test_sales_data = """{
-            "sales": [
+            "sales_order": [
                 {
                 "sales_order_id": 7,
                 "created_at": "1904-05-20 11:12:12.115290",
@@ -68,11 +68,11 @@ def bucket(aws_creds, s3_resource):
                 }
             ]
             }"""
-        with open("tests/data/sales-2025-05-29T11:06:18.399084.json", "w") as file:
+        with open("tests/data/sales_order-2025-05-29T11:06:18.399084.json", "w") as file:
             file.write(test_sales_data)
         bucket.upload_file(
-            "tests/data/sales-2025-05-29T11:06:18.399084.json",
-            "sales/sales-2025-05-29T11:06:18.399084.json",
+            "tests/data/sales_order-2025-05-29T11:06:18.399084.json",
+            "sales_order/sales_order-2025-05-29T11:06:18.399084.json",
         )
         return bucket
 
