@@ -8,3 +8,12 @@ pandas
 forex-python
 pyarrow
 fastparquet
+pytest-testdox
+pytest
+pg8000
+dotenv
+boto3
+moto
+pandas
+forex-python
+pyarrow

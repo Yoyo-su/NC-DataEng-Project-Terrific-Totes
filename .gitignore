@@ -26,3 +26,4 @@ dependencies_forex_parquet
 dependencies_pandas
 *.txt
 !requirements*.txt
+layer/
