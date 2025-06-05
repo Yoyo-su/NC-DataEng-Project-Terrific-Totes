@@ -2,7 +2,7 @@ import boto3
 from botocore.exceptions import ClientError
 
 
-def find_most_recent_json_filename(table_name, bucket_name):
+def find_most_recent_json_filename(table_name, bucket_name, file_type="json"):
     """
     This function:
     - looks through the json files in the ingestion s3 bucket with a given table name
@@ -20,7 +20,7 @@ def find_most_recent_json_filename(table_name, bucket_name):
 
     """
     files = find_files_with_specified_table_name(table_name, bucket_name)
-    most_recent_file = find_most_recent_file(files, table_name, bucket_name)
+    most_recent_file = find_most_recent_file(files, table_name, bucket_name, file_type)
     return most_recent_file
 
 
@@ -48,7 +48,7 @@ def find_files_with_specified_table_name(table_name, bucket_name):
     return files
 
 
-def find_most_recent_file(files, table_name, bucket_name):
+def find_most_recent_file(files, table_name, bucket_name, filetype="json"):
     """
     This function:
     - returns the name of the most recent file in a given s3 bucket whose name contains table_name
@@ -64,7 +64,10 @@ def find_most_recent_file(files, table_name, bucket_name):
     """
     try:
         most_recent_file = sorted(files, reverse=True)[0]
-        file_date_time = most_recent_file[len(table_name) + 1 : -5]
+        if filetype == "json":
+            file_date_time = most_recent_file[len(table_name) + 1 : -5]
+        elif filetype == "parquet":
+            file_date_time = most_recent_file[len(table_name) + 1 : -8]
         s3 = boto3.resource("s3")
         last_updated_file = s3.Object(bucket_name, "last_updated.txt")
         last_update = last_updated_file.get()["Body"].read().decode("utf-8")

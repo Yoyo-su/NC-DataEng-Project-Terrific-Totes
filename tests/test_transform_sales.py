@@ -72,7 +72,7 @@ def bucket(aws_creds, s3_resource):
             file.write(test_sales_data)
         bucket.upload_file(
             "tests/data/sales-2025-05-29T11:06:18.399084.json",
-            "sales-2025-05-29T11:06:18.399084.json",
+            "sales/sales-2025-05-29T11:06:18.399084.json",
         )
         return bucket
 

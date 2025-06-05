@@ -20,9 +20,13 @@ last_updated.txt
 tests/data/**.txt
 tests/data/**.json
 **.parquet
+
 packages/
 dependencies_extract
 dependencies_forex_parquet
 dependencies_pandas
 *.txt
 !requirements*.txt
+
+dependencies*/
+
