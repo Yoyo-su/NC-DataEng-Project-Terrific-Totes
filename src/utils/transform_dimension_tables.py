@@ -1,6 +1,6 @@
 import pandas as pd
-from src.utils.find_most_recent_json_filename import (
-    find_most_recent_json_filename,
+from src.utils.find_most_recent_filename import (
+    find_most_recent_filename,
     find_files_with_specified_table_name,
 )
 from src.utils.json_to_pd_dataframe import json_to_pd_dataframe
@@ -10,7 +10,7 @@ from src.utils.find_currency_name_by_currency_code import find_currency_name_by_
 def transform_dim_location():
     """
     This function:
-    - calls find_most_recent_json_filename
+    - calls find_most_recent_filename
     - check whether this returns a file name string (which will be the case if new data has been added to the address table in the totesys database)
     - if an exception is raised, transform_dim_location returns nothing (because there is no new data to be transformed)
     - otherwise, json_to_pd_dataframe is invoked, which returns a dataframe for new address data, location_df
@@ -23,7 +23,7 @@ def transform_dim_location():
     Returns: nothing (if no new location data), or a dataframe containing new, transformed location data.
 
     """
-    most_recent_file = find_most_recent_json_filename("address", "fscifa-raw-data")
+    most_recent_file = find_most_recent_filename("address", "fscifa-raw-data")
     if most_recent_file:
         location_df = json_to_pd_dataframe(
             most_recent_file, "address", "fscifa-raw-data"
@@ -36,7 +36,7 @@ def transform_dim_location():
 def transform_dim_counterparty():
     """
     This function:
-    - calls find_most_recent_json_filename
+    - calls find_most_recent_filename
     - check whether this returns a file name string (will be the case if new data has been added to the counterparty table in the totesys database)
     - if an exception is raised, transform_dim_counterparty returns nothing (because there is no new data to be transformed)
     - otherwise, json_to_pd_dataframe is invoked, which returns a dataframe for new counterparty data, counterparty_df
@@ -51,7 +51,7 @@ def transform_dim_counterparty():
     Returns: nothing (if no new counterparty data), or a dataframe containing new, transformed counterparty data.
 
     """
-    most_recent_file = find_most_recent_json_filename("counterparty", "fscifa-raw-data")
+    most_recent_file = find_most_recent_filename("counterparty", "fscifa-raw-data")
     if most_recent_file:
         counterparty_df = json_to_pd_dataframe(
             most_recent_file, "counterparty", "fscifa-raw-data"
@@ -90,8 +90,8 @@ def transform_dim_counterparty():
 def transform_dim_currency():
     """
     This function:
-    - calls find_most_recent_json_filename
-    - check whether this returns a file name string (which will be the case if new data has been added to the currency table in the totesys database)
+    - calls find_most_recent_filename
+    - checks whether this returns a file name string (which will be the case if new data has been added to the currency table in the totesys database)
     - if an exception is raised, transform_dim_currency returns nothing (because there is no new data to be transformed)
     - otherwise, json_to_pd_dataframe is invoked, which returns a dataframe for new currency data, currency_df
     - columns, "last_updated" and "created_at" dropped from currency_df, to match specification
@@ -103,7 +103,7 @@ def transform_dim_currency():
     Returns: nothing (if no new currency data), or a dataframe containing new, transformed currency data.
 
     """
-    most_recent_file = find_most_recent_json_filename("currency", "fscifa-raw-data")
+    most_recent_file = find_most_recent_filename("currency", "fscifa-raw-data")
     if most_recent_file:
         currency_df = json_to_pd_dataframe(
             most_recent_file, "currency", "fscifa-raw-data"
@@ -140,7 +140,7 @@ def get_department_data():
 def transform_dim_staff():
     """
     This function:
-    - calls find_most_recent_json_filename
+    - calls find_most_recent_filename
     - check whether this returns a file name string (will be the case if new data has been added to the staff table in the totesys database)
     - if an exception is raised, transform_dim_staff returns nothing (because there is no new data to be transformed)
     - otherwise, json_to_pd_dataframe is invoked, which returns a dataframe for new staff data, staff_df
@@ -157,7 +157,7 @@ def transform_dim_staff():
 
     """
 
-    most_recent_file = find_most_recent_json_filename("staff", "fscifa-raw-data")
+    most_recent_file = find_most_recent_filename("staff", "fscifa-raw-data")
     if most_recent_file:
         staff_df = json_to_pd_dataframe(most_recent_file, "staff", "fscifa-raw-data")
     department_df = get_department_data()
@@ -185,7 +185,7 @@ def transform_dim_staff():
 def transform_dim_design():
     """
     This function:
-    - calls find_most_recent_json_filename
+    - calls find_most_recent_filename
     - check whether this returns a file name string (which will be the case if new data has been added to the design table in the totesys database)
     - if an exception is raised, transform_dim_design returns nothing (because there is no new data to be transformed)
     - otherwise, json_to_pd_dataframe is invoked, which returns a dataframe for new design data, design_df
@@ -197,7 +197,7 @@ def transform_dim_design():
     Returns: nothing (if no new design data), or a dataframe containing new, transformed design data.
 
     """
-    most_recent_file = find_most_recent_json_filename("design", "fscifa-raw-data")
+    most_recent_file = find_most_recent_filename("design", "fscifa-raw-data")
     if most_recent_file:
         design_df = json_to_pd_dataframe(most_recent_file, "design", "fscifa-raw-data")
     design_df.drop(
