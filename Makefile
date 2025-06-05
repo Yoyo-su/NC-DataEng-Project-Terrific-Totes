@@ -58,7 +58,7 @@ run-black:
 
 ## Run the unit tests
 unit-test:
-	$(PYTEST) -vv --ignore=layer/python,dependencies_extract/python
+	$(PYTEST) -vv --ignore=layer/python --ignore=dependencies_extract/python
 
 ## Run the coverage check
 check-coverage:
