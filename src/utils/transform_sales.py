@@ -1,5 +1,5 @@
 import pandas as pd
-from src.utils.find_most_recent_json_filename import find_most_recent_json_filename
+from src.utils.find_most_recent_filename import find_most_recent_filename
 from src.utils.json_to_pd_dataframe import json_to_pd_dataframe
 
 
@@ -16,7 +16,7 @@ def transform_fact_sales_order():
         - Exception: a generic exception if an error occurs.
     """
     try:
-        most_recent_file = find_most_recent_json_filename("sales_order", "fscifa-raw-data")
+        most_recent_file = find_most_recent_filename("sales_order", "fscifa-raw-data")
         if most_recent_file:
             fact_sales_order = json_to_pd_dataframe(
                 most_recent_file, "sales_order", "fscifa-raw-data"

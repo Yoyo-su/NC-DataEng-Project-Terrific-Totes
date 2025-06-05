@@ -61,10 +61,9 @@ resource "aws_lambda_function" "transform_lambda" {
   source_code_hash = filebase64sha256("${path.module}/../packages/${var.transform_lambda}/function.zip")
 
   layers = [
-    aws_lambda_layer_version.pandas_layer.arn,
-    aws_lambda_layer_version.forex_parquet_layer.arn
+    "arn:aws:lambda:eu-west-2:336392948345:layer:AWSSDKPandas-Python313:2"
   ]
-  depends_on = [aws_s3_object.lambda_code, aws_s3_object.pandas_layer_object, aws_s3_object.forex_parquet_layer_object]
+  depends_on = [aws_s3_object.lambda_code]
 }
 
 

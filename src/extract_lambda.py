@@ -6,6 +6,7 @@ from datetime import datetime
 from botocore.exceptions import ClientError
 import json
 
+
 """ EXTRACT LAMBDA: Includes extract lambda handler and util functions """
 
 
@@ -89,7 +90,6 @@ def lambda_handler(event, context):
         print(f"Failed to extract data from database: {error}")
         raise Exception
 
-
 def extract_db(table_name, last_updated=None):
     """Lambda function that extracts data from a database table and returns it as a formatted dictionary
 
@@ -102,14 +102,29 @@ def extract_db(table_name, last_updated=None):
 
     try:
         conn = connect_to_db()
-        if not last_updated:
-            query = f"SELECT * FROM {table_name};"
+        if table_name in [
+            "address",
+            "counterparty",
+            "currency",
+            "department",
+            "design",
+            "payment",
+            "payment_type",
+            "purchase_order",
+            "sales_order",
+            "staff",
+            "transaction",
+        ]:
+            if not last_updated:
+                query = f"SELECT * FROM {table_name};"
+            else:
+                query = f"SELECT * FROM {table_name} WHERE last_updated > '{last_updated}';"
+            response = conn.run(query)
+            columns = [column["name"] for column in conn.columns]
+            table_dict = {table_name: [dict(zip(columns, row)) for row in response]}
+            return table_dict
         else:
-            query = f"SELECT * FROM {table_name} WHERE last_updated > '{last_updated}';"
-        response = conn.run(query)
-        columns = [column["name"] for column in conn.columns]
-        table_dict = {table_name: [dict(zip(columns, row)) for row in response]}
-        return table_dict
+            raise Exception('Invalid table name.')
 
     except Exception as error:
         print(f"Failed to extract from DB: {error}")

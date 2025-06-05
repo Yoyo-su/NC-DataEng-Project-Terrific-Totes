@@ -22,9 +22,7 @@ tests/data/**.json
 **.parquet
 
 packages/
-dependencies_extract
-dependencies_forex_parquet
-dependencies_pandas
+dependencies*
 *.txt
 !requirements*.txt
 layer/

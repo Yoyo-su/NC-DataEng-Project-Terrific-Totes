@@ -1,26 +1,25 @@
 import boto3
 from botocore.exceptions import ClientError
-from forex_python.converter import CurrencyCodes
 import pandas as pd
 from datetime import datetime
 import json
+import os
 
 
-def find_most_recent_json_filename(table_name, bucket_name):
+def find_most_recent_filename(table_name, bucket_name):
     """
     This function:
-    - looks through the json files in the ingestion s3 bucket with a given table name
+    - looks through files (of default json type, or parquet type if specified) in a specified s3 bucket, with a specified table name
     - selects the most recent file starting with this table name
     - compares the date/time in this file with the date/time in the last_updated.txt
     - if date/time are the same, returns string of the filename
     - else raises Exception informing the user that there is no new data for this table since the last update
     These functionalities are implemented using dependency injection.
 
-    Arguments: table_name which is a table name from the original OLTP database
+    Arguments: table_name (str): a specified table name from the original OLTP database
 
-    Returns: if new data is found in the s3 "fscifa-raw-data" bucket for the given table_name,
-    returns a string containing the name of the most recent file with specified table_name,
-    otherwise raises an appropriate exception.
+    Returns: if a new file is found in the specified bucket containing the specified table_name,
+    returns a string containing that file's name, otherwise raises an appropriate exception.
 
     """
     files = find_files_with_specified_table_name(table_name, bucket_name)
@@ -28,7 +27,7 @@ def find_most_recent_json_filename(table_name, bucket_name):
     return most_recent_file
 
 
-"""The below functions are used as dependencies, injected within load_data_from_most_recent_json:"""
+"""The below functions are used as dependencies, injected within find_most_recent_filename:"""
 
 
 def find_files_with_specified_table_name(table_name, bucket_name):
@@ -131,7 +130,7 @@ def json_to_pd_dataframe(most_recent_file: str, table_name, bucket_name):
 def transform_dim_location():
     """
     This function:
-    - calls find_most_recent_json_filename
+    - calls find_most_recent_filename
     - check whether this returns a file name string (which will be the case if new data has been added to the address table in the totesys database)
     - if an exception is raised, transform_dim_location returns nothing (because there is no new data to be transformed)
     - otherwise, json_to_pd_dataframe is invoked, which returns a dataframe for new address data, location_df
@@ -144,7 +143,7 @@ def transform_dim_location():
     Returns: nothing (if no new location data), or a dataframe containing new, transformed location data.
 
     """
-    most_recent_file = find_most_recent_json_filename("address", "fscifa-raw-data")
+    most_recent_file = find_most_recent_filename("address", "fscifa-raw-data")
     if most_recent_file:
         location_df = json_to_pd_dataframe(
             most_recent_file, "address", "fscifa-raw-data"
@@ -157,7 +156,7 @@ def transform_dim_location():
 def transform_dim_counterparty():
     """
     This function:
-    - calls find_most_recent_json_filename
+    - calls find_most_recent_filename
     - check whether this returns a file name string (will be the case if new data has been added to the counterparty table in the totesys database)
     - if an exception is raised, transform_dim_counterparty returns nothing (because there is no new data to be transformed)
     - otherwise, json_to_pd_dataframe is invoked, which returns a dataframe for new counterparty data, counterparty_df
@@ -172,7 +171,7 @@ def transform_dim_counterparty():
     Returns: nothing (if no new counterparty data), or a dataframe containing new, transformed counterparty data.
 
     """
-    most_recent_file = find_most_recent_json_filename("counterparty", "fscifa-raw-data")
+    most_recent_file = find_most_recent_filename("counterparty", "fscifa-raw-data")
     if most_recent_file:
         counterparty_df = json_to_pd_dataframe(
             most_recent_file, "counterparty", "fscifa-raw-data"
@@ -210,17 +209,97 @@ def transform_dim_counterparty():
 
 def find_currency_name_by_currency_code(code):
     """
-    This function uses the forex-python.converter module to return the correct currency name, when passed with a given currency code.
+    This function takes a currency code (e.g. "USD"), and returns the currency's name (e.g. "United States dollar").
+    If the currency code is not recognised, it raises a KeyError exception, informing the user the currency code is not found.
 
     """
-    c = CurrencyCodes()
-    return c.get_currency_name(code)
+
+    currency_codes_to_names = {
+        "JPY": "Japanese yen",
+        "BGN": "Bulgarian lev",
+        "CZK": "Czech koruna",
+        "DKK": "Danish krone",
+        "GBP": "British pound",
+        "HUF": "Hungarian forint",
+        "PLN": "Polish zloty",
+        "RON": "Romanian leu",
+        "SEK": "Swedish krona",
+        "CHF": "Swiss franc",
+        "ISK": "Icelandic króna",
+        "NOK": "Norwegian krone",
+        "TRY": "Turkish new lira",
+        "AUD": "Australian dollar",
+        "BRL": "Brazilian real",
+        "CAD": "Canadian dollar",
+        "CNY": "Chinese/Yuan renminbi",
+        "HKD": "Hong Kong dollar",
+        "IDR": "Indonesian rupiah",
+        "ILS": "Israeli new sheqel",
+        "INR": "Indian rupee",
+        "KRW": "South Korean won",
+        "MXN": "Mexican peso",
+        "MYR": "Malaysian ringgit",
+        "NZD": "New Zealand dollar",
+        "PHP": "Philippine peso",
+        "SGD": "Singapore dollar",
+        "THB": "Thai baht",
+        "ZAR": "South African rand",
+        "EUR": "European Euro",
+        "USD": "United States dollar",
+        "KWD": "Kuwaiti dinar",
+        "BHD": "Bahraini dinar",
+        "OMR": "Omani rial",
+        "JOD": "Jordanian dinar",
+        "GIP": "Gibraltar pound",
+        "KYD": "Cayman Islands dollar",
+        "GEL": "Georgian lari",
+        "GHS": "Ghanaian cedi",
+        "GYD": "Guyanese dollar",
+        "JMD": "Jamaican dollar",
+        "KZT": "Kazakhstani tenge",
+        "KES": "Kenyan shilling",
+        "KGS": "Kyrgyzstani som",
+        "LAK": "Laotian kip",
+        "LBP": "Lebanese pound",
+        "LRD": "Liberian dollar",
+        "LYD": "Libyan dinar",
+        "MGA": "Malagasy ariary",
+        "MWK": "Malawian kwacha",
+        "MVR": "Maldivian rufiyaa",
+        "MUR": "Mauritian rupee",
+        "MNT": "Mongolian tugrik",
+        "MZN": "Mozambican metical",
+        "NAD": "Namibian dollar",
+        "NPR": "Nepalese rupee",
+        "NIO": "Nicaraguan córdoba",
+        "NGN": "Nigerian naira",
+        "PKR": "Pakistani rupee",
+        "PAB": "Panamanian balboa",
+        "PYG": "Paraguayan guarani",
+        "PEN": "Peruvian sol",
+        "QAR": "Qatari riyal",
+        "RUB": "Russian ruble",
+        "SHP": "Saint Helena pound",
+        "SCR": "Seychelles rupee",
+        "SBD": "Solomon Islands dollar",
+        "LKR": "Sri Lankan rupee",
+        "SDG": "Sudanese pound",
+        "SRD": "Surinamese dollar",
+        "SYP": "Syrian pound",
+        "TZS": "Tanzanian shilling",
+        "TOP": "Tongan paanga",
+        "TTD": "Trinidad and Tobago dollar",
+    }
+    try:
+        return currency_codes_to_names[code]
+    except KeyError:
+        raise KeyError("Currency code not found")
 
 
 def transform_dim_currency():
     """
     This function:
-    - calls find_most_recent_json_filename
+    - calls find_most_recent_filename
     - check whether this returns a file name string (which will be the case if new data has been added to the currency table in the totesys database)
     - if an exception is raised, transform_dim_currency returns nothing (because there is no new data to be transformed)
     - otherwise, json_to_pd_dataframe is invoked, which returns a dataframe for new currency data, currency_df
@@ -233,7 +312,7 @@ def transform_dim_currency():
     Returns: nothing (if no new currency data), or a dataframe containing new, transformed currency data.
 
     """
-    most_recent_file = find_most_recent_json_filename("currency", "fscifa-raw-data")
+    most_recent_file = find_most_recent_filename("currency", "fscifa-raw-data")
     if most_recent_file:
         currency_df = json_to_pd_dataframe(
             most_recent_file, "currency", "fscifa-raw-data"
@@ -246,6 +325,19 @@ def transform_dim_currency():
 
 
 def get_department_data():
+    """
+    This function:
+    - calls find_files_with_specified_table_name, which returns a list of json files from department folder of s3 bucket, fscifa-raw-data
+    - assigns this list of json files to variable, files
+    - creates a dataframe (department_df) out of the first json file in the list, by calling json_to_pd_dataframe
+    - loops through remaining json files in list, and creates a dataframe for each (additional_df), and appends these dataframes to department_df
+    - returns department_df
+
+    Arguments: no arguments.
+
+    Returns: a dataframe (department_df) containing all department data to date.
+
+    """
     files = find_files_with_specified_table_name("department", "fscifa-raw-data")
     print(files)
     department_df = json_to_pd_dataframe(files[0], "department", "fscifa-raw-data")
@@ -256,38 +348,65 @@ def get_department_data():
 
 
 def transform_dim_staff():
-    most_recent_file = find_most_recent_json_filename("staff", "fscifa-raw-data")
+    """
+    This function:
+    - calls find_most_recent_filename
+    - check whether this returns a file name string (will be the case if new data has been added to the staff table in the totesys database)
+    - if an exception is raised, transform_dim_staff returns nothing (because there is no new data to be transformed)
+    - otherwise, json_to_pd_dataframe is invoked, which returns a dataframe for new staff data, staff_df
+    - create department_df by invoking get_department_data
+    - columns "manager", "created_at" and "last_updated" are dropped from department_df, to match specification
+    - columns "created_at" and "last_updated" are dropped from staff_df, to match specification
+    - staff_df is left merged with department_df on depatment_id, to add location data for each staff member
+    - column, "department_id" is dropped from staff_df, to match specification
+    - transformed staff_df (dataframe) is returned
+
+    Arguments: no arguments.
+
+    Returns: nothing (if no new staff data), or a dataframe containing new, transformed staff data.
+
+    """
+    most_recent_file = find_most_recent_filename("staff", "fscifa-raw-data")
     if most_recent_file:
         staff_df = json_to_pd_dataframe(most_recent_file, "staff", "fscifa-raw-data")
     department_df = get_department_data()
-
     department_df.drop(
         ["manager", "created_at", "last_updated"],
         axis=1,
         inplace=True,
     )
-
     staff_df.drop(
         ["created_at", "last_updated"],
         axis=1,
         inplace=True,
     )
-
     merge_staff_to_department_df = pd.merge(
         staff_df, department_df, on="department_id", how="left"
     )
-
     merge_staff_to_department_df.drop(
         ["department_id"],
         axis=1,
         inplace=True,
     )
-
     return merge_staff_to_department_df
 
 
 def transform_dim_design():
-    most_recent_file = find_most_recent_json_filename("design", "fscifa-raw-data")
+    """
+    This function:
+    - calls find_most_recent_filename
+    - check whether this returns a file name string (which will be the case if new data has been added to the design table in the totesys database)
+    - if an exception is raised, transform_dim_design returns nothing (because there is no new data to be transformed)
+    - otherwise, json_to_pd_dataframe is invoked, which returns a dataframe for new design data, design_df
+    - columns "created_at" and "last_updated" are dropped from design_df, to match specification
+    - transformed design_df (dataframe) is returned
+
+    Arguments: no arguments.
+
+    Returns: nothing (if no new design data), or a dataframe containing new, transformed design data.
+
+    """
+    most_recent_file = find_most_recent_filename("design", "fscifa-raw-data")
     if most_recent_file:
         design_df = json_to_pd_dataframe(most_recent_file, "design", "fscifa-raw-data")
     design_df.drop(
@@ -298,17 +417,19 @@ def transform_dim_design():
     return design_df
 
 
-"""Saves a dataframe to parquet file
+def dataframe_to_parquet(df, table_name, compression: str = "gzip"):
+    """
+    This function saves a dataframe to a parquet file.
 
     Args:
     - df: dataframe of transformed table
     - table_name: name of the dimensions /fact table
     - compression: One of ["snappy", "gzip", "brotli", "none"] user choice
-    returns:
-        The path of the parquet file"""
 
+    returns: The path of the parquet file
 
-def dataframe_to_parquet(df, table_name, compression: str = "gzip"):
+    """
+
     timestamp = datetime.now().isoformat()
     valid_compressions = ["snappy", "gzip", "brotli", "none"]
     if compression not in valid_compressions:
@@ -318,41 +439,37 @@ def dataframe_to_parquet(df, table_name, compression: str = "gzip"):
                         "brotli"=> Very good compression ratio, slower, newer
                         "none"=> No Compression, larger file size but fastest to read/ write  """
     try:
-        path = f"{table_name}-{timestamp}.parquet"
-        df.to_parquet(path, engine="fastparquet", compression=compression)  #
-        return path
+        tmp_dir = "/tmp"
+        filename = f"{table_name}-{timestamp}.parquet"
+        path = os.path.join(tmp_dir, filename)
 
+        df.to_parquet(path, engine="pyarrow", compression=compression)
+        return path
     except Exception as e:
         print(f"Error: {e}")
         return None
 
 
-"""
-Uploads a Parquet file to a specified location in an S3 bucket.
-
-Parameters
-----------
-parquet_file : str
-    The local path to the Parquet file to be uploaded.
-bucket_name : str
-    The name of the target S3 bucket.
-key : str
-    The S3 key (path) where the file should be uploaded.
-s3_client : boto3.client
-    A Boto3 S3 client object used to perform the upload.
-
-Returns
--------
-str
-    A success message indicating the uploaded file path in S3.
-
-Raises
-------
-Exception
-    Propagates any exception raised during the upload process."""
-
-
 def upload_parquet_to_processed_zone(parquet_file, bucket_name, key, s3_client):
+    """
+    This function uploads a Parquet file to a specified location in an S3 bucket.
+
+    Parameters:
+    - parquet_file : str
+        The local path to the Parquet file to be uploaded.
+    - bucket_name : str
+        The name of the target S3 bucket.
+    - key : str
+        The S3 key (path) where the file should be uploaded.
+    - s3_client : boto3.client
+        A Boto3 S3 client object used to perform the upload.
+
+    Returns: (str): A success message indicating the uploaded file path in S3.
+
+    Raises: Exception: Propagates any exception raised during the upload process.
+
+    """
+
     try:
         s3_client.upload_file(parquet_file, bucket_name, key)
         print(f"Successfully uploaded {key} to s3://{bucket_name}/{key}")
@@ -360,8 +477,6 @@ def upload_parquet_to_processed_zone(parquet_file, bucket_name, key, s3_client):
     except Exception as e:
         print(f"Failed to up: {e}")
         raise e
-
-
 
 
 def transform_fact_sales_order():
@@ -377,7 +492,7 @@ def transform_fact_sales_order():
         - Exception: a generic exception if an error occurs.
     """
     try:
-        most_recent_file = find_most_recent_json_filename("sales_order", "fscifa-raw-data")
+        most_recent_file = find_most_recent_filename("sales_order", "fscifa-raw-data")
         if most_recent_file:
             fact_sales_order = json_to_pd_dataframe(
                 most_recent_file, "sales_order", "fscifa-raw-data"
@@ -487,6 +602,14 @@ def transform_dim_date(fact_sales_order):
 
 
 def lambda_handler(event, context):
+    """
+    When invoked, this lambda handler will:
+    - invoke util functions to create dataframes for dimension tables, and fact table, sales_order
+    - creates parquet files containing these dataframes, by invoking function dataframe_to_parquet
+    - uploads these parquet files to s3 bucket, "fscifa-processed-data"
+
+    """
+
     table_list = [
         "fact_sales_order",
         "dim_staff",
@@ -496,7 +619,7 @@ def lambda_handler(event, context):
         "dim_currency",
         "dim_counterparty",
     ]
-    # table_list = ["dim_staff", "dim_location", "dim_currency"]
+
     s3_client = boto3.client("s3")
     for table in table_list:
         table_name = table
@@ -520,12 +643,10 @@ def lambda_handler(event, context):
             continue
         parquet_file = dataframe_to_parquet(df, table_name)
         key = f"{table_name}/{parquet_file}"
-        upload_parquet_to_processed_zone(
-            parquet_file=parquet_file,
-            bucket_name="fscifa-processed-data",
-            key=key,
-            s3_client=s3_client,
-        )
-
-
-
+        if parquet_file:
+            upload_parquet_to_processed_zone(
+                parquet_file=parquet_file,
+                bucket_name="fscifa-processed-data",
+                key=key,
+                s3_client=s3_client,
+            )
