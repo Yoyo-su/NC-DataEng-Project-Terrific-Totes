@@ -16,9 +16,9 @@ def transform_fact_sales_order():
         - Exception: a generic exception if an error occurs.
     """
     try:
-        most_recent_file = find_most_recent_json_filename("sales", "fscifa-raw-data")
+        most_recent_file = find_most_recent_json_filename("sales_order", "fscifa-raw-data")
         fact_sales_order = json_to_pd_dataframe(
-            most_recent_file, "sales", "fscifa-raw-data"
+            most_recent_file, "sales_order", "fscifa-raw-data"
         )
 
         fact_sales_order["created_date"] = pd.to_datetime(
