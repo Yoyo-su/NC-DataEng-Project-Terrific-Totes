@@ -31,9 +31,9 @@ resource "aws_lambda_function" "extract_lambda" {
   source_code_hash = filebase64sha256("${path.module}/../packages/${var.extract_lambda}/function.zip")
 
   layers = [
-    aws_lambda_layer_version.extract_layer.arn
+    aws_lambda_layer_version.extract_layer.arn, aws_lambda_layer_version.utils_layer.arn
   ]
-  depends_on = [aws_s3_object.lambda_code, aws_s3_object.extract_layer_object]
+  depends_on = [aws_s3_object.lambda_code, aws_s3_object.extract_layer_object, aws_s3_object.utils_layer_object]
   environment {
     variables = {
       PG_HOST     = var.pg_host
@@ -61,9 +61,9 @@ resource "aws_lambda_function" "transform_lambda" {
   source_code_hash = filebase64sha256("${path.module}/../packages/${var.transform_lambda}/function.zip")
 
   layers = [
-    "arn:aws:lambda:eu-west-2:336392948345:layer:AWSSDKPandas-Python313:2"
+    "arn:aws:lambda:eu-west-2:336392948345:layer:AWSSDKPandas-Python313:2", aws_lambda_layer_version.utils_layer.arn
   ]
-  depends_on = [aws_s3_object.lambda_code]
+  depends_on = [aws_s3_object.lambda_code, aws_s3_object.utils_layer_object]
 }
 
 
@@ -83,9 +83,9 @@ resource "aws_lambda_function" "load_lambda" {
   source_code_hash = filebase64sha256("${path.module}/../packages/${var.load_lambda}/function.zip")
 
   layers = [
-    "arn:aws:lambda:eu-west-2:336392948345:layer:AWSSDKPandas-Python313:2"
+    "arn:aws:lambda:eu-west-2:336392948345:layer:AWSSDKPandas-Python313:2", aws_lambda_layer_version.utils_layer.arn
   ]
-  depends_on = [aws_s3_object.lambda_code]
+  depends_on = [aws_s3_object.lambda_code, aws_s3_object.utils_layer_object]
 }
 
 
