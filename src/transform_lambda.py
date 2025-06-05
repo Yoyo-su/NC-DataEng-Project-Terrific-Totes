@@ -3,6 +3,7 @@ from botocore.exceptions import ClientError
 import pandas as pd
 from datetime import datetime
 import json
+import os
 
 
 def find_most_recent_filename(table_name, bucket_name):
@@ -438,10 +439,12 @@ def dataframe_to_parquet(df, table_name, compression: str = "gzip"):
                         "brotli"=> Very good compression ratio, slower, newer
                         "none"=> No Compression, larger file size but fastest to read/ write  """
     try:
-        path = f"{table_name}-{timestamp}.parquet"
-        df.to_parquet(path, engine="fastparquet", compression=compression)  #
-        return path
+        tmp_dir = "/tmp"
+        filename = f"{table_name}-{timestamp}.parquet"
+        path = os.path.join(tmp_dir, filename)
 
+        df.to_parquet(path, engine="pyarrow", compression=compression)
+        return path
     except Exception as e:
         print(f"Error: {e}")
         return None
@@ -640,9 +643,10 @@ def lambda_handler(event, context):
             continue
         parquet_file = dataframe_to_parquet(df, table_name)
         key = f"{table_name}/{parquet_file}"
-        upload_parquet_to_processed_zone(
-            parquet_file=parquet_file,
-            bucket_name="fscifa-processed-data",
-            key=key,
-            s3_client=s3_client,
-        )
+        if parquet_file:
+            upload_parquet_to_processed_zone(
+                parquet_file=parquet_file,
+                bucket_name="fscifa-processed-data",
+                key=key,
+                s3_client=s3_client,
+            )
