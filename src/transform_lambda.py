@@ -1,6 +1,5 @@
 import boto3
 from botocore.exceptions import ClientError
-from forex_python.converter import CurrencyCodes
 import pandas as pd
 from datetime import datetime
 import json
@@ -288,7 +287,7 @@ def find_currency_name_by_currency_code(code):
         "SYP": "Syrian pound",
         "TZS": "Tanzanian shilling",
         "TOP": "Tongan paanga",
-        "TTD": "Trinidad and Tobago dollar"
+        "TTD": "Trinidad and Tobago dollar",
     }
     try:
         return currency_codes_to_names[code]
@@ -465,9 +464,9 @@ def upload_parquet_to_processed_zone(parquet_file, bucket_name, key, s3_client):
     Returns: (str): A success message indicating the uploaded file path in S3.
 
     Raises: Exception: Propagates any exception raised during the upload process.
-    
+
     """
-    
+
     try:
         s3_client.upload_file(parquet_file, bucket_name, key)
         print(f"Successfully uploaded {key} to s3://{bucket_name}/{key}")
@@ -475,8 +474,6 @@ def upload_parquet_to_processed_zone(parquet_file, bucket_name, key, s3_client):
     except Exception as e:
         print(f"Failed to up: {e}")
         raise e
-
-
 
 
 def transform_fact_sales_order():
@@ -649,6 +646,3 @@ def lambda_handler(event, context):
             key=key,
             s3_client=s3_client,
         )
-
-
-
