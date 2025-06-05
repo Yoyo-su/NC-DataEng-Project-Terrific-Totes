@@ -1,4 +1,4 @@
-from utils.find_most_recent_filename import find_most_recent_filename
+from src.utils.find_most_recent_filename import find_most_recent_filename
 import pandas as pd
 import boto3
 from db.connection import connect_to_db, close_db
