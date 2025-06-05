@@ -86,14 +86,94 @@ def transform_dim_counterparty():
                 )
         return merge_location_to_counterparty_df
 
-
 def find_currency_name_by_currency_code(code):
     """
-    This function uses the forex-python.converter module to return the correct currency name, when passed with a given currency code.
+    This function takes a currency code (e.g. "USD"), and returns the currency's name (e.g. "United States dollar").
+    If the currency code is not recognised, it raises a KeyError exception, informing the user the currency code is not found.
 
     """
-    c = CurrencyCodes()
-    return c.get_currency_name(code)
+
+    currency_codes_to_names = {
+        "JPY": "Japanese yen",
+        "BGN": "Bulgarian lev",
+        "CZK": "Czech koruna",
+        "DKK": "Danish krone",
+        "GBP": "British pound",
+        "HUF": "Hungarian forint",
+        "PLN": "Polish zloty",
+        "RON": "Romanian leu",
+        "SEK": "Swedish krona",
+        "CHF": "Swiss franc",
+        "ISK": "Icelandic króna",
+        "NOK": "Norwegian krone",
+        "TRY": "Turkish new lira",
+        "AUD": "Australian dollar",
+        "BRL": "Brazilian real",
+        "CAD": "Canadian dollar",
+        "CNY": "Chinese/Yuan renminbi",
+        "HKD": "Hong Kong dollar",
+        "IDR": "Indonesian rupiah",
+        "ILS": "Israeli new sheqel",
+        "INR": "Indian rupee",
+        "KRW": "South Korean won",
+        "MXN": "Mexican peso",
+        "MYR": "Malaysian ringgit",
+        "NZD": "New Zealand dollar",
+        "PHP": "Philippine peso",
+        "SGD": "Singapore dollar",
+        "THB": "Thai baht",
+        "ZAR": "South African rand",
+        "EUR": "European Euro",
+        "USD": "United States dollar",
+        "KWD": "Kuwaiti dinar",
+        "BHD": "Bahraini dinar",
+        "OMR": "Omani rial",
+        "JOD": "Jordanian dinar",
+        "GIP": "Gibraltar pound",
+        "KYD": "Cayman Islands dollar",
+        "GEL": "Georgian lari",
+        "GHS": "Ghanaian cedi",
+        "GYD": "Guyanese dollar",
+        "JMD": "Jamaican dollar",
+        "KZT": "Kazakhstani tenge",
+        "KES": "Kenyan shilling",
+        "KGS": "Kyrgyzstani som",
+        "LAK": "Laotian kip",
+        "LBP": "Lebanese pound",
+        "LRD": "Liberian dollar",
+        "LYD": "Libyan dinar",
+        "MGA": "Malagasy ariary",
+        "MWK": "Malawian kwacha",
+        "MVR": "Maldivian rufiyaa",
+        "MUR": "Mauritian rupee",
+        "MNT": "Mongolian tugrik",
+        "MZN": "Mozambican metical",
+        "NAD": "Namibian dollar",
+        "NPR": "Nepalese rupee",
+        "NIO": "Nicaraguan córdoba",
+        "NGN": "Nigerian naira",
+        "PKR": "Pakistani rupee",
+        "PAB": "Panamanian balboa",
+        "PYG": "Paraguayan guarani",
+        "PEN": "Peruvian sol",
+        "QAR": "Qatari riyal",
+        "RUB": "Russian ruble",
+        "SHP": "Saint Helena pound",
+        "SCR": "Seychelles rupee",
+        "SBD": "Solomon Islands dollar",
+        "LKR": "Sri Lankan rupee",
+        "SDG": "Sudanese pound",
+        "SRD": "Surinamese dollar",
+        "SYP": "Syrian pound",
+        "TZS": "Tanzanian shilling",
+        "TOP": "Tongan paanga",
+        "TTD": "Trinidad and Tobago dollar",
+    }
+    try:
+        return currency_codes_to_names[code]
+    except KeyError:
+        raise KeyError("Currency code not found")
+
 
 
 def transform_dim_currency():
