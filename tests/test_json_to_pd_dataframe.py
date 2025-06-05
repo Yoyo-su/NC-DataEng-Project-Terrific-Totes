@@ -46,7 +46,7 @@ class TestJsonToPDdataframe:
         test_file_1 = "address-2025-06-29T11:06:18.399084.txt"
         with pytest.raises(
             Exception,
-            match=r"Error when converting file to dataframe: most_recent_file should be of type json",
+            match="Error when converting file to dataframe: most_recent_file should be of type json",
         ):
             json_to_pd_dataframe(test_file_1, "address", "test_ingest_bucket")
 
@@ -55,7 +55,7 @@ class TestJsonToPDdataframe:
         test_file_1 = "address-2025-06-29T11:06:18.399084.txt"
         with pytest.raises(
             Exception,
-            match=r"Error when converting file to dataframe: incorrect table_name",
+            match="Error when converting file to dataframe: incorrect table_name",
         ):
             json_to_pd_dataframe(test_file_1, "payments", "test_ingest_bucket")
 
@@ -66,7 +66,7 @@ class TestJsonToPDdataframe:
         test_file_1 = "address-2025-06-29T11:06:18.399084.txt"
         with pytest.raises(
             Exception,
-            match=r"Error when converting file to dataframe: most_recent_file should be of type json",
+            match="Error when converting file to dataframe: most_recent_file should be of type json",
         ):
             json_to_pd_dataframe(test_file_1, "address", "test_wrong_bucket")
 

@@ -133,7 +133,7 @@ class TestFindMostRecentFile:
     )
     def test_no_updated_data_for_specified_table(self, bucket):
         test_list = ["address-2025-05-28T11:06:18.399084.json"]
-        with pytest.raises(Exception, match=r"No new data for table, address"):
+        with pytest.raises(Exception, match="No new data for table, address"):
             find_most_recent_file(test_list, "address", "test_ingest_bucket")
 
     @pytest.mark.it(
@@ -143,7 +143,7 @@ class TestFindMostRecentFile:
         test_list = []
         with pytest.raises(
             IndexError,
-            match=r"No file containing table, address is found in the s3 bucket",
+            match="No file containing table, address is found in the s3 bucket",
         ):
             find_most_recent_file(test_list, "address", "test_ingest_bucket")
 
@@ -157,7 +157,7 @@ class TestFindMostRecentFile:
         test_list = ["address-2025-05-29T11:06:18.399084.json"]
         with pytest.raises(
             FileNotFoundError,
-            match=r"File not found 404: there is no last_updated.txt file saved in the s3 bucket 'fscifa-raw-data'",
+            match="File not found 404: there is no last_updated.txt file saved in the s3 bucket 'fscifa-raw-data'",
         ):
             find_most_recent_file(test_list, "address", "test_ingest_bucket")
 
