@@ -2,21 +2,20 @@ import boto3
 from botocore.exceptions import ClientError
 
 
-def find_most_recent_json_filename(table_name, bucket_name, file_type="json"):
+def find_most_recent_filename(table_name, bucket_name, file_type="json"):
     """
     This function:
-    - looks through the json files in the ingestion s3 bucket with a given table name
+    - looks through files (of default json type, or parquet type if specified) in a specified s3 bucket, with a specified table name
     - selects the most recent file starting with this table name
     - compares the date/time in this file with the date/time in the last_updated.txt
     - if date/time are the same, returns string of the filename
     - else raises Exception informing the user that there is no new data for this table since the last update
     These functionalities are implemented using dependency injection.
 
-    Arguments: table_name which is a table name from the original OLTP database
+    Arguments: table_name (str): a specified table name from the original OLTP database
 
-    Returns: if new data is found in the s3 "fscifa-raw-data" bucket for the given table_name,
-    returns a string containing the name of the most recent file with specified table_name,
-    otherwise raises an appropriate exception.
+    Returns: if a new file is found in the specified bucket containing the specified table_name,
+    returns a string containing that file's name, otherwise raises an appropriate exception.
 
     """
     files = find_files_with_specified_table_name(table_name, bucket_name)
@@ -24,7 +23,7 @@ def find_most_recent_json_filename(table_name, bucket_name, file_type="json"):
     return most_recent_file
 
 
-"""The below functions are used as dependencies, injected within load_data_from_most_recent_json:"""
+"""The below functions are used as dependencies, injected within find_most_recent_filename:"""
 
 
 def find_files_with_specified_table_name(table_name, bucket_name):

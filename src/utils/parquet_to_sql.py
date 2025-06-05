@@ -1,4 +1,4 @@
-from src.utils.find_most_recent_json_filename import find_most_recent_json_filename
+from utils.find_most_recent_filename import find_most_recent_filename
 import pandas as pd
 import boto3
 from db.connection import connect_to_db, close_db
@@ -6,9 +6,10 @@ import io
 
 
 def fetch_parquet(table_name, bucket):
+    
     try:
         # get most recent parquet from bucket with table name in filename
-        most_recent_file = find_most_recent_json_filename(table_name, bucket, "parquet")
+        most_recent_file = find_most_recent_filename(table_name, bucket, "parquet")
         s3 = boto3.client("s3")
         s3_file_path = f"{table_name}/{most_recent_file}"
         obj = s3.get_object(Bucket=bucket, Key=s3_file_path)

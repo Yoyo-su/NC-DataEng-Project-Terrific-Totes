@@ -2,14 +2,14 @@ import os
 import pytest
 from moto import mock_aws
 import boto3
-from src.utils.find_most_recent_json_filename import (
+from src.utils.find_most_recent_filename import (
     find_files_with_specified_table_name,
     find_most_recent_file,
-    find_most_recent_json_filename,
+    find_most_recent_filename,
 )
 
 """
-Tests for load_data_from_most_recent_json util function.
+Tests for find_most_recent_filename util function.
 - tests use a mock s3 bucket
 - some tests create local files which will be stored in tests/data
 - all files in tests/data won't be committed to GitHub
@@ -273,6 +273,6 @@ class TestLoadMostRecentDataFromJson:
         )
 
         assert (
-            find_most_recent_json_filename("address", "test_ingest_bucket")
+            find_most_recent_filename("address", "test_ingest_bucket")
             == "address-2025-05-29T11:06:18.399084.json"
         )
