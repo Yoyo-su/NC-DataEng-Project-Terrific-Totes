@@ -189,3 +189,7 @@ resource "aws_iam_role_policy_attachment" "lambda_load_logging" {
   role      = aws_iam_role.lambda_load_role.name
   policy_arn = aws_iam_policy.lambda_sns_policy.arn
 }
+
+
+
+

@@ -25,6 +25,22 @@ resource "aws_cloudwatch_metric_alarm" "lambda_alarm" {
   }
 }
 
+# resource "aws_cloudwatch_metric_alarm" "lambda_transform_alarm" {
+#   alarm_name                = "transform-lambda-error-alarm"
+#   comparison_operator       = "GreaterThanOrEqualToThreshold"
+#   evaluation_periods        = 1
+#   metric_name               = "Errors"
+#   namespace                 = "AWS/Lambda"
+#   period                    = 60
+#   statistic                 = "Sum"
+#   threshold                 = 1
+#   alarm_description         = "Alarm for when transform lambda fails"
+#   alarm_actions = [aws_sns_topic.lambda_alerts.arn]
+#   dimensions = {
+#     FunctionName = var.load_lambda
+#   }
+# }
+
 resource "aws_cloudwatch_metric_alarm" "lambda_load_alarm" {
   alarm_name                = "load-lambda-error-alarm"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
@@ -40,3 +56,4 @@ resource "aws_cloudwatch_metric_alarm" "lambda_load_alarm" {
     FunctionName = var.load_lambda
   }
 }
+
