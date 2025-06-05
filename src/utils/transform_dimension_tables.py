@@ -4,7 +4,7 @@ from src.utils.find_most_recent_filename import (
     find_files_with_specified_table_name,
 )
 from src.utils.json_to_pd_dataframe import json_to_pd_dataframe
-from forex_python.converter import CurrencyCodes
+
 
 
 def transform_dim_location():

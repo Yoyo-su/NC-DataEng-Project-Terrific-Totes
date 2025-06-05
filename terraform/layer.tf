@@ -30,16 +30,6 @@ data "archive_file" "extract_layer_zip" {
   depends_on = [ null_resource.create_extract_dependencies ]
 }
 
-# Pandas Layer Archive
-
-
-# Forex & Fastparquet Layer Archive
-# data "archive_file" "fast_parquet_layer_zip" {
-#   type        = "zip"
-#   output_path = "${path.module}/../packages/layers/fastparquet_layer.zip"
-#   source_dir  = "${path.module}/../dependencies_fastparquet/"
-#   depends_on = [ null_resource.create_fastparquet_dependencies ]
-# }
 
 resource "aws_lambda_layer_version" "extract_layer" {
   layer_name = "extract-deps-layer"
