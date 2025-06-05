@@ -1,4 +1,10 @@
 def find_currency_name_by_currency_code(code):
+    """
+    This function takes a currency code (e.g. "USD"), and returns the currency's name (e.g. "United States dollar").
+    If the currency code is not recognised, it raises a KeyError exception, informing the user the currency code is not found.
+
+    """
+
     currency_codes_to_names = {
         "JPY": "Japanese yen",
         "BGN": "Bulgarian lev",
@@ -31,6 +37,49 @@ def find_currency_name_by_currency_code(code):
         "ZAR": "South African rand",
         "EUR": "European Euro",
         "USD": "United States dollar",
+        "KWD": "Kuwaiti dinar",
+        "BHD": "Bahraini dinar",
+        "OMR": "Omani rial",
+        "JOD": "Jordanian dinar",
+        "GIP": "Gibraltar pound",
+        "KYD": "Cayman Islands dollar",
+        "GEL": "Georgian lari",
+        "GHS": "Ghanaian cedi",
+        "GYD": "Guyanese dollar",
+        "JMD": "Jamaican dollar",
+        "KZT": "Kazakhstani tenge",
+        "KES": "Kenyan shilling",
+        "KGS": "Kyrgyzstani som",
+        "LAK": "Laotian kip",
+        "LBP": "Lebanese pound",
+        "LRD": "Liberian dollar",
+        "LYD": "Libyan dinar",
+        "MGA": "Malagasy ariary",
+        "MWK": "Malawian kwacha",
+        "MVR": "Maldivian rufiyaa",
+        "MUR": "Mauritian rupee",
+        "MNT": "Mongolian tugrik",
+        "MZN": "Mozambican metical",
+        "NAD": "Namibian dollar",
+        "NPR": "Nepalese rupee",
+        "NIO": "Nicaraguan córdoba",
+        "NGN": "Nigerian naira",
+        "PKR": "Pakistani rupee",
+        "PAB": "Panamanian balboa",
+        "PYG": "Paraguayan guarani",
+        "PEN": "Peruvian sol",
+        "QAR": "Qatari riyal",
+        "RUB": "Russian ruble",
+        "SHP": "Saint Helena pound",
+        "SCR": "Seychelles rupee",
+        "SBD": "Solomon Islands dollar",
+        "LKR": "Sri Lankan rupee",
+        "SDG": "Sudanese pound",
+        "SRD": "Surinamese dollar",
+        "SYP": "Syrian pound",
+        "TZS": "Tanzanian shilling",
+        "TOP": "Tongan paanga",
+        "TTD": "Trinidad and Tobago dollar"
     }
     try:
         return currency_codes_to_names[code]
