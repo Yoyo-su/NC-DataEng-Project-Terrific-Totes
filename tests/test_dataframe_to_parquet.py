@@ -25,11 +25,11 @@ def test_df_to_parquet_successful_creation_asserting_by_path(mock_datetime,mock_
     fixed_time = datetime(2025, 6, 4, 10,13,0)
     mock_datetime.now.return_value = fixed_time
     table_name = "test_staff"
-    path = f"{table_name}-{fixed_time.isoformat()}.parquet"
+    path = f"/tmp/{table_name}-{fixed_time.isoformat()}.parquet"
 
     result = dataframe_to_parquet(mock_df, table_name)  # returning path from util func
     mock_to_parquet.assert_called_once_with(
-        path, engine="fastparquet", compression="gzip"
+        path, engine="pyarrow", compression="snappy"
     )
     assert result == path
 

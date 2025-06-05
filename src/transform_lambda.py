@@ -417,7 +417,7 @@ def transform_dim_design():
     return design_df
 
 
-def dataframe_to_parquet(df, table_name, compression: str = "gzip"):
+def dataframe_to_parquet(df, table_name, compression: str = "snappy"):
     """
     This function saves a dataframe to a parquet file.
 
