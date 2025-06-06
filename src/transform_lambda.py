@@ -44,14 +44,15 @@ def lambda_handler(event, context):
             df = transform_dim_design()
         elif table == "dim_date":
             fact_sales = transform_fact_sales_order()
-            df = transform_dim_date(fact_sales)
+            if fact_sales:
+                df = transform_dim_date(fact_sales)
         elif table == "fact_sales_order":
             df = transform_fact_sales_order()
         else:
             print(f"No transformation function found for: {table}")
             continue
-
-        key_prefix = f"{table_name}"
-        upload_dataframe_to_s3_parquet(
-            df, table_name, "fscifa-processed-data", key_prefix, s3_client=s3_client
-        )
+        if df:
+            key_prefix = f"{table_name}"
+            upload_dataframe_to_s3_parquet(
+                df, table_name, "fscifa-processed-data", key_prefix, s3_client=s3_client
+            )
