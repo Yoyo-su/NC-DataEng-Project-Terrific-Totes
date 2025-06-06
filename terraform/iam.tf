@@ -156,24 +156,16 @@ resource "aws_iam_policy_attachment" "lambda_code_bucket_policy_attachment" {
 
 resource "aws_iam_role" "state_machine_role" {
   name_prefix        = "role-fscifa-etl-state-machine-"
-  assume_role_policy = <<EOF
-    {
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Effect": "Allow",
-                "Action": [
-                    "sts:AssumeRole"
-                ],
-                "Principal": {
-                    "Service": [
-                        "states.amazonaws.com"
-                    ]
-                }
-            }
-        ]
-    }
-    EOF
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Action = "sts:AssumeRole",
+      Effect = "Allow",
+      Principal = {
+        Service = "states.amazonaws.com"
+      }
+    }]
+  })
 }
 
 
@@ -184,7 +176,7 @@ resource "aws_iam_role_policy_attachment" "state_machine_policy_attachment" {
 
 
 resource "aws_iam_policy" "state_machine_policy" {
-  name_prefix = "policy-currency-state-machine-"
+  name_prefix = "policy-state-machine"
   policy      = data.aws_iam_policy_document.state_machine_role_policy.json
 }
 
@@ -196,7 +188,7 @@ data "aws_iam_policy_document" "state_machine_role_policy" {
       "lambda:InvokeFunction"
     ]
     resources = ["${aws_lambda_function.extract_lambda.arn}:*",
-    "${aws_lambda_function.transform_lambda.arn}:*"]
+    "${aws_lambda_function.transform_lambda.arn}:*", "${aws_lambda_function.load_lambda.arn}:*"]
   }
 }
 
