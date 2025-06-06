@@ -2,7 +2,7 @@ import os
 import pytest
 from moto import mock_aws
 import boto3
-from src.utils.find_most_recent_filename import (
+from src.python.utils.find_most_recent_filename import (
     find_files_with_specified_table_name,
     find_most_recent_file,
     find_most_recent_filename,

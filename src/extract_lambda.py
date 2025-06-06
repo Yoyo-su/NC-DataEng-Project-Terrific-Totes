@@ -1,10 +1,11 @@
 from dotenv import load_dotenv
-import os
 import boto3
 from datetime import datetime
 from utils.extract_db import extract_db
 from utils.json_dumps import dump_to_json
 from utils.insert_into_s3 import upload_json_to_s3
+from db.connection import connect_to_db, close_db
+
 
 
 """ EXTRACT LAMBDA: Includes extract lambda handler and util functions """
