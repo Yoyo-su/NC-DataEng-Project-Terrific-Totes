@@ -1,6 +1,6 @@
 import pytest
 import pandas as pd
-from src.utils.json_to_pd_dataframe import json_to_pd_dataframe
+from src.python.utils.json_to_pd_dataframe import json_to_pd_dataframe
 from moto import mock_aws
 import boto3
 import os

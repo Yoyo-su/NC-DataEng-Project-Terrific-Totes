@@ -1,5 +1,5 @@
 import pytest
-from src.utils.find_currency_name_by_currency_code import (
+from src.python.utils.find_currency_name_by_currency_code import (
     find_currency_name_by_currency_code,
 )
 

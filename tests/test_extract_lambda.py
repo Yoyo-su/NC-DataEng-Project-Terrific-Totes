@@ -1,6 +1,8 @@
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src/python")))
 from src.extract_lambda import lambda_handler
 import pytest
-import os
 from unittest.mock import Mock, patch
 from moto import mock_aws
 import boto3

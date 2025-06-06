@@ -1,5 +1,5 @@
 import pytest
-from src.utils.transform_dimension_tables import (
+from src.python.utils.transform_dimension_tables import (
     transform_dim_location,
     transform_dim_counterparty,
     transform_dim_currency,

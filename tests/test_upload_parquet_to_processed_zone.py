@@ -1,7 +1,7 @@
 import pytest
 from moto import mock_aws
 import boto3
-from src.utils.upload_parquet_to_processed_zone import upload_parquet_to_processed_zone
+from src.python.utils.upload_parquet_to_processed_zone import upload_parquet_to_processed_zone
 from datetime import datetime
 
 
@@ -15,7 +15,7 @@ def s3_client():
 def test_upload_parquet_to_s3(s3_client):
     fixed_time = datetime(2025, 6, 4, 10, 13, 0)
     table_name = "test_staff"
-    path = f"{table_name}-{fixed_time.isoformat()}.parquet"
+    path = f"/tmp/{table_name}-{fixed_time.isoformat()}.parquet"
     s3_client.create_bucket(
         Bucket="test-bucket",
         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
@@ -33,7 +33,7 @@ def test_upload_parquet_to_s3(s3_client):
 def test_upload_parquet_to_s3_error_handling_without_creating_bucket(s3_client):
     fixed_time = datetime(2025, 6, 4, 10, 13, 0)
     table_name = "test_staff"
-    path = f"{table_name}-{fixed_time.isoformat()}.parquet"
+    path = f"/tmp/{table_name}-{fixed_time.isoformat()}.parquet"
     key = f"{table_name}/{path}"
     with pytest.raises(Exception):
         upload_parquet_to_processed_zone(
@@ -47,7 +47,7 @@ def test_upload_parquet_to_s3_error_handling_without_creating_bucket(s3_client):
 def test_upload_parquet_to_s3_using_list_objects(s3_client):
     fixed_time = datetime(2025, 6, 4, 10, 13, 0)
     table_name = "test_staff"
-    path = f"{table_name}-{fixed_time.isoformat()}.parquet"
+    path = f"/tmp/{table_name}-{fixed_time.isoformat()}.parquet"
     s3_client.create_bucket(
         Bucket="test-bucket",
         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},

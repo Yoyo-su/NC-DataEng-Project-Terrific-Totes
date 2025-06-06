@@ -1,6 +1,6 @@
 import pytest
 import pandas as pd
-from src.utils.transform_sales import transform_fact_sales_order, transform_dim_date
+from src.python.utils.transform_sales import transform_fact_sales_order, transform_dim_date
 import os
 from moto import mock_aws
 import boto3
@@ -106,7 +106,7 @@ class TestMakeFactSalesOrderTable:
     @pytest.mark.it(
         "Tests that transform_fact_sales_order raises an exception when given an empty or malformed dataframe"
     )
-    @patch("src.utils.transform_sales.json_to_pd_dataframe")
+    @patch("src.python.utils.transform_sales.json_to_pd_dataframe")
     def test_raises_appropriate_exception_for_malformed_dataframe(
         self, json_to_pd_dataframe, bucket
     ):

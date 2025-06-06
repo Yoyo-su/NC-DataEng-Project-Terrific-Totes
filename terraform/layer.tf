@@ -40,8 +40,7 @@ resource "aws_lambda_layer_version" "extract_layer" {
 data "archive_file" "utils_layer_zip" {
   type        = "zip"
   output_path = "${path.module}/../packages/layers/utils_layer.zip"
-  source_dir  = "${path.module}/../utils/"
-  depends_on = [ null_resource.create_extract_dependencies ]
+  source_dir  = "${path.module}/../src/"
 }
 
 resource "aws_lambda_layer_version" "utils_layer" {

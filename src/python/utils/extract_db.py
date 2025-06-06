@@ -1,4 +1,4 @@
-from utils.db.connection import connect_to_db, close_db
+from db.connection import connect_to_db, close_db
 
 
 def extract_db(table_name, last_updated=None):

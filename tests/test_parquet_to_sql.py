@@ -1,4 +1,4 @@
-from src.utils.parquet_to_sql import fetch_parquet, parquet_to_sql
+from src.python.utils.parquet_to_sql import fetch_parquet, parquet_to_sql
 import pytest
 import os
 import boto3
@@ -91,7 +91,7 @@ class TestFetchParquet:
 
 class TestParquetToSQL:
     @pytest.mark.it("Should return dictionary indicating success")
-    @patch("src.utils.parquet_to_sql.connect_to_db")
+    @patch("src.python.utils.parquet_to_sql.connect_to_db")
     def test_parquet_to_sql_returns_dict_if_succeful(self, mock_connect_to_db):
         mock_conn = Mock()
         mock_conn.run.return_value = []
@@ -101,7 +101,7 @@ class TestParquetToSQL:
         assert result == {"result": "success"}
 
     @pytest.mark.it("Should run expected insert query on db connection ")
-    @patch("src.utils.parquet_to_sql.connect_to_db")
+    @patch("src.python.utils.parquet_to_sql.connect_to_db")
     def test_parquet_to_sql_runs_expected_query(self, mock_connect_to_db):
         mock_conn = Mock()
         mock_conn.run.return_value = []
