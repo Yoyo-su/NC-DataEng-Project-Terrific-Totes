@@ -129,12 +129,12 @@ class TestFindMostRecentFile:
 
     @pytest.mark.it(
         """when passed a bucket that contains a file with the specified table name, but with a different date/time to
-        the last date/time in last_updated.txt, raises exception with appropriate message"""
+        the last date/time in last_updated.txt, returns None"""
     )
-    def test_no_updated_data_for_specified_table(self, bucket):
+    def test_no_updated_data_for_specified_table_returns_none(self, bucket):
         test_list = ["address-2025-05-28T11:06:18.399084.json"]
-        with pytest.raises(Exception, match="No new data for table, address"):
-            find_most_recent_file(test_list, "address", "test_ingest_bucket")
+        result = find_most_recent_file(test_list, "address", "test_ingest_bucket")
+        assert result is None
 
     @pytest.mark.it(
         "when passed an empty list, raises IndexError with appropriate message"
@@ -240,14 +240,14 @@ class TestFindMostRecentFile:
         assert result == "address-2025-05-29T11:06:18.399084.parquet"
 
     @pytest.mark.it(
-        """"when given a parquet file type, raises error if no parquet files"""
+        """"when given a parquet file type, returns None if no parquet files"""
     )
-    def test_raises_error_if_wrong_filetype_given(self, bucket):
+    def test_returns_none_if_no_parquet_file_found_for_table(self, bucket):
         test_files = ["address-2025-05-29T11:06:18.399084.json"]
-        with pytest.raises(Exception):
-            find_most_recent_file(
-                test_files, "address", "test_ingest_bucket", "parquet"
-            )
+        result = find_most_recent_file(
+            test_files, "address", "test_ingest_bucket", "parquet"
+        )
+        assert result is None
 
 
 class TestLoadMostRecentDataFromJson:
