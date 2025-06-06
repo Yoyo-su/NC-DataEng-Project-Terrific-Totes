@@ -73,7 +73,7 @@ def find_most_recent_file(files, table_name, bucket_name, filetype="json"):
         if last_update == file_date_time:
             return most_recent_file
         else:
-            raise Exception(f"No new data for table, {table_name}")
+            print(f"No new data for table, {table_name}")
     except IndexError:
         raise IndexError(
             f"No file containing table, {table_name} is found in the s3 bucket"
