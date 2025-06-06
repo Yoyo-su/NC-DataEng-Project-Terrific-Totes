@@ -37,7 +37,7 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
           "Output" : "{% $states.result.Payload %}",
           "Arguments" : {
             "FunctionName" : aws_lambda_function.transform_lambda.arn,
-            "Payload" : { "result" : "success" }
+            "Payload" : { result : "success" }
           },
           #   "Catch": [ {
           #         "ErrorEquals": ["States.TaskFailed"],
