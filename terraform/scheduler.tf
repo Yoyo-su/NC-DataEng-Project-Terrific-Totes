@@ -8,7 +8,7 @@ resource "aws_scheduler_schedule" "fscifa_etl_schedule" {
 
   schedule_expression = "rate(30 minutes)"
 
-  start_date = "2025-06-06T09:00:00Z"
+  # start_date = "2025-06-06T12:12:00Z"
 
   target {
     arn      = aws_sfn_state_machine.sfn_state_machine.arn
