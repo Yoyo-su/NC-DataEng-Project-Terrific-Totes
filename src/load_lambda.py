@@ -22,7 +22,7 @@ def lambda_handler(event, context):
 
     Raises:
         Exception: if the extraction or the upload fails
-    
+
     """
     bucket = "fscifa-processed-data"
     table_list = [

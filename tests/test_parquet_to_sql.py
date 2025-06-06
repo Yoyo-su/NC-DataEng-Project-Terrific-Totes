@@ -7,7 +7,6 @@ import pandas as pd
 from unittest.mock import Mock, patch
 
 
-
 test_df = pd.DataFrame(
     {
         "sales_order_id": [7, 1],

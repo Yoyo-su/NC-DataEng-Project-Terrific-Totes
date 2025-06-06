@@ -6,7 +6,6 @@ from src.utils.find_most_recent_filename import (
 from src.utils.json_to_pd_dataframe import json_to_pd_dataframe
 
 
-
 def transform_dim_location():
     """
     This function:
@@ -85,6 +84,7 @@ def transform_dim_counterparty():
                     inplace=True,
                 )
         return merge_location_to_counterparty_df
+
 
 def find_currency_name_by_currency_code(code):
     """
@@ -173,7 +173,6 @@ def find_currency_name_by_currency_code(code):
         return currency_codes_to_names[code]
     except KeyError:
         raise KeyError("Currency code not found")
-
 
 
 def transform_dim_currency():
