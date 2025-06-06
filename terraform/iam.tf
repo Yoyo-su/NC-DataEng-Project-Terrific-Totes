@@ -189,7 +189,7 @@ data "aws_iam_policy_document" "state_machine_role_policy" {
     ]
     resources = ["${aws_lambda_function.extract_lambda.arn}:*","${aws_lambda_function.extract_lambda.arn}",
     "${aws_lambda_function.transform_lambda.arn}",
-    "${aws_lambda_function.transform_lambda.arn}:*", "${aws_lambda_function.load_lambda.arn}:*"]
+    "${aws_lambda_function.transform_lambda.arn}:*", "${aws_lambda_function.load_lambda.arn}:*", "${aws_lambda_function.load_lambda.arn}"]
   }
 }
 

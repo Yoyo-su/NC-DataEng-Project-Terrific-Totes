@@ -1,10 +1,15 @@
 import pytest
+import os
+import sys
 import pandas as pd
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src/python"))
+)
 from src.python.utils.transform_sales import (
     transform_fact_sales_order,
     transform_dim_date,
 )
-import os
+
 from moto import mock_aws
 import boto3
 from unittest.mock import patch
@@ -188,6 +193,6 @@ class TestMakeDimDate:
         "Tests that transform_fact_sales_order raises an exception when given an empty or malformed dataframe"
     )
     def test_dim_maker_raises_appropriate_exception_for_malformed_dataframe(self):
-        bad_dataframe = pd.DataFrame({})
-        with pytest.raises(Exception):
+        bad_dataframe = pd.DataFrame({"sales_order_id": [7, 1]})
+        with pytest.raises(Exception): 
             transform_dim_date(bad_dataframe)
