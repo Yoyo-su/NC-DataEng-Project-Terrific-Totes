@@ -1,8 +1,6 @@
 import boto3
 from utils.transform_sales import transform_dim_date, transform_fact_sales_order
 from utils.transform_dimension_tables import transform_dim_counterparty, transform_dim_currency, transform_dim_design, transform_dim_location, transform_dim_staff
-from utils.dataframe_to_parquet import dataframe_to_parquet
-from utils.upload_parquet_to_processed_zone import upload_parquet_to_processed_zone
 from utils.upload_dataframe_to_s3_parquet import upload_dataframe_to_s3_parquet
 
 def lambda_handler(event, context):
