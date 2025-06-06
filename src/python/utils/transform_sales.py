@@ -15,6 +15,7 @@ def transform_fact_sales_order():
     Raises:
         - Exception: a generic exception if an error occurs.
     """
+    global fact_sales_order
     try:
         most_recent_file = find_most_recent_filename("sales_order", "fscifa-raw-data")
         if not most_recent_file:
@@ -82,6 +83,7 @@ def transform_dim_date(fact_sales_order):
         - Exception: a generic exception if an error occurs.
 
     """
+    global dim_date
     try:
         if not fact_sales_order.empty:
             created_date = pd.Series(fact_sales_order["created_date"], name="date_id")

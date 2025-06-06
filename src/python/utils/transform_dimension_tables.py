@@ -22,6 +22,8 @@ def transform_dim_location():
     Returns: nothing (if no new location data), or a dataframe containing new, transformed location data.
 
     """
+    global location_df
+
     most_recent_file = find_most_recent_filename("address", "fscifa-raw-data")
     if not most_recent_file:
         return None
@@ -49,6 +51,7 @@ def transform_dim_counterparty():
     Returns: nothing (if no new counterparty data), or a dataframe containing new, transformed counterparty data.
 
     """
+    global counterparty_df
     most_recent_file = find_most_recent_filename("counterparty", "fscifa-raw-data")
     if not most_recent_file:
         return None
@@ -191,6 +194,7 @@ def transform_dim_currency():
     Returns: nothing (if no new currency data), or a dataframe containing new, transformed currency data.
 
     """
+    global currency_df
     most_recent_file = find_most_recent_filename("currency", "fscifa-raw-data")
     if not most_recent_file:
         return None
@@ -216,6 +220,7 @@ def get_department_data():
     Returns: a dataframe (department_df) containing all department data to date.
 
     """
+    global department_df
     files = find_files_with_specified_table_name("department", "fscifa-raw-data")
     department_df = json_to_pd_dataframe(files[0], "department", "fscifa-raw-data")
     for i in range(1, len(files)):
@@ -243,7 +248,7 @@ def transform_dim_staff():
     Returns: nothing (if no new staff data), or a dataframe containing new, transformed staff data.
 
     """
-
+    global staff_df
     most_recent_file = find_most_recent_filename("staff", "fscifa-raw-data")
     if not most_recent_file:
         return None
@@ -285,6 +290,7 @@ def transform_dim_design():
     Returns: nothing (if no new design data), or a dataframe containing new, transformed design data.
 
     """
+    global design_df
     most_recent_file = find_most_recent_filename("design", "fscifa-raw-data")
     if not most_recent_file:
         return None
