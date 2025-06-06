@@ -22,7 +22,7 @@ tests/data/**.json
 **.parquet
 
 packages/
-dependencies*
+
 *.txt
 !requirements*.txt
 layer/

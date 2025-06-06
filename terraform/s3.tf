@@ -27,12 +27,12 @@ resource "aws_s3_bucket" "code_bucket" {
   }
 }
 resource "aws_s3_object" "lambda_code" {
-  for_each = toset([var.extract_lambda, var.transform_lambda])
+  for_each = toset([var.extract_lambda, var.transform_lambda, var.load_lambda])
   bucket   = aws_s3_bucket.code_bucket.bucket
   key      = "${each.key}/function.zip"
   source   = "${path.module}/../packages/${each.key}/function.zip"
   etag     = filemd5("${path.module}/../packages/${each.key}/function.zip")
-  depends_on = [ data.archive_file.extract_lambda,data.archive_file.transform_lambda ]
+  depends_on = [ data.archive_file.extract_lambda,data.archive_file.transform_lambda, data.archive_file.load_lambda  ]
 }
 
 resource "aws_s3_object" "extract_layer_object" {
@@ -42,6 +42,4 @@ resource "aws_s3_object" "extract_layer_object" {
 
   depends_on = [null_resource.zip_extract_layer]
 }
-
-
 

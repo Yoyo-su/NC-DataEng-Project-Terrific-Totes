@@ -3,7 +3,7 @@ from botocore.exceptions import ClientError
 import pandas as pd
 from datetime import datetime
 import json
-import os
+from io import BytesIO
 
 
 def find_most_recent_filename(table_name, bucket_name):
@@ -417,65 +417,45 @@ def transform_dim_design():
     return design_df
 
 
-def dataframe_to_parquet(df, table_name, compression: str = "gzip"):
+def upload_dataframe_to_s3_parquet(
+    df, table_name, bucket_name, key_prefix, compression="snappy", s3_client=None
+):
     """
-    This function saves a dataframe to a parquet file.
+    Converts a DataFrame to a Parquet file in-memory and uploads it directly to S3.
 
     Args:
-    - df: dataframe of transformed table
-    - table_name: name of the dimensions /fact table
-    - compression: One of ["snappy", "gzip", "brotli", "none"] user choice
+    - df: The pandas DataFrame to upload.
+    - table_name: Logical name of the table (used in filename).
+    - bucket_name: Target S3 bucket.
+    - key_prefix: S3 folder/prefix.
+    - compression: One of ["snappy", "gzip", "brotli", "none"].
+    - s3_client: boto3 S3 client (optional).
 
-    returns: The path of the parquet file
-
+    Returns:
+    - S3 path of the uploaded object.
     """
+
+    if compression not in ["snappy", "gzip", "brotli", "none"]:
+        raise ValueError(f"Invalid compression: {compression}")
+
+    s3_client = boto3.client("s3")
 
     timestamp = datetime.now().isoformat()
-    valid_compressions = ["snappy", "gzip", "brotli", "none"]
-    if compression not in valid_compressions:
-        raise ValueError(f"Invalid compression: {compression}")
-    """compression can be "snappy" => Fast compression, moderate size reduction
-                        "gzip"  => Higher compression ratio, slower compression/decompression
-                        "brotli"=> Very good compression ratio, slower, newer
-                        "none"=> No Compression, larger file size but fastest to read/ write  """
+    filename = f"{table_name}-{timestamp}.parquet"
+    s3_key = f"{key_prefix.rstrip('/')}/{filename}"
+
+    # Write DataFrame to in-memory buffer
+    buffer = BytesIO()
+    df.to_parquet(buffer, engine="pyarrow", compression=compression)
+    buffer.seek(0)
+
+    # Upload in-memory buffer to S3
     try:
-        tmp_dir = "/tmp"
-        filename = f"{table_name}-{timestamp}.parquet"
-        path = os.path.join(tmp_dir, filename)
-
-        df.to_parquet(path, engine="pyarrow", compression=compression)
-        return path
+        s3_client.put_object(Bucket=bucket_name, Key=s3_key, Body=buffer.getvalue())
+        print(f"Uploaded to s3://{bucket_name}/{s3_key}")
+        return f"s3://{bucket_name}/{s3_key}"
     except Exception as e:
-        print(f"Error: {e}")
-        return None
-
-
-def upload_parquet_to_processed_zone(parquet_file, bucket_name, key, s3_client):
-    """
-    This function uploads a Parquet file to a specified location in an S3 bucket.
-
-    Parameters:
-    - parquet_file : str
-        The local path to the Parquet file to be uploaded.
-    - bucket_name : str
-        The name of the target S3 bucket.
-    - key : str
-        The S3 key (path) where the file should be uploaded.
-    - s3_client : boto3.client
-        A Boto3 S3 client object used to perform the upload.
-
-    Returns: (str): A success message indicating the uploaded file path in S3.
-
-    Raises: Exception: Propagates any exception raised during the upload process.
-
-    """
-
-    try:
-        s3_client.upload_file(parquet_file, bucket_name, key)
-        print(f"Successfully uploaded {key} to s3://{bucket_name}/{key}")
-        return f"Successfully uploaded {key} to s3://{bucket_name}/{key}"
-    except Exception as e:
-        print(f"Failed to up: {e}")
+        print(f"Upload failed: {e}")
         raise e
 
 
@@ -641,12 +621,8 @@ def lambda_handler(event, context):
         else:
             print(f"No transformation function found for: {table}")
             continue
-        parquet_file = dataframe_to_parquet(df, table_name)
-        key = f"{table_name}/{parquet_file}"
-        if parquet_file:
-            upload_parquet_to_processed_zone(
-                parquet_file=parquet_file,
-                bucket_name="fscifa-processed-data",
-                key=key,
-                s3_client=s3_client,
-            )
+
+        key_prefix = f"{table_name}"
+        upload_dataframe_to_s3_parquet(
+            df, table_name, "fscifa-processed-data", key_prefix, s3_client=s3_client
+        )

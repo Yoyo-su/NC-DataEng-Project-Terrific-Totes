@@ -7,6 +7,11 @@ variable "transform_lambda" {
   default = "transform_lambda"
   
 }
+variable "load_lambda" {
+  type    = string
+  default = "load_lambda"
+  
+}
 variable "lambda_functions" {
   type    = list(string)
   default = ["extract_lambda", "transform_lambda"]

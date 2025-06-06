@@ -68,7 +68,9 @@ def bucket(aws_creds, s3_resource):
                 }
             ]
             }"""
-        with open("tests/data/sales_order-2025-05-29T11:06:18.399084.json", "w") as file:
+        with open(
+            "tests/data/sales_order-2025-05-29T11:06:18.399084.json", "w"
+        ) as file:
             file.write(test_sales_data)
         bucket.upload_file(
             "tests/data/sales_order-2025-05-29T11:06:18.399084.json",

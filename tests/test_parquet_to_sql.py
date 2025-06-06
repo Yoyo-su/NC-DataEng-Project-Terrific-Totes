@@ -7,11 +7,10 @@ import pandas as pd
 from unittest.mock import Mock, patch
 
 
-
 test_df = pd.DataFrame(
     {
         "sales_order_id": [7, 1],
-        "sales_staff_id": [666, 69],
+        "staff": ['hello', 'wo\'rld'],
         "counterparty_id": [420, 13],
         "currency_id": [1, 3],
     }
@@ -110,5 +109,5 @@ class TestParquetToSQL:
         parquet_to_sql(table_name, test_df)
         assert mock_conn.run.called  # Ensure .run() was called
         mock_conn.run.assert_called_with(
-            "INSERT INTO dim_staff (sales_order_id, sales_staff_id, counterparty_id, currency_id) VALUES(7, 666, 420, 1), (1, 69, 13, 3);"
+            "INSERT INTO dim_staff (sales_order_id, staff, counterparty_id, currency_id) VALUES(7, hello, 420, 1), (1, wo''rld, 13, 3);"
         )  # Ensure expected query was run

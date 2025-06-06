@@ -79,7 +79,7 @@ def find_currency_name_by_currency_code(code):
         "SYP": "Syrian pound",
         "TZS": "Tanzanian shilling",
         "TOP": "Tongan paanga",
-        "TTD": "Trinidad and Tobago dollar"
+        "TTD": "Trinidad and Tobago dollar",
     }
     try:
         return currency_codes_to_names[code]

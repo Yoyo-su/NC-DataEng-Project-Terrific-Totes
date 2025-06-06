@@ -21,7 +21,6 @@ resource "null_resource" "zip_extract_layer" {
   depends_on = [null_resource.create_extract_dependencies]
 }
 
-
 # Extract Layer Archive
 data "archive_file" "extract_layer_zip" {
   type        = "zip"
@@ -29,7 +28,6 @@ data "archive_file" "extract_layer_zip" {
   source_dir  = "${path.module}/../dependencies_extract/"
   depends_on = [ null_resource.create_extract_dependencies ]
 }
-
 
 resource "aws_lambda_layer_version" "extract_layer" {
   layer_name = "extract-deps-layer"
