@@ -86,6 +86,15 @@ resource "aws_lambda_function" "load_lambda" {
     aws_lambda_layer_version.db_layer.arn, "arn:aws:lambda:eu-west-2:336392948345:layer:AWSSDKPandas-Python313:2", aws_lambda_layer_version.utils_layer.arn
   ]
   depends_on = [aws_s3_object.lambda_code, aws_s3_object.utils_layer_object, aws_s3_object.db_layer_object]
+  environment {
+      variables = {
+        DW_HOST     = var.dw_host
+        PG_PORT     = var.pg_port
+        PG_USER     = var.pg_user
+        DW_PASSWORD = var.dw_password
+        DW_DATABASE = var.dw_database
+      }
+}
 }
 
 
