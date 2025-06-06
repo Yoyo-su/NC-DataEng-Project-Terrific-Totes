@@ -32,7 +32,7 @@ def lambda_handler(event, context):
     ]
 
     s3_client = boto3.client("s3")
-    timestamp = datetime.now().isoformat()
+    timestamp = datetime.now().isoformat(timespec="minutes")
     for table in table_list:
         table_name = table
         if table == "dim_location":
