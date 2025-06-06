@@ -4,14 +4,13 @@ from datetime import datetime
 from utils.extract_db import extract_db
 from utils.json_dumps import dump_to_json
 from utils.insert_into_s3 import upload_json_to_s3
-from db.connection import connect_to_db, close_db
-
 
 
 """ EXTRACT LAMBDA: Includes extract lambda handler and util functions """
 
 
 load_dotenv()
+
 
 def lambda_handler(event, context):
     """Lambda handler that extracts data from a list of database tables (dbtables) and puts each table as a json inside an S3 bucket

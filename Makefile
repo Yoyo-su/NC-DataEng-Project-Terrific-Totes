@@ -54,11 +54,11 @@ security-test:
 
 ## Run the black code check
 run-black:
-	$(BLACK) ./src ./tests ./db
+	$(BLACK) ./src ./tests
 
 ## Run the unit tests
 unit-test:
-	$(PYTEST) -vv --ignore=layer/python --ignore=dependencies_extract/python
+	$(PYTEST) -vv --ignore=layer/python --ignore=dependencies_db/python
 
 ## Run the coverage check
 check-coverage:
@@ -66,7 +66,7 @@ check-coverage:
 
 ## Run lint
 lint:
-	$(FLAKE8) . --max-line-length=150 --exclude=.git,__pycache__,./venv,./layer,./dependencies_extract --ignore=E203,W503
+	$(FLAKE8) . --max-line-length=150 --exclude=.git,__pycache__,./venv,./layer,./dependencies_db --ignore=E203,W503,E402
 
 ## Run audit
 audit:

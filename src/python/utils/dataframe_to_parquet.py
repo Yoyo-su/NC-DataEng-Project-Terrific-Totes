@@ -1,5 +1,5 @@
 from datetime import datetime
-import os 
+import os
 
 """Saves a dataframe to parquet file
 

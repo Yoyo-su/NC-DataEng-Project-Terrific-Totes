@@ -1,10 +1,12 @@
 import sys
 import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src/python")))
 from unittest.mock import Mock, patch
 import pytest
-from src.python.utils.extract_db import extract_db
 import datetime
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src/python"))
+)
+from src.python.utils.extract_db import extract_db
 
 """Tests for the extract_db util function"""
 

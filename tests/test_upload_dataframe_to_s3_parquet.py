@@ -2,7 +2,9 @@ import pytest
 import pandas as pd
 from moto import mock_aws
 import boto3
-from src.python.utils.upload_dataframe_to_s3_parquet import upload_dataframe_to_s3_parquet
+from src.python.utils.upload_dataframe_to_s3_parquet import (
+    upload_dataframe_to_s3_parquet,
+)
 
 
 @pytest.fixture

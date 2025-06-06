@@ -22,7 +22,7 @@ def upload_parquet_to_processed_zone(parquet_file, bucket_name, key, s3_client):
     ------
     Exception
     Propagates any exception raised during the upload process.
-    
+
     """
 
     try:

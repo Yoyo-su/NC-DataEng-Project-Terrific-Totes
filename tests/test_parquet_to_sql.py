@@ -10,7 +10,7 @@ from unittest.mock import Mock, patch
 test_df = pd.DataFrame(
     {
         "sales_order_id": [7, 1],
-        "staff": ['hello', 'wo\'rld'],
+        "staff": ["hello", "wo'rld"],
         "counterparty_id": [420, 13],
         "currency_id": [1, 3],
     }

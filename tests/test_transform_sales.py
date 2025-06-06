@@ -1,6 +1,9 @@
 import pytest
 import pandas as pd
-from src.python.utils.transform_sales import transform_fact_sales_order, transform_dim_date
+from src.python.utils.transform_sales import (
+    transform_fact_sales_order,
+    transform_dim_date,
+)
 import os
 from moto import mock_aws
 import boto3
