@@ -1,4 +1,4 @@
-# Extract Dependencies (e.g.,pg8000,dotenv etc.)
+# db Dependencies (e.g.,pg8000,dotenv etc.)
 resource "null_resource" "create_dependencies_db" {
   provisioner "local-exec" {
     command =  "mkdir -p ${path.module}/../dependencies_db/python && pip install -r ${path.module}/../requirements_db.txt -t ${path.module}/../dependencies_db/python"
@@ -6,7 +6,7 @@ resource "null_resource" "create_dependencies_db" {
   }
 
   triggers = {
-    extract = filemd5("${path.module}/../requirements_extract.txt")
+    db_requirements = filemd5("${path.module}/../requirements_db.txt")
   }
 }
 resource "null_resource" "zip_db_layer" {
@@ -21,7 +21,7 @@ resource "null_resource" "zip_db_layer" {
   depends_on = [null_resource.create_dependencies_db]
 }
 
-# Extract Layer Archive
+# db Layer Archive
 data "archive_file" "db_layer_zip" {
   type        = "zip"
   output_path = "${path.module}/../packages/layers/db_layer.zip"
