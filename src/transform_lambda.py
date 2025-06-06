@@ -1,6 +1,6 @@
 import boto3
 from datetime import datetime
-from python.utils.insert_into_s3 import upload_json_to_s3
+from utils.insert_into_s3 import upload_json_to_s3
 from utils.transform_sales import transform_dim_date, transform_fact_sales_order
 from utils.transform_dimension_tables import (
     transform_dim_counterparty,
@@ -10,7 +10,6 @@ from utils.transform_dimension_tables import (
     transform_dim_staff,
 )
 from utils.upload_dataframe_to_s3_parquet import upload_dataframe_to_s3_parquet
-from utils.insert_into_s3 import upload_json_to_s3
 
 
 def lambda_handler(event, context):
@@ -23,7 +22,6 @@ def lambda_handler(event, context):
     """
 
     table_list = [
-        
         "dim_staff",
         "dim_location",
         "dim_design",
@@ -60,5 +58,5 @@ def lambda_handler(event, context):
             upload_dataframe_to_s3_parquet(
                 df, table_name, "fscifa-processed-data", key_prefix, s3_client=s3_client
             )
-    upload_json_to_s3(timestamp, "fscifa-processed-data", "last_updated.txt",s3_client)
-    return {"result":"success"}
+    upload_json_to_s3(timestamp, "fscifa-processed-data", "last_updated.txt", s3_client)
+    return {"result": "success"}

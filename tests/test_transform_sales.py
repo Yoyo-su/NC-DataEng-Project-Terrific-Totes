@@ -2,6 +2,7 @@ import pytest
 import os
 import sys
 import pandas as pd
+
 sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src/python"))
 )
@@ -194,5 +195,5 @@ class TestMakeDimDate:
     )
     def test_dim_maker_raises_appropriate_exception_for_malformed_dataframe(self):
         bad_dataframe = pd.DataFrame({"sales_order_id": [7, 1]})
-        with pytest.raises(Exception): 
+        with pytest.raises(Exception):
             transform_dim_date(bad_dataframe)
