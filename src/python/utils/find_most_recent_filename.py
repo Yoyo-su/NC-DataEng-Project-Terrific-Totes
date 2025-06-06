@@ -74,6 +74,7 @@ def find_most_recent_file(files, table_name, bucket_name, filetype="json"):
             return most_recent_file
         else:
             print(f"No new data for table, {table_name}")
+            return None
     except IndexError:
         raise IndexError(
             f"No file containing table, {table_name} is found in the s3 bucket"
