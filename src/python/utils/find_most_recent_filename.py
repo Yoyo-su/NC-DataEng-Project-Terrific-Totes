@@ -66,7 +66,7 @@ def find_most_recent_file(files, table_name, bucket_name, filetype="json"):
         if filetype == "json":
             file_date_time = most_recent_file[len(table_name) + 1 : -5]
         elif filetype == "parquet":
-            file_date_time = most_recent_file[len(table_name) + 1 : -8]
+            file_date_time = most_recent_file[len(table_name) + 1 : len(table_name) + 1 + 16]
         s3 = boto3.resource("s3")
         last_updated_file = s3.Object(bucket_name, "last_updated.txt")
         last_update = last_updated_file.get()["Body"].read().decode("utf-8")
