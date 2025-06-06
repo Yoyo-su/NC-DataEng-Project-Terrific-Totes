@@ -11,7 +11,7 @@ resource "null_resource" "create_dependencies_db" {
 }
 resource "null_resource" "zip_db_layer" {
   provisioner "local-exec" {
-    command = "cd ${path.module}/../dependencies_db && zip -r ../packages/layers/db_layer.zip ."
+    command = "cd ${path.module}/../dependencies_db && zip -r ../packages/layers/db_layer.zip"
   }
 
   triggers = {
