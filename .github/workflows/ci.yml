@@ -70,6 +70,9 @@ jobs:
           TF_VAR_pg_user: ${{ secrets.TF_VAR_PG_USER }}
           TF_VAR_pg_database: ${{ secrets.TF_VAR_PG_DATABASE }}
           TF_VAR_pg_password: ${{ secrets.TF_VAR_PG_PASSWORD }}
+          TF_VAR_dw_host: ${{ secrets.TF_VAR_DW_HOST }}
+          TF_VAR_dw_database: ${{ secrets.TF_VAR_DW_DATABASE }}
+          TF_VAR_dw_password: ${{ secrets.TF_VAR_DW_PASSWORD }}
       - name: Terraform Apply
         working-directory: terraform
         run: terraform apply -auto-approve
@@ -79,3 +82,6 @@ jobs:
           TF_VAR_pg_user: ${{ secrets.TF_VAR_PG_USER }}
           TF_VAR_pg_database: ${{ secrets.TF_VAR_PG_DATABASE }}
           TF_VAR_pg_password: ${{ secrets.TF_VAR_PG_PASSWORD }}
+          TF_VAR_dw_host: ${{ secrets.TF_VAR_DW_HOST }}
+          TF_VAR_dw_database: ${{ secrets.TF_VAR_DW_DATABASE }}
+          TF_VAR_dw_password: ${{ secrets.TF_VAR_DW_PASSWORD }}
