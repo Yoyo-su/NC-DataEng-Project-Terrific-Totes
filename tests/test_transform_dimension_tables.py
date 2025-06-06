@@ -6,6 +6,7 @@ from src.python.utils.transform_dimension_tables import (
     transform_dim_staff,
     transform_dim_design,
     get_department_data,
+    get_sales_delivery_location_data
 )
 from moto import mock_aws
 import boto3
@@ -35,16 +36,75 @@ def bucket(aws_creds, s3_resource):
         )
         bucket = s3_resource.Bucket("fscifa-raw-data")
         # add folder structure to mock bucket to imitate actual bucket folder structure:
+        bucket.put_object(Key="sales_order/")
         bucket.put_object(Key="address/")
         bucket.put_object(Key="counterparty/")
         bucket.put_object(Key="currency/")
-        bucket.put_object(Key="staff/")
         bucket.put_object(Key="department/")
+        bucket.put_object(Key="staff/")
         bucket.put_object(Key="design/")
         # add last_updated txt to the mock bucket:
         with open("tests/data/last_updated.txt", "w") as file:
             file.write("2025-05-29T11:06:18.399084")
         bucket.upload_file("tests/data/last_updated.txt", "last_updated.txt")
+        # add test sales_order data to the mock bucket:
+        test_sales_order_data_1 = """{"sales_order": [
+                        {"sales_order_id": 1,
+                        "created_at": "2025-05-29T11:05:00.399084",
+                        "last_updated": "2025-05-29T11:05:30.399084",
+                        "design_id": 1,
+                        "staff_id": 1,
+                        "counterparty_id": 1,
+                        "units_sold": 20,
+                        "unit_price": 5,
+                        "currency_id": 1,
+                        "agreed_delivery_date": "2025-05-20",
+                        "agreed_payment_date": "2025-05-21",
+                        "agreed_delivery_location_id": 1}]}"""
+        test_sales_order_data_2 = """{"sales_order": [
+                        {"sales_order_id": 2,
+                        "created_at": "2025-05-29T11:05:00.399084",
+                        "last_updated": "2025-05-29T11:05:30.399084",
+                        "design_id": 1,
+                        "staff_id": 1,
+                        "counterparty_id": 1,
+                        "units_sold": 25,
+                        "unit_price": 8,
+                        "currency_id": 1,
+                        "agreed_delivery_date": "2025-05-20",
+                        "agreed_payment_date": "2025-05-21",
+                        "agreed_delivery_location_id": 1}]}"""
+        test_sales_order_data_3 = """{"sales_order": [
+                        {"sales_order_id": 2,
+                        "created_at": "2025-05-29T11:05:00.399084",
+                        "last_updated": "2025-05-29T11:05:30.399084",
+                        "design_id": 1,
+                        "staff_id": 1,
+                        "counterparty_id": 1,
+                        "units_sold": 15,
+                        "unit_price": 4,
+                        "currency_id": 1,
+                        "agreed_delivery_date": "2025-05-20",
+                        "agreed_payment_date": "2025-05-21",
+                        "agreed_delivery_location_id": 2}]}"""
+        with open("tests/data/sales_order-2025-05-29T10:06:18.399084.json", "w") as file:
+            file.write(test_sales_order_data_1)
+        bucket.upload_file(
+            "tests/data/sales_order-2025-05-29T10:06:18.399084.json",
+            "sales_order/sales_order-2025-05-29T10:06:18.399084.json",
+        )
+        with open("tests/data/sales_order-2025-05-29T10:36:18.399084.json", "w") as file:
+            file.write(test_sales_order_data_2)
+        bucket.upload_file(
+            "tests/data/sales_order-2025-05-29T10:36:18.399084.json",
+            "sales_order/sales_order-2025-05-29T10:36:18.399084.json",
+        )
+        with open("tests/data/sales_order-2025-05-29T11:06:18.399084.json", "w") as file:
+            file.write(test_sales_order_data_3)
+        bucket.upload_file(
+            "tests/data/sales_order-2025-05-29T11:06:18.399084.json",
+            "sales_order/sales_order-2025-05-29T11:06:18.399084.json",
+        )
         # add test address data to the mock bucket:
         test_address_data = """{"address": [
                         {"address_id": 1,
@@ -178,6 +238,33 @@ def bucket(aws_creds, s3_resource):
         return bucket
 
 
+class TestGetSalesDeliveryLocationData:
+    @pytest.mark.it(
+        "test that get_sales_delivery_location_data returns a dataframe with correct column"
+    )
+    def test_returns_sales_location_df_with_correct_column(self, bucket):
+        result = get_sales_delivery_location_data()
+        assert len(result.columns) == 1
+        assert "agreed_delivery_location_id" in list(result.columns)
+
+    @pytest.mark.it(
+        """test that get_sales_delivery_location_data, when passed with a bucket that
+        contains three files of data, two related to the same delivery address, does not return 
+        duplicate rows (so will only return 2 rows in the dataframe)"""
+    )
+    def test_location_df_not_empty(self, bucket):
+        result = get_sales_delivery_location_data()
+        assert len(result) == 2
+
+    @pytest.mark.it(
+        "test that transform_dim_location returns a dataframe containing correct data"
+    )
+    def test_location_df_not_empty(self, bucket):
+        result = get_sales_delivery_location_data()
+        assert result.isin([1]).any().any()
+        assert result.isin([2]).any().any()
+
+
 class TestTransformDimLocation:
     @pytest.mark.it(
         "test that transform_dim_location returns a dataframe with correct columns"
@@ -249,13 +336,10 @@ class TestGetDepartmentData:
     )
     def test_returns_department_df_with_correct_columns(self, bucket):
         result = get_department_data()
-        assert len(list(result.columns)) == 6
+        assert len(list(result.columns)) == 3
         assert "department_id" in list(result.columns)
         assert "department_name" in list(result.columns)
         assert "location" in list(result.columns)
-        assert "manager" in list(result.columns)
-        assert "created_at" in list(result.columns)
-        assert "last_updated" in list(result.columns)
 
     @pytest.mark.it(
         "test that get_department_data returns a non-empty dataframe with 2 rows"

@@ -23,20 +23,15 @@ def get_sales_delivery_location_data():
     """
     files = find_files_with_specified_table_name("sales_order", "fscifa-raw-data")
     sales_location_df = json_to_pd_dataframe(files[0], "sales_order", "fscifa-raw-data")
-    sales_location_df.drop(
-        ["created_at", "last_updated", "design_id", "staff_id", "counterparty_id", "units_sold", "unit_price", "currency_id", "agreed_delivery_date", "agreed_payment_date"],
-        axis=1,
-        inplace=True,
-        )
     for i in range(1, len(files)):
         additional_df = json_to_pd_dataframe(files[i], "sales_order", "fscifa-raw-data")
-        additional_df.drop(
-            ["created_at", "last_updated", "design_id", "staff_id", "counterparty_id", "units_sold", "unit_price", "currency_id", "agreed_delivery_date", "agreed_payment_date"],
+        sales_location_df = pd.concat([sales_location_df, additional_df], axis=0)
+    sales_location_df.drop(
+            ["sales_order_id", "created_at", "last_updated", "design_id", "staff_id", "counterparty_id", "units_sold", "unit_price", "currency_id", "agreed_delivery_date", "agreed_payment_date"],
             axis=1,
             inplace=True,
         )
-        sales_location_df = pd.concat([sales_location_df, additional_df], axis=0)
-
+    sales_location_df.drop_duplicates()
     return sales_location_df
 
 
@@ -50,6 +45,7 @@ def transform_dim_location():
     - left merge address data into sales_location_df (obtained by invoking get_sales_delivery_location_data) to create dim_location_df
     - address_id column of dim_location_df is renamed to location_id, to match specification
     - columns, "created_at" and "last_updated" are dropped from dim_location_df, to match specification
+    - drops duplicate rows from dim_location_df (which may appear if there are multiple sales delivered to the same address)
     - transformed dim_location_df (dataframe) is returned
 
     Arguments: no arguments.
@@ -71,8 +67,9 @@ def transform_dim_location():
             right_on="address_id",
             how="left"
         )
-        dim_location_df.rename(columns={"address_id": "location_id"}, inplace=True)
-        dim_location_df.drop(["created_at", "last_updated"], axis=1, inplace=True)
+        dim_location_df.rename(columns={"agreed_delivery_location_id": "location_id"}, inplace=True)
+        dim_location_df.drop(["created_at", "last_updated", "address_id"], axis=1, inplace=True)
+        dim_location_df.drop_duplicates()
         return dim_location_df 
     
 
@@ -97,10 +94,11 @@ def transform_dim_counterparty():
 
     """
     global counterparty_df
-    most_recent_file = find_most_recent_filename("counterparty", "fscifa-raw-data")
-    if most_recent_file:
+    most_recent_counterparty_file = find_most_recent_filename("counterparty", "fscifa-raw-data")
+    most_recent_address_file = find_most_recent_filename("address", "fscifa-raw-data")
+    if most_recent_counterparty_file:
         counterparty_df = json_to_pd_dataframe(
-            most_recent_file, "counterparty", "fscifa-raw-data"
+            most_recent_counterparty_file, "counterparty", "fscifa-raw-data"
         )
         counterparty_df.drop(
             ["created_at", "last_updated", "delivery_contact", "commercial_contact"],
@@ -108,10 +106,10 @@ def transform_dim_counterparty():
             inplace=True,
         )
         location_df = json_to_pd_dataframe(
-            most_recent_file, "address", "fscifa-raw-data"
+            most_recent_address_file, "address", "fscifa-raw-data"
         )
         location_df.drop(
-            ["created_at", "last_updated", "address_line_1", "address_line_2", "district", "city", "postal_code", "country", "phone"],
+            ["created_at", "last_updated"],
             axis=1,
             inplace=True,
         )    
@@ -265,6 +263,8 @@ def get_department_data():
     - assigns this list of json files to variable, files
     - creates a dataframe (department_df) out of the first json file in the list, by calling json_to_pd_dataframe
     - loops through remaining json files in list, and creates a dataframe for each (additional_df), and appends these dataframes to department_df
+    - columns "manager", "created_at" and "last_updated" are dropped from department_df, to match specification
+    - drop duplicate rows from department_df (so we only have one row for each department_id)
     - returns department_df
 
     Arguments: no arguments.
@@ -278,6 +278,12 @@ def get_department_data():
     for i in range(1, len(files)):
         additional_df = json_to_pd_dataframe(files[i], "department", "fscifa-raw-data")
         department_df = pd.concat([department_df, additional_df], axis=0)
+    department_df.drop(
+        ["manager", "created_at", "last_updated"],
+        axis=1,
+        inplace=True,
+    )
+    department_df.drop_duplicates()
     return department_df
 
 
@@ -288,10 +294,8 @@ def transform_dim_staff():
     - check whether this returns a file name string (will be the case if new data has been added to the staff table in the totesys database)
     - if an exception is raised, transform_dim_staff returns nothing (because there is no new data to be transformed)
     - otherwise, json_to_pd_dataframe is invoked, which returns a dataframe for new staff data, staff_df
-    - create department_df by invoking get_department_data
-    - columns "manager", "created_at" and "last_updated" are dropped from department_df, to match specification
     - columns "created_at" and "last_updated" are dropped from staff_df, to match specification
-    - staff_df is left merged with department_df on depatment_id, to add location data for each staff member
+    - staff_df is left merged with department_df (created by invoking get_department_data) on depatment_id, to add location data for each staff member
     - column, "department_id" is dropped from staff_df, to match specification
     - transformed staff_df (dataframe) is returned
 
@@ -302,22 +306,15 @@ def transform_dim_staff():
     """
     global staff_df
     most_recent_file = find_most_recent_filename("staff", "fscifa-raw-data")
-    if not most_recent_file:
-        return None
-    staff_df = json_to_pd_dataframe(most_recent_file, "staff", "fscifa-raw-data")
-    department_df = get_department_data()
-    department_df.drop(
-        ["manager", "created_at", "last_updated"],
-        axis=1,
-        inplace=True,
-    )
+    if most_recent_file:
+        staff_df = json_to_pd_dataframe(most_recent_file, "staff", "fscifa-raw-data")
     staff_df.drop(
         ["created_at", "last_updated"],
         axis=1,
         inplace=True,
     )
     merge_staff_to_department_df = pd.merge(
-        staff_df, department_df, on="department_id", how="left"
+        staff_df, get_department_data(), on="department_id", how="left"
     )
     merge_staff_to_department_df.drop(
         ["department_id"],
