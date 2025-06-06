@@ -42,7 +42,7 @@ def bucket(aws_creds, s3_resource):
 
         # add last_updated txt to the mock bucket:
         with open("tests/data/last_updated.txt", "w") as file:
-            file.write("2025-05-29T11:06:18.399084")
+            file.write("2025-05-29T11:06")
         bucket.upload_file("tests/data/last_updated.txt", "last_updated.txt")
 
         # add parquet file to mock bucket

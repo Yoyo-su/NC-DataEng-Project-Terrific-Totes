@@ -32,15 +32,22 @@ def s3_resource(aws_creds):
 
 
 @pytest.fixture()
-def bucket(aws_creds, s3_resource):
+def bucket(request, aws_creds, s3_resource):
+    file_type = getattr(request, "param", "json")
     with mock_aws():
+
         s3_resource.create_bucket(
             Bucket="test_ingest_bucket",
             CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
         )
         bucket = s3_resource.Bucket("test_ingest_bucket")
+        if file_type == "parquet":
+            last_updated_value = "2025-05-29T11:06"
+        else:  # parquet
+            last_updated_value = "2025-05-29T11:06:18.399084"
+
         with open("tests/data/last_updated.txt", "w") as file:
-            file.write("2025-05-29T11:06:18.399084")
+            file.write(last_updated_value)
         bucket.upload_file("tests/data/last_updated.txt", "last_updated.txt")
         bucket.put_object(Key="address/")
         bucket.put_object(Key="payments/")
@@ -231,9 +238,11 @@ class TestFindMostRecentFile:
             == "address-2025-05-29T11:06:18.399084.json"
         )
 
+    @pytest.mark.parametrize("bucket", ["parquet"], indirect=True)
     @pytest.mark.it(""""when given a parquet file type, returns parquet file""")
     def test_returns_most_recent_parquet_if_parquet_filetype_specified(self, bucket):
         test_files = ["address-2025-05-29T11:06:18.399084.parquet"]
+
         result = find_most_recent_file(
             test_files, "address", "test_ingest_bucket", "parquet"
         )
