@@ -23,13 +23,14 @@ def lambda_handler(event, context):
     """
 
     table_list = [
-        "fact_sales_order",
+        
         "dim_staff",
         "dim_location",
         "dim_design",
         "dim_date",
         "dim_currency",
         "dim_counterparty",
+        "fact_sales_order",
     ]
 
     s3_client = boto3.client("s3")
@@ -54,7 +55,7 @@ def lambda_handler(event, context):
         else:
             print(f"No transformation function found for: {table}")
             continue
-        if not df.empty:
+        if df is not None:
             key_prefix = f"{table_name}"
             upload_dataframe_to_s3_parquet(
                 df, table_name, "fscifa-processed-data", key_prefix, s3_client=s3_client

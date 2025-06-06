@@ -85,7 +85,7 @@ def transform_dim_date(fact_sales_order):
     """
     global dim_date
     try:
-        if not fact_sales_order.empty:
+        if fact_sales_order is not None:
             created_date = pd.Series(fact_sales_order["created_date"], name="date_id")
             last_updated_date = pd.Series(
                 fact_sales_order["last_updated_date"], name="date_id"
