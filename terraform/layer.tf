@@ -1,7 +1,7 @@
 # Extract Dependencies (e.g.,pg8000,dotenv etc.)
-resource "null_resource" "create_extract_dependencies" {
+resource "null_resource" "create_dependencies_db" {
   provisioner "local-exec" {
-    command =  "mkdir -p ${path.module}/../dependencies_extract/python && pip install -r ${path.module}/../requirements_extract.txt -t ${path.module}/../dependencies_extract/python"
+    command =  "mkdir -p ${path.module}/../dependencies_db/python && pip install -r ${path.module}/../requirements_db.txt -t ${path.module}/../dependencies_db/python"
 
   }
 
@@ -9,30 +9,30 @@ resource "null_resource" "create_extract_dependencies" {
     extract = filemd5("${path.module}/../requirements_extract.txt")
   }
 }
-resource "null_resource" "zip_extract_layer" {
+resource "null_resource" "zip_db_layer" {
   provisioner "local-exec" {
-    command = "cd ${path.module}/../dependencies_extract && zip -r ../packages/layers/extract_layer.zip ."
+    command = "cd ${path.module}/../dependencies_db && zip -r ../packages/layers/db_layer.zip ."
   }
 
   triggers = {
     zipped = timestamp()
   }
 
-  depends_on = [null_resource.create_extract_dependencies]
+  depends_on = [null_resource.create_dependencies_db]
 }
 
 # Extract Layer Archive
-data "archive_file" "extract_layer_zip" {
+data "archive_file" "db_layer_zip" {
   type        = "zip"
-  output_path = "${path.module}/../packages/layers/extract_layer.zip"
-  source_dir  = "${path.module}/../dependencies_extract/"
-  depends_on = [ null_resource.create_extract_dependencies ]
+  output_path = "${path.module}/../packages/layers/db_layer.zip"
+  source_dir  = "${path.module}/../dependencies_db/"
+  depends_on = [ null_resource.create_dependencies_db ]
 }
 
-resource "aws_lambda_layer_version" "extract_layer" {
-  layer_name = "extract-deps-layer"
-  s3_bucket  = aws_s3_object.extract_layer_object.bucket
-  s3_key     = aws_s3_object.extract_layer_object.key
+resource "aws_lambda_layer_version" "db_layer" {
+  layer_name = "db-deps-layer"
+  s3_bucket  = aws_s3_object.db_layer_object.bucket
+  s3_key     = aws_s3_object.db_layer_object.key
   
 }
 
