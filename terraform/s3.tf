@@ -35,12 +35,12 @@ resource "aws_s3_object" "lambda_code" {
   depends_on = [ data.archive_file.extract_lambda,data.archive_file.transform_lambda, data.archive_file.load_lambda  ]
 }
 
-resource "aws_s3_object" "extract_layer_object" {
+resource "aws_s3_object" "db_layer_object" {
   bucket = aws_s3_bucket.code_bucket.bucket
-  key    = "layers/extract_layer.zip"
-  source = "${path.module}/../packages/layers/extract_layer.zip"
+  key    = "layers/db_layer.zip"
+  source = "${path.module}/../packages/layers/db_layer.zip"
 
-  depends_on = [null_resource.zip_extract_layer]
+  depends_on = [null_resource.zip_db_layer]
 }
 
 resource "aws_s3_object" "utils_layer_object" {
