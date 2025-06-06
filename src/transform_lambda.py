@@ -20,13 +20,14 @@ def lambda_handler(event, context):
     """
 
     table_list = [
-        "fact_sales_order",
+        
         "dim_staff",
         "dim_location",
         "dim_design",
         "dim_date",
         "dim_currency",
         "dim_counterparty",
+        "fact_sales_order",
     ]
 
     s3_client = boto3.client("s3")
