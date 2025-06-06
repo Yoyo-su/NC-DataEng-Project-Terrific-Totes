@@ -1,21 +1,56 @@
 import pandas as pd
-from utils.find_most_recent_filename import (
+from src.python.utils.find_most_recent_filename import (
     find_most_recent_filename,
     find_files_with_specified_table_name,
 )
-from utils.json_to_pd_dataframe import json_to_pd_dataframe
+from src.python.utils.json_to_pd_dataframe import json_to_pd_dataframe
+
+def get_sales_delivery_location_data():
+    """ 
+    This function:
+    - calls find_files_with_specified_table_name, which returns a list of json files from sales_order folder of s3 bucket, fscifa-raw-data
+    - assigns this list of json files to variable, files
+    - creates a dataframe (sales_location_df) out of the first json file in the list, by calling json_to_pd_dataframe
+    - drops all columns of the sales_location_df except for agreed_delivery_location_id 
+    - loops through remaining json files in list, creates a dataframe for each (additional_df), drops all columns except agreed_delivery_location_id, 
+      appends additional dataframes to sales_location_df
+    - returns sales_location_df
+
+    Arguments: no arguments.
+
+    Returns: a single column dataframe (sales_location_df) containing all agreed_delivery_location_ids.
+
+    """
+    files = find_files_with_specified_table_name("sales_order", "fscifa-raw-data")
+    sales_location_df = json_to_pd_dataframe(files[0], "sales_order", "fscifa-raw-data")
+    sales_location_df.drop(
+        ["created_at", "last_updated", "design_id", "staff_id", "counterparty_id", "units_sold", "unit_price", "currency_id", "agreed_delivery_date", "agreed_payment_date"],
+        axis=1,
+        inplace=True,
+        )
+    for i in range(1, len(files)):
+        additional_df = json_to_pd_dataframe(files[i], "sales_order", "fscifa-raw-data")
+        additional_df.drop(
+            ["created_at", "last_updated", "design_id", "staff_id", "counterparty_id", "units_sold", "unit_price", "currency_id", "agreed_delivery_date", "agreed_payment_date"],
+            axis=1,
+            inplace=True,
+        )
+        sales_location_df = pd.concat([sales_location_df, additional_df], axis=0)
+
+    return sales_location_df
 
 
 def transform_dim_location():
-    """
+    """ 
     This function:
     - calls find_most_recent_filename
     - check whether this returns a file name string (which will be the case if new data has been added to the address table in the totesys database)
     - if an exception is raised, transform_dim_location returns nothing (because there is no new data to be transformed)
-    - otherwise, json_to_pd_dataframe is invoked, which returns a dataframe for new address data, location_df
-    - address_id column of location_df is renamed to location_id, to match specification
-    - columns, "created_at" and "last_updated" are dropped from location_df, to match specification
-    - transformed location_df (dataframe) is returned
+    - otherwise, json_to_pd_dataframe is invoked, which returns a dataframe for new address data, address_df
+    - left merge address data into sales_location_df (obtained by invoking get_sales_delivery_location_data) to create dim_location_df
+    - address_id column of dim_location_df is renamed to location_id, to match specification
+    - columns, "created_at" and "last_updated" are dropped from dim_location_df, to match specification
+    - transformed dim_location_df (dataframe) is returned
 
     Arguments: no arguments.
 
@@ -25,13 +60,21 @@ def transform_dim_location():
     global location_df
 
     most_recent_file = find_most_recent_filename("address", "fscifa-raw-data")
-    if not most_recent_file:
-        return None
-    location_df = json_to_pd_dataframe(most_recent_file, "address", "fscifa-raw-data")
-    location_df.rename(columns={"address_id": "location_id"}, inplace=True)
-    location_df.drop(["created_at", "last_updated"], axis=1, inplace=True)
-    return location_df
-
+    if most_recent_file:
+        address_df = json_to_pd_dataframe(
+            most_recent_file, "address", "fscifa-raw-data"
+        )
+        dim_location_df = pd.merge(
+            get_sales_delivery_location_data(),
+            address_df,
+            left_on="agreed_delivery_location_id",
+            right_on="address_id",
+            how="left"
+        )
+        dim_location_df.rename(columns={"address_id": "location_id"}, inplace=True)
+        dim_location_df.drop(["created_at", "last_updated"], axis=1, inplace=True)
+        return dim_location_df 
+    
 
 def transform_dim_counterparty():
     """
@@ -41,8 +84,10 @@ def transform_dim_counterparty():
     - if an exception is raised, transform_dim_counterparty returns nothing (because there is no new data to be transformed)
     - otherwise, json_to_pd_dataframe is invoked, which returns a dataframe for new counterparty data, counterparty_df
     - columns, "created_at", "last_updated", "delivery_contact", "commercial_contact" dropped from counterparty_df, to match specification
-    - counterparty_df is left merged with location_df (created by invoking transform_dim_location), to add location data for the counterparty
-    - columns, "location_id", "legal_address_id", dropped from counterparty_df, to match specification
+    - json_to_pd_dataframe is invoked, which returns a dataframe for new address data, location_df
+    - all columns of the location_df except for address_id are dropped, to match specification
+    - counterparty_df is left merged with location_df, to add location data for the counterparty
+    - columns, "address_id", "legal_address_id", dropped from counterparty_df, to match specification
     - for loop is used to rename particular columns to match specification
     - transformed counterparty_df (dataframe) is returned
 
@@ -53,40 +98,47 @@ def transform_dim_counterparty():
     """
     global counterparty_df
     most_recent_file = find_most_recent_filename("counterparty", "fscifa-raw-data")
-    if not most_recent_file:
-        return None
-    counterparty_df = json_to_pd_dataframe(
-        most_recent_file, "counterparty", "fscifa-raw-data"
-    )
-    counterparty_df.drop(
-        ["created_at", "last_updated", "delivery_contact", "commercial_contact"],
-        axis=1,
-        inplace=True,
-    )
-    merge_location_to_counterparty_df = pd.merge(
-        counterparty_df,
-        transform_dim_location(),
-        left_on="legal_address_id",
-        right_on="location_id",
-        how="left",
-    )
-    merge_location_to_counterparty_df.drop(
-        ["location_id", "legal_address_id"], axis=1, inplace=True
-    )
-    for column_name in list(merge_location_to_counterparty_df.columns):
-        if column_name == "phone":
-            merge_location_to_counterparty_df.rename(
-                columns={"phone": "counterparty_legal_phone_number"}, inplace=True
-            )
-        if (
-            column_name != "counterparty_id"
-            and column_name != "counterparty_legal_name"
-        ):
-            merge_location_to_counterparty_df.rename(
-                columns={column_name: f"counterparty_legal_{column_name}"},
-                inplace=True,
-            )
-    return merge_location_to_counterparty_df
+    if most_recent_file:
+        counterparty_df = json_to_pd_dataframe(
+            most_recent_file, "counterparty", "fscifa-raw-data"
+        )
+        counterparty_df.drop(
+            ["created_at", "last_updated", "delivery_contact", "commercial_contact"],
+            axis=1,
+            inplace=True,
+        )
+        location_df = json_to_pd_dataframe(
+            most_recent_file, "address", "fscifa-raw-data"
+        )
+        location_df.drop(
+            ["created_at", "last_updated", "address_line_1", "address_line_2", "district", "city", "postal_code", "country", "phone"],
+            axis=1,
+            inplace=True,
+        )    
+        merge_location_to_counterparty_df = pd.merge(
+            counterparty_df,
+            location_df,
+            left_on="legal_address_id",
+            right_on="address_id",
+            how="left",
+        )
+        merge_location_to_counterparty_df.drop(
+            ["address_id", "legal_address_id"], axis=1, inplace=True
+        )
+        for column_name in list(merge_location_to_counterparty_df.columns):
+            if column_name == "phone":
+                merge_location_to_counterparty_df.rename(
+                    columns={"phone": "counterparty_legal_phone_number"}, inplace=True
+                )
+            if (
+                column_name != "counterparty_id"
+                and column_name != "counterparty_legal_name"
+            ):
+                merge_location_to_counterparty_df.rename(
+                    columns={column_name: f"counterparty_legal_{column_name}"},
+                    inplace=True,
+                )
+        return merge_location_to_counterparty_df
 
 
 def find_currency_name_by_currency_code(code):
