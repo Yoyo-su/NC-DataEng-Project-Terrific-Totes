@@ -1,6 +1,6 @@
 import pandas as pd
-from src.utils.find_most_recent_filename import find_most_recent_filename
-from src.utils.json_to_pd_dataframe import json_to_pd_dataframe
+from utils.find_most_recent_filename import find_most_recent_filename
+from utils.json_to_pd_dataframe import json_to_pd_dataframe
 
 
 def transform_fact_sales_order():

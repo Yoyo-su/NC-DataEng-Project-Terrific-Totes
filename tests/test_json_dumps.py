@@ -1,5 +1,5 @@
 import pytest
-from src.extract_lambda import dump_to_json
+from src.python.utils.json_dumps import dump_to_json
 import json
 
 """ Tests for json_dump function"""

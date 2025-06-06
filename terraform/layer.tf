@@ -36,6 +36,18 @@ resource "aws_lambda_layer_version" "extract_layer" {
   
 }
 
+# Utils Layer Archive
+data "archive_file" "utils_layer_zip" {
+  type        = "zip"
+  output_path = "${path.module}/../packages/layers/utils_layer.zip"
+  source_dir  = "${path.module}/../src/"
+}
 
+resource "aws_lambda_layer_version" "utils_layer" {
+  layer_name = "utils-layer"
+  s3_bucket  = aws_s3_object.utils_layer_object.bucket
+  s3_key     = aws_s3_object.utils_layer_object.key
+  
+}
 
 

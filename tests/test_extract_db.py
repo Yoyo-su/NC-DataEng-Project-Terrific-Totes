@@ -1,6 +1,9 @@
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src/python")))
 from unittest.mock import Mock, patch
 import pytest
-from src.extract_lambda import extract_db
+from src.python.utils.extract_db import extract_db
 import datetime
 
 """Tests for the extract_db util function"""
@@ -8,7 +11,7 @@ import datetime
 
 class TestExtractDB:
     @pytest.mark.it("Testing returns dictionary with expected key and value as list")
-    @patch("src.extract_lambda.connect_to_db")
+    @patch("src.python.utils.extract_db.connect_to_db")
     def test_extract_db_returns_dictionary_with_expected_key_and_list_value(
         self, mock_connect_to_db
     ):
@@ -24,7 +27,7 @@ class TestExtractDB:
     @pytest.mark.it(
         "Testing extract db with empty table returns dictionary with empty list"
     )
-    @patch("src.extract_lambda.connect_to_db")
+    @patch("src.python.utils.extract_db.connect_to_db")
     def test_extract_db_returns_empty_list_inside_dictionary(self, mock_connect_to_db):
         mock_conn = Mock()
         mock_conn.run.return_value = []
@@ -35,7 +38,7 @@ class TestExtractDB:
         assert expected == result
 
     @pytest.mark.it("Testing extract db returns data as formatted dictionary")
-    @patch("src.extract_lambda.connect_to_db")
+    @patch("src.python.utils.extract_db.connect_to_db")
     def test_extract_db_returns_expected_values(self, mock_connect_to_db):
         mock_conn = Mock()
         mock_conn.run.return_value = [
@@ -152,7 +155,7 @@ class TestExtractDB:
         assert expected == result
 
     @pytest.mark.it("Testing raises exception")
-    @patch("src.extract_lambda.connect_to_db")
+    @patch("src.python.utils.extract_db.connect_to_db")
     def test_extract_db_raises_exception_if_table_doesnt_exist(
         self, mock_connect_to_db
     ):
@@ -164,7 +167,7 @@ class TestExtractDB:
     @pytest.mark.it(
         "Testing extract db with last_updated arguement returns only new results "
     )
-    @patch("src.extract_lambda.connect_to_db")
+    @patch("src.python.utils.extract_db.connect_to_db")
     def test_extract_db_returns_only_new_values(self, mock_connect_to_db):
         mock_conn = Mock()
         mock_conn.run.return_value = [
