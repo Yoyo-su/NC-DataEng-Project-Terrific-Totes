@@ -44,5 +44,5 @@ def lambda_handler(event, context):
                 print(f"No data to load for {table}")
         return {"result": "success"}
     except Exception as error:
-        print(f"Failed to update database: {error}")
+        print(f"Failed to update {table} in database: {error}")
         raise error
