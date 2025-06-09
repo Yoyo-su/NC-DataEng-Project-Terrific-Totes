@@ -113,7 +113,7 @@ def transform_dim_date(fact_sales_order):
             )
 
             dim_date = pd.DataFrame()
-            dim_date["date_id"] = pd.to_datetime(all_the_dates)
+            dim_date["date_id"] = pd.to_datetime(all_the_dates, format="%Y-%m-%d")
             dim_date["year"] = dim_date["date_id"].dt.year
             dim_date["month"] = dim_date["date_id"].dt.month
             dim_date["day"] = dim_date["date_id"].dt.day
