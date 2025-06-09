@@ -3,9 +3,8 @@ import boto3
 from datetime import datetime
 import os
 import pytest
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 from moto import mock_aws
-import boto3
 import pandas as pd
 
 table_list = [
@@ -78,9 +77,6 @@ class TestTransformLambda:
         result = lambda_handler({}, {})
         assert result == {"result": "success"}
 
-
-        
-
     @mock_aws
     @patch("src.transform_lambda.transform_dim_staff")
     @patch("src.transform_lambda.transform_dim_location")
@@ -116,17 +112,20 @@ class TestTransformLambda:
             Bucket="fscifa-processed-data",
             CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
         )
-        result = lambda_handler({}, {})
-        uploaded_objects_list = s3_client.list_objects_v2(Bucket = 'fscifa-processed-data')
+        lambda_handler({}, {})
+        uploaded_objects_list = s3_client.list_objects_v2(
+            Bucket="fscifa-processed-data"
+        )
 
-        bucket_contents = [uploaded_objects_list['Contents'][i]['Key'] for i in range(6)]
+        bucket_contents = [
+            uploaded_objects_list["Contents"][i]["Key"] for i in range(6)
+        ]
         table_in_bucket_contents = False
         for table in table_list:
             for content in bucket_contents:
                 if table in content:
                     table_in_bucket_contents = True
-            assert table_in_bucket_contents 
-
+            assert table_in_bucket_contents
 
     @mock_aws
     @patch("src.transform_lambda.transform_dim_staff")
@@ -163,10 +162,14 @@ class TestTransformLambda:
             Bucket="fscifa-processed-data",
             CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
         )
-        result = lambda_handler({}, {})
-        uploaded_objects_list = s3_client.list_objects_v2(Bucket = 'fscifa-processed-data')
+        lambda_handler({}, {})
+        uploaded_objects_list = s3_client.list_objects_v2(
+            Bucket="fscifa-processed-data"
+        )
 
-        bucket_contents = [uploaded_objects_list['Contents'][i]['Key'] for i in range(6)]
+        bucket_contents = [
+            uploaded_objects_list["Contents"][i]["Key"] for i in range(6)
+        ]
         timestamp2 = datetime.now().isoformat(timespec="minutes")
         filename = f"dim_design/dim_design-{timestamp2}.parquet"
         assert filename not in bucket_contents

@@ -5,6 +5,7 @@ from unittest.mock import Mock, patch
 from moto import mock_aws
 import boto3
 import pandas as pd
+
 # import sqlite3
 
 sys.path.insert(
@@ -45,16 +46,16 @@ class TestLoadLambda:
             CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
         )
         with pytest.raises(Exception):
-            result = lambda_handler({}, {})
+            lambda_handler({}, {})
 
     @pytest.mark.it(
-            "Testing that our transform lambda function successfully runs with all util functions integrated"
-        )
+        "Testing that our transform lambda function successfully runs with all util functions integrated"
+    )
     @mock_aws
     @patch("src.load_lambda.fetch_parquet")
     @patch("src.load_lambda.parquet_to_sql")
     def test_lambda_function_successfully_uploads_new_file(
-        self,  mock_parquet_to_sql, mock_fetch_parquet, aws_creds
+        self, mock_parquet_to_sql, mock_fetch_parquet, aws_creds
     ):
         dummy_df = pd.DataFrame()
         mock_fetch_parquet.return_value = dummy_df.to_parquet()
@@ -65,8 +66,3 @@ class TestLoadLambda:
         )
         result = lambda_handler({}, {})
         assert result == {"result": "success"}
-
-
-
-
-
