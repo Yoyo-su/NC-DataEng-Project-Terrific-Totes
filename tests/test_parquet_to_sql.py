@@ -47,13 +47,13 @@ def bucket(aws_creds, s3_resource):
 
         # add parquet file to mock bucket
         test_df.to_parquet(
-            "tests/data/dim_staff-2025-05-29T11:06:18.399084.parquet",
+            "tests/data/dim_staff-2025-05-29T11:06.parquet",
             engine="pyarrow",
             compression="snappy",
         )
         bucket.upload_file(
-            "tests/data/dim_staff-2025-05-29T11:06:18.399084.parquet",
-            "dim_staff/dim_staff-2025-05-29T11:06:18.399084.parquet",
+            "tests/data/dim_staff-2025-05-29T11:06.parquet",
+            "dim_staff/dim_staff-2025-05-29T11:06.parquet",
         )
 
         return bucket
@@ -64,7 +64,7 @@ class TestFetchParquet:
     def test_fetch_parquet_returns_parquet_dataframe(self, bucket):
         table_name = "dim_staff"
         expected_df = pd.read_parquet(
-            "tests/data/dim_staff-2025-05-29T11:06:18.399084.parquet", engine="pyarrow"
+            "tests/data/dim_staff-2025-05-29T11:06.parquet", engine="pyarrow"
         )
         result = fetch_parquet(table_name, "fscifa-processed-data")
         pd.testing.assert_frame_equal(result, expected_df)
