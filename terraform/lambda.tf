@@ -88,11 +88,11 @@ resource "aws_lambda_function" "load_lambda" {
   depends_on = [aws_s3_object.lambda_code, aws_s3_object.utils_layer_object, aws_s3_object.db_layer_object]
   environment {
       variables = {
-        DW_HOST     = var.dw_host
+        PG_HOST     = var.dw_host
         PG_PORT     = var.pg_port
         PG_USER     = var.pg_user
-        DW_PASSWORD = var.dw_password
-        DW_DATABASE = var.dw_database
+        PG_PASSWORD = var.dw_password
+        PG_DATABASE = var.dw_database
       }
 }
 }

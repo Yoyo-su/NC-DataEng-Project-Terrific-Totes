@@ -37,9 +37,11 @@ def lambda_handler(event, context):
     try:
         for table in table_list:
             parquet_df = fetch_parquet(table, bucket)
-            if parquet_df:
+            if parquet_df is not None:
                 parquet_to_sql(table, parquet_df)
                 print(f"{table} table updated in OLAP warehouse")
+            else:
+                print(f"No data to load for {table}")
         return {"result": "success"}
     except Exception as error:
         print(f"Failed to update database: {error}")
