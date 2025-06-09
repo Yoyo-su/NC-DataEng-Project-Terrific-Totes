@@ -1,7 +1,6 @@
 import pytest
 import pandas as pd
 from moto import mock_aws
-from datetime import datetime
 import boto3
 from src.python.utils.upload_dataframe_to_s3_parquet import (
     upload_dataframe_to_s3_parquet,
