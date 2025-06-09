@@ -99,4 +99,5 @@ def parquet_to_sql(table_name, df):
         print(f"Unable to run sql query: {err}")
         raise err
     finally:
-        close_db(conn)
+        if conn:
+            close_db(conn)
