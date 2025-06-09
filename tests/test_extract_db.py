@@ -9,7 +9,7 @@ sys.path.insert(
 )
 from src.python.utils.extract_db import extract_db
 
-"""Tests for the extract_db util function"""
+"""Tests for the extract_db utility function"""
 
 
 class TestExtractDB:
