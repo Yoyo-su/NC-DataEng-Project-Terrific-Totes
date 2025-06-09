@@ -4,7 +4,7 @@ from io import BytesIO
 
 
 def upload_dataframe_to_s3_parquet(
-    df, table_name, bucket_name, key_prefix, compression="snappy", s3_client=None
+    df, table_name, bucket_name, key_prefix, timestamp,compression="snappy", s3_client=None
 ):
     """Saves a dataframe to parquet file and stores it into s3 bucket
 
@@ -21,7 +21,7 @@ def upload_dataframe_to_s3_parquet(
                         "none"=> No Compression, larger file size but fastest to read/ write  """
     s3_client = boto3.client("s3")
 
-    timestamp = datetime.now().isoformat()
+    # timestamp = datetime.now().isoformat()
     filename = f"{table_name}-{timestamp}.parquet"
     s3_key = f"{key_prefix.rstrip('/')}/{filename}"
 

@@ -56,7 +56,7 @@ def lambda_handler(event, context):
         if df is not None:
             key_prefix = f"{table_name}"
             upload_dataframe_to_s3_parquet(
-                df, table_name, "fscifa-processed-data", key_prefix, s3_client=s3_client
+                df, table_name, "fscifa-processed-data", key_prefix, timestamp=timestamp, s3_client=s3_client
             )
     upload_json_to_s3(timestamp, "fscifa-processed-data", "last_updated.txt", s3_client)
     return {"result": "success"}
