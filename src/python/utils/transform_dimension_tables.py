@@ -1,4 +1,5 @@
 import pandas as pd
+
 from utils.find_most_recent_filename import (
     find_most_recent_filename,
     find_files_with_specified_table_name,
@@ -342,6 +343,9 @@ def transform_dim_staff():
     merge_staff_to_department_df = pd.merge(
         staff_df, get_department_data(), on="department_id", how="left"
     )
+    merge_staff_to_department_df.loc[
+        merge_staff_to_department_df["location"] == "Leds", "location"
+    ] = "Leeds"
     merge_staff_to_department_df.drop(
         ["department_id"],
         axis=1,
@@ -355,8 +359,8 @@ def transform_dim_staff():
         "location",
         "email_address",
     ]
-
     merge_staff_to_department_df = merge_staff_to_department_df[new_column_order]
+    print(merge_staff_to_department_df)
     return merge_staff_to_department_df
 
 

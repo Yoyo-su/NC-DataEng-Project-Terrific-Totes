@@ -1,5 +1,14 @@
 import pytest
-from src.python.utils.transform_dimension_tables import (
+import sys
+import os
+from moto import mock_aws
+import boto3
+
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src/python"))
+)
+
+from utils.transform_dimension_tables import (
     transform_dim_location,
     transform_dim_counterparty,
     transform_dim_currency,
@@ -8,9 +17,6 @@ from src.python.utils.transform_dimension_tables import (
     get_department_data,
     get_sales_delivery_location_data,
 )
-from moto import mock_aws
-import boto3
-import os
 
 
 @pytest.fixture
@@ -25,6 +31,13 @@ def aws_creds():
 def s3_resource(aws_creds):
     with mock_aws():
         yield boto3.resource("s3", region_name="eu-west-2")
+
+
+def data_file_path(file):
+    current_dir = os.path.dirname(__file__)
+    data_file_path = os.path.join(current_dir, "data", file)
+    os.makedirs(os.path.dirname(data_file_path), exist_ok=True)
+    return os.path.join(current_dir, "data", file)
 
 
 @pytest.fixture()
@@ -44,9 +57,9 @@ def bucket(aws_creds, s3_resource):
         bucket.put_object(Key="staff/")
         bucket.put_object(Key="design/")
         # add last_updated txt to the mock bucket:
-        with open("tests/data/last_updated.txt", "w") as file:
+        with open(data_file_path("last_updated.txt"), "w") as file:
             file.write("2025-05-29T11:06:18.399084")
-        bucket.upload_file("tests/data/last_updated.txt", "last_updated.txt")
+        bucket.upload_file(data_file_path("last_updated.txt"), "last_updated.txt")
         # add test sales_order data to the mock bucket:
         test_sales_order_data = """{"sales_order": [
                         {"sales_order_id": 1,
@@ -87,11 +100,11 @@ def bucket(aws_creds, s3_resource):
                         "agreed_delivery_location_id": 2}]}"""
 
         with open(
-            "tests/data/sales_order-2025-05-29T11:06:18.399084.json", "w"
+            data_file_path("sales_order-2025-05-29T11:06:18.399084.json"), "w"
         ) as file:
             file.write(test_sales_order_data)
         bucket.upload_file(
-            "tests/data/sales_order-2025-05-29T11:06:18.399084.json",
+            data_file_path("sales_order-2025-05-29T11:06:18.399084.json"),
             "sales_order/sales_order-2025-05-29T11:06:18.399084.json",
         )
         # add test address data to the mock bucket:
@@ -129,10 +142,12 @@ def bucket(aws_creds, s3_resource):
                         ]
                     }"""
 
-        with open("tests/data/address-2025-05-29T11:06:18.399084.json", "w") as file:
+        with open(
+            data_file_path("address-2025-05-29T11:06:18.399084.json"), "w"
+        ) as file:
             file.write(test_address_data)
         bucket.upload_file(
-            "tests/data/address-2025-05-29T11:06:18.399084.json",
+            data_file_path("address-2025-05-29T11:06:18.399084.json"),
             "address/address-2025-05-29T11:06:18.399084.json",
         )
 
@@ -148,11 +163,11 @@ def bucket(aws_creds, s3_resource):
                         ]
                     }"""
         with open(
-            "tests/data/counterparty-2025-05-29T11:06:18.399084.json", "w"
+            data_file_path("counterparty-2025-05-29T11:06:18.399084.json"), "w"
         ) as file:
             file.write(test_counterparty_data)
         bucket.upload_file(
-            "tests/data/counterparty-2025-05-29T11:06:18.399084.json",
+            data_file_path("counterparty-2025-05-29T11:06:18.399084.json"),
             "counterparty/counterparty-2025-05-29T11:06:18.399084.json",
         )
         # add test currency data to the mock bucket:
@@ -171,10 +186,12 @@ def bucket(aws_creds, s3_resource):
                         "last_updated": "2025-05-29T11:05:30.399084"}
                         ]
                     }"""
-        with open("tests/data/currency-2025-05-29T11:06:18.399084.json", "w") as file:
+        with open(
+            data_file_path("currency-2025-05-29T11:06:18.399084.json"), "w"
+        ) as file:
             file.write(test_currency_data)
         bucket.upload_file(
-            "tests/data/currency-2025-05-29T11:06:18.399084.json",
+            data_file_path("currency-2025-05-29T11:06:18.399084.json"),
             "currency/currency-2025-05-29T11:06:18.399084.json",
         )
 
@@ -189,10 +206,10 @@ def bucket(aws_creds, s3_resource):
                         "last_updated": "2025-05-29T11:05:30.399084"}
                        ]
                     }"""
-        with open("tests/data/staff-2025-05-29T11:06:18.399084.json", "w") as file:
+        with open(data_file_path("staff-2025-05-29T11:06:18.399084.json"), "w") as file:
             file.write(test_staff_data)
         bucket.upload_file(
-            "tests/data/staff-2025-05-29T11:06:18.399084.json",
+            data_file_path("staff-2025-05-29T11:06:18.399084.json"),
             "staff/staff-2025-05-29T11:06:18.399084.json",
         )
 
@@ -200,16 +217,18 @@ def bucket(aws_creds, s3_resource):
         test_department_data_1 = """{"department": [
                         {"department_id": 1,
                         "department_name": "Sales",
-                        "location": "London",
+                        "location": "Leds",
                         "manager": "John Carter",
                         "created_at": "2025-05-29T11:05:00.399084",
                         "last_updated": "2025-05-29T11:05:30.399084"}
                        ]
                     }"""
-        with open("tests/data/department-2025-05-29T11:06:18.399084.json", "w") as file:
+        with open(
+            data_file_path("department-2025-05-29T11:06:18.399084.json"), "w"
+        ) as file:
             file.write(test_department_data_1)
         bucket.upload_file(
-            "tests/data/department-2025-05-29T11:06:18.399084.json",
+            data_file_path("department-2025-05-29T11:06:18.399084.json"),
             "department/department-2025-05-29T11:06:18.399084.json",
         )
 
@@ -222,10 +241,12 @@ def bucket(aws_creds, s3_resource):
                         "last_updated": "2025-05-29T10:05:30.399084"}
                        ]
                     }"""
-        with open("tests/data/department-2025-05-29T10:06:18.399084.json", "w") as file:
+        with open(
+            data_file_path("department-2025-05-29T10:06:18.399084.json"), "w"
+        ) as file:
             file.write(test_department_data_2)
         bucket.upload_file(
-            "tests/data/department-2025-05-29T10:06:18.399084.json",
+            data_file_path("department-2025-05-29T10:06:18.399084.json"),
             "department/department-2025-05-29T10:06:18.399084.json",
         )
 
@@ -239,10 +260,12 @@ def bucket(aws_creds, s3_resource):
                         "file_name": "Summer_sunset.jpg"}
                        ]
                     }"""
-        with open("tests/data/design-2025-05-29T11:06:18.399084.json", "w") as file:
+        with open(
+            data_file_path("design-2025-05-29T11:06:18.399084.json"), "w"
+        ) as file:
             file.write(test_design_data)
         bucket.upload_file(
-            "tests/data/design-2025-05-29T11:06:18.399084.json",
+            data_file_path("design-2025-05-29T11:06:18.399084.json"),
             "design/design-2025-05-29T11:06:18.399084.json",
         )
 
@@ -378,6 +401,13 @@ class TestTransformDimStaff:
     @pytest.mark.it("test that transform_dim_staff returns a dataframe containing data")
     def test_staff_df_not_empty(self, bucket):
         assert not transform_dim_staff().empty
+
+    @pytest.mark.it(
+        "test that transform_dim_staff cleans incorrect location name, 'Leds', to 'Leeds'"
+    )
+    def test_incorrect_location_name_changed_in_transformed_dataframe(self, bucket):
+        result = transform_dim_staff()
+        assert "Leds" not in result["location"].values
 
 
 class TestTransformDimDesign:
