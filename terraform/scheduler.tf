@@ -6,7 +6,7 @@ resource "aws_scheduler_schedule" "fscifa_etl_schedule" {
     mode = "OFF"
   }
 
-  schedule_expression = "rate(30 minutes)"
+  schedule_expression = "rate(20 minutes)"
 
   # start_date = "2025-06-06T12:12:00Z"
 
@@ -15,3 +15,4 @@ resource "aws_scheduler_schedule" "fscifa_etl_schedule" {
     role_arn = aws_iam_role.scheduler_role.arn
   }
 }
+
