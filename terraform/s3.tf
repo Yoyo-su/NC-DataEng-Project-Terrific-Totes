@@ -39,7 +39,8 @@ resource "aws_s3_object" "db_layer_object" {
   bucket = aws_s3_bucket.code_bucket.bucket
   key    = "layers/db_layer.zip"
   source = "${path.module}/../packages/layers/db_layer.zip"
-  depends_on = [null_resource.zip_db_layer]
+  etag     = filemd5(data.archive_file.db_layer_zip.output_path)
+  depends_on = [data.archive_file.db_layer_zip]
 }
 
 resource "aws_s3_object" "utils_layer_object" {
@@ -47,6 +48,6 @@ resource "aws_s3_object" "utils_layer_object" {
   key    = "layers/utils_layer.zip"
   source = "${path.module}/../packages/layers/utils_layer.zip"
   etag     = filemd5(data.archive_file.utils_layer_zip.output_path)
-  #depends_on = [null_resource.zip_utils_layer]
+  # depends_on = [null_resource.zip_utils_layer]
 }
 

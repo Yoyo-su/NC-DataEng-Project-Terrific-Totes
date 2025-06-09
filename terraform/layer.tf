@@ -9,17 +9,17 @@ resource "null_resource" "create_dependencies_db" {
     db_requirements = filemd5("${path.module}/../requirements_db.txt")
   }
 }
-resource "null_resource" "zip_db_layer" {
-  provisioner "local-exec" {
-    command = "cd ${path.module}/../dependencies_db && zip -r ../packages/layers/db_layer.zip ."
-  }
+# resource "null_resource" "zip_db_layer" {
+#   provisioner "local-exec" {
+#     command = "cd ${path.module}/../dependencies_db && zip -r ../packages/layers/db_layer.zip ."
+#   }
 
-  triggers = {
-    zipped = timestamp()
-  }
+#   triggers = {
+#     zipped = timestamp()
+#   }
 
-  depends_on = [null_resource.create_dependencies_db]
-}
+#   depends_on = [null_resource.create_dependencies_db]
+# }
 
 # db Layer Archive
 data "archive_file" "db_layer_zip" {
