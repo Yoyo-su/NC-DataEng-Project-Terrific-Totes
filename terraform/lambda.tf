@@ -1,3 +1,5 @@
+# zip lambda functions
+
 data "archive_file" "extract_lambda" {
   type        = "zip"
   output_path = "${path.module}/../packages/extract_lambda/function.zip"
@@ -16,7 +18,7 @@ data "archive_file" "load_lambda" {
   source_file = "${path.module}/../src/load_lambda.py"
 }
 
-
+# Define extract lambda function
 resource "aws_lambda_function" "extract_lambda" {
   function_name = var.extract_lambda
   role          = aws_iam_role.lambda_role.arn
