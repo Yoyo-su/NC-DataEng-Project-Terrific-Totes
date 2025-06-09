@@ -48,6 +48,5 @@ resource "aws_s3_object" "utils_layer_object" {
   key    = "layers/utils_layer.zip"
   source = "${path.module}/../packages/layers/utils_layer.zip"
   etag     = filemd5(data.archive_file.utils_layer_zip.output_path)
-  # depends_on = [null_resource.zip_utils_layer]
 }
 
