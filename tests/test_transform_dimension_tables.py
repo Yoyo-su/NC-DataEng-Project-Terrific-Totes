@@ -6,7 +6,7 @@ from src.python.utils.transform_dimension_tables import (
     transform_dim_staff,
     transform_dim_design,
     get_department_data,
-    get_sales_delivery_location_data
+    get_sales_delivery_location_data,
 )
 from moto import mock_aws
 import boto3
@@ -61,7 +61,6 @@ def bucket(aws_creds, s3_resource):
                         "agreed_delivery_date": "2025-05-20",
                         "agreed_payment_date": "2025-05-21",
                         "agreed_delivery_location_id": 1},
-                        
                         {"sales_order_id": 2,
                         "created_at": "2025-05-29T11:05:00.399084",
                         "last_updated": "2025-05-29T11:05:30.399084",
@@ -74,7 +73,6 @@ def bucket(aws_creds, s3_resource):
                         "agreed_delivery_date": "2025-05-20",
                         "agreed_payment_date": "2025-05-21",
                         "agreed_delivery_location_id": 1},
-   
                         {"sales_order_id": 2,
                         "created_at": "2025-05-29T11:05:00.399084",
                         "last_updated": "2025-05-29T11:05:30.399084",
@@ -87,8 +85,10 @@ def bucket(aws_creds, s3_resource):
                         "agreed_delivery_date": "2025-05-20",
                         "agreed_payment_date": "2025-05-21",
                         "agreed_delivery_location_id": 2}]}"""
-        
-        with open("tests/data/sales_order-2025-05-29T11:06:18.399084.json", "w") as file:
+
+        with open(
+            "tests/data/sales_order-2025-05-29T11:06:18.399084.json", "w"
+        ) as file:
             file.write(test_sales_order_data)
         bucket.upload_file(
             "tests/data/sales_order-2025-05-29T11:06:18.399084.json",
@@ -106,7 +106,6 @@ def bucket(aws_creds, s3_resource):
                         "phone": "07933457899",
                         "created_at": "2025-05-29T11:05:00.399084",
                         "last_updated": "2025-05-29T11:05:30.399084"},
-
                         {"address_id": 2,
                         "address_line_1": "2 Bloom Street",
                         "address_line_2": "Clapham",
@@ -117,7 +116,6 @@ def bucket(aws_creds, s3_resource):
                         "phone": "02006850200",
                         "created_at": "2025-05-29T11:05:00.399084",
                         "last_updated": "2025-05-29T11:05:30.399084"},
-   
                         {"address_id": 3,
                         "address_line_1": "34 Park Road",
                         "address_line_2": "Ealing",
@@ -130,7 +128,7 @@ def bucket(aws_creds, s3_resource):
                         "last_updated": "2025-05-29T11:05:30.399084"}
                         ]
                     }"""
-        
+
         with open("tests/data/address-2025-05-29T11:06:18.399084.json", "w") as file:
             file.write(test_address_data)
         bucket.upload_file(
@@ -262,17 +260,17 @@ class TestGetSalesDeliveryLocationData:
 
     @pytest.mark.it(
         """test that get_sales_delivery_location_data, when passed with a bucket that
-        contains three files of data, two related to the same delivery address, does not return 
+        contains three files of data, two related to the same delivery address, does not return
         duplicate rows (so will only return 2 rows in the dataframe)"""
     )
-    def test_location_df_not_empty(self, bucket):
+    def test_location_df_does_not_return_duplicates(self, bucket):
         result = get_sales_delivery_location_data()
         assert len(result) == 2
 
     @pytest.mark.it(
         "test that transform_dim_location returns a dataframe containing correct data"
     )
-    def test_location_df_not_empty(self, bucket):
+    def test_location_df_returns_correct_data(self, bucket):
         result = get_sales_delivery_location_data()
         assert result.isin([1]).any().any()
         assert result.isin([2]).any().any()

@@ -16,7 +16,10 @@ def sample_df():
 def mock_s3_client():
     with mock_aws():
         s3 = boto3.client("s3", region_name="eu-west-2")
-        s3.create_bucket(Bucket="test-bucket",CreateBucketConfiguration={"LocationConstraint": "eu-west-2"})
+        s3.create_bucket(
+            Bucket="test-bucket",
+            CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
+        )
         yield s3
 
 
@@ -35,7 +38,9 @@ def test_successful_upload(sample_df, mock_s3_client, fixed_timestamp):
         s3_client=mock_s3_client,
     )
 
-    assert result == f"s3://test-bucket/test-folder/test_table-{fixed_timestamp}.parquet"
+    assert (
+        result == f"s3://test-bucket/test-folder/test_table-{fixed_timestamp}.parquet"
+    )
     s3_key = result.replace("s3://test-bucket/", "")
     obj = mock_s3_client.get_object(Bucket="test-bucket", Key=s3_key)
     assert obj["ResponseMetadata"]["HTTPStatusCode"] == 200
@@ -62,7 +67,9 @@ def test_correct_key_format(sample_df, mock_s3_client, fixed_timestamp):
         timestamp=fixed_timestamp,
         s3_client=mock_s3_client,
     )
-    assert result == f"s3://test-bucket/some-folder/some_table-{fixed_timestamp}.parquet"
+    assert (
+        result == f"s3://test-bucket/some-folder/some_table-{fixed_timestamp}.parquet"
+    )
 
 
 def test_upload_failure(sample_df, fixed_timestamp):

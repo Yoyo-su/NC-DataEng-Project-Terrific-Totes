@@ -12,7 +12,7 @@ test_df = pd.DataFrame(
         "sales_order_id": [7, 1],
         "staff": ["hello", "wo'rld"],
         "counterparty_id": [420, 13],
-        "currency_id": [1, 3],
+        "currency_id": [None, "hi"],
     }
 )
 
@@ -109,5 +109,5 @@ class TestParquetToSQL:
         parquet_to_sql(table_name, test_df)
         assert mock_conn.run.called  # Ensure .run() was called
         mock_conn.run.assert_called_with(
-            "INSERT INTO dim_staff (sales_order_id, staff, counterparty_id, currency_id) VALUES(7, \'hello\', 420, 1), (1, \'wo''rld\', 13, 3);"
+            "INSERT INTO dim_staff (sales_order_id, staff, counterparty_id, currency_id) VALUES(7, 'hello', 420, NULL), (1, 'wo''rld', 13, 'hi');"
         )  # Ensure expected query was run
