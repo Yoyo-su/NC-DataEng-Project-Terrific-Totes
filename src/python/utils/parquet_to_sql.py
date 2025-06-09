@@ -84,7 +84,7 @@ def parquet_to_sql(table_name, df):
         for row in values:
             for value in row:
                 if type(value) is str:
-                    value = value.replace("'", "''")
+                    value = value.replace("'", "\'\'")
                     query += f"\"{value}\", "
                 else:
                     query += f"{value}, "
