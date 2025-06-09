@@ -49,6 +49,7 @@ else
 	$(call execute_in_env, pip install bandit black pytest-cov flake8 pip-audit)
 endif
 
+## Run security test
 security-test:
 	$(BANDIT) -lll ./src/*.py ./tests/*.py
 
