@@ -69,7 +69,6 @@ def transform_dim_location():
         dim_location_df.rename(columns={"agreed_delivery_location_id": "location_id"}, inplace=True)
         dim_location_df.drop(["created_at", "last_updated", "address_id"], axis=1, inplace=True)
         dim_location_df.drop_duplicates(subset = None, keep= "first", inplace = True)
-        print(dim_location_df)
     return dim_location_df 
     
 
