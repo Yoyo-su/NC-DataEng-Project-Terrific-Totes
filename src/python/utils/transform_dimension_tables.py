@@ -5,14 +5,15 @@ from src.python.utils.find_most_recent_filename import (
 )
 from src.python.utils.json_to_pd_dataframe import json_to_pd_dataframe
 
+
 def get_sales_delivery_location_data():
-    """ 
+    """
     This function:
     - calls find_files_with_specified_table_name, which returns a list of json files from sales_order folder of s3 bucket, fscifa-raw-data
     - assigns this list of json files to variable, files
     - creates a dataframe (sales_location_df) out of the first json file in the list, by calling json_to_pd_dataframe
-    - drops all columns of the sales_location_df except for agreed_delivery_location_id 
-    - loops through remaining json files in list, creates a dataframe for each (additional_df), drops all columns except agreed_delivery_location_id, 
+    - drops all columns of the sales_location_df except for agreed_delivery_location_id
+    - loops through remaining json files in list, creates a dataframe for each (additional_df), drops all columns except agreed_delivery_location_id,
       appends additional dataframes to sales_location_df
     - returns sales_location_df
 
@@ -23,21 +24,37 @@ def get_sales_delivery_location_data():
     """
     files = find_files_with_specified_table_name("sales_order", "fscifa-raw-data")
     if files:
-        sales_location_df = json_to_pd_dataframe(files[0], "sales_order", "fscifa-raw-data")
+        sales_location_df = json_to_pd_dataframe(
+            files[0], "sales_order", "fscifa-raw-data"
+        )
         for i in range(1, len(files)):
-            additional_df = json_to_pd_dataframe(files[i], "sales_order", "fscifa-raw-data")
+            additional_df = json_to_pd_dataframe(
+                files[i], "sales_order", "fscifa-raw-data"
+            )
             sales_location_df = pd.concat([sales_location_df, additional_df], axis=0)
         sales_location_df.drop(
-                ["sales_order_id", "created_at", "last_updated", "design_id", "staff_id", "counterparty_id", "units_sold", "unit_price", "currency_id", "agreed_delivery_date", "agreed_payment_date"],
-                axis=1,
-                inplace=True,
-            )
-        sales_location_df.drop_duplicates(subset = None, keep= "first", inplace = True)
+            [
+                "sales_order_id",
+                "created_at",
+                "last_updated",
+                "design_id",
+                "staff_id",
+                "counterparty_id",
+                "units_sold",
+                "unit_price",
+                "currency_id",
+                "agreed_delivery_date",
+                "agreed_payment_date",
+            ],
+            axis=1,
+            inplace=True,
+        )
+        sales_location_df.drop_duplicates(subset=None, keep="first", inplace=True)
         return sales_location_df
 
 
 def transform_dim_location():
-    """ 
+    """
     This function:
     - calls find_most_recent_filename
     - check whether this returns a file name string (which will be the case if new data has been added to the address table in the totesys database)
@@ -54,7 +71,7 @@ def transform_dim_location():
     Returns: nothing (if no new location data), or a dataframe containing new, transformed location data.
 
     """
-    global location_df
+    global address_df
 
     most_recent_file = find_most_recent_filename("address", "fscifa-raw-data")
     if most_recent_file:
@@ -65,13 +82,17 @@ def transform_dim_location():
             get_sales_delivery_location_data(),
             address_df,
             left_on="agreed_delivery_location_id",
-            right_on="address_id"
+            right_on="address_id",
         )
-        dim_location_df.rename(columns={"agreed_delivery_location_id": "location_id"}, inplace=True)
-        dim_location_df.drop(["created_at", "last_updated", "address_id"], axis=1, inplace=True)
-        dim_location_df.drop_duplicates(subset = None, keep= "first", inplace = True)
-        return dim_location_df 
-    
+        dim_location_df.rename(
+            columns={"agreed_delivery_location_id": "location_id"}, inplace=True
+        )
+        dim_location_df.drop(
+            ["created_at", "last_updated", "address_id"], axis=1, inplace=True
+        )
+        dim_location_df.drop_duplicates(subset=None, keep="first", inplace=True)
+        return dim_location_df
+
 
 def transform_dim_counterparty():
     """
@@ -94,7 +115,9 @@ def transform_dim_counterparty():
 
     """
     global counterparty_df
-    most_recent_counterparty_file = find_most_recent_filename("counterparty", "fscifa-raw-data")
+    most_recent_counterparty_file = find_most_recent_filename(
+        "counterparty", "fscifa-raw-data"
+    )
     most_recent_address_file = find_most_recent_filename("address", "fscifa-raw-data")
     if most_recent_counterparty_file:
         counterparty_df = json_to_pd_dataframe(
@@ -112,7 +135,7 @@ def transform_dim_counterparty():
             ["created_at", "last_updated"],
             axis=1,
             inplace=True,
-        )    
+        )
         merge_location_to_counterparty_df = pd.merge(
             counterparty_df,
             location_df,
@@ -277,14 +300,16 @@ def get_department_data():
     if files:
         department_df = json_to_pd_dataframe(files[0], "department", "fscifa-raw-data")
         for i in range(1, len(files)):
-            additional_df = json_to_pd_dataframe(files[i], "department", "fscifa-raw-data")
+            additional_df = json_to_pd_dataframe(
+                files[i], "department", "fscifa-raw-data"
+            )
             department_df = pd.concat([department_df, additional_df], axis=0)
         department_df.drop(
             ["manager", "created_at", "last_updated"],
             axis=1,
             inplace=True,
         )
-        department_df.drop_duplicates(subset = None, keep= "first", inplace = True)
+        department_df.drop_duplicates(subset=None, keep="first", inplace=True)
         return department_df
 
 
@@ -323,13 +348,13 @@ def transform_dim_staff():
         inplace=True,
     )
     new_column_order = [
-            "staff_id",
-            "first_name",
-            "last_name",
-            "department_name",
-            "location",
-            "email_address",
-        ]
+        "staff_id",
+        "first_name",
+        "last_name",
+        "department_name",
+        "location",
+        "email_address",
+    ]
 
     merge_staff_to_department_df = merge_staff_to_department_df[new_column_order]
     return merge_staff_to_department_df

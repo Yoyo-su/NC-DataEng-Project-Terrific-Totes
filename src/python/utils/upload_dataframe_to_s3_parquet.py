@@ -3,7 +3,13 @@ from io import BytesIO
 
 
 def upload_dataframe_to_s3_parquet(
-    df, table_name, bucket_name, key_prefix, timestamp,compression="snappy", s3_client=None
+    df,
+    table_name,
+    bucket_name,
+    key_prefix,
+    timestamp,
+    compression="snappy",
+    s3_client=None,
 ):
     """Saves a dataframe to parquet file and stores it into s3 bucket
 
