@@ -241,12 +241,12 @@ class TestFindMostRecentFile:
     @pytest.mark.parametrize("bucket", ["parquet"], indirect=True)
     @pytest.mark.it(""""when given a parquet file type, returns parquet file""")
     def test_returns_most_recent_parquet_if_parquet_filetype_specified(self, bucket):
-        test_files = ["address-2025-05-29T11:06:18.399084.parquet"]
+        test_files = ["address-2025-05-29T11:06.parquet"]
 
         result = find_most_recent_file(
             test_files, "address", "test_ingest_bucket", "parquet"
         )
-        assert result == "address-2025-05-29T11:06:18.399084.parquet"
+        assert result == "address-2025-05-29T11:06.parquet"
 
     @pytest.mark.it(
         """"when given a parquet file type, returns None if no parquet files"""
