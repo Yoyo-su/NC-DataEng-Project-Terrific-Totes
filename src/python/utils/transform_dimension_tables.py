@@ -272,6 +272,16 @@ def transform_dim_staff():
         axis=1,
         inplace=True,
     )
+    new_column_order = [
+            "staff_id",
+            "first_name",
+            "last_name",
+            "department_name",
+            "location",
+            "email_address",
+        ]
+
+    merge_staff_to_department_df = merge_staff_to_department_df[new_column_order]
     return merge_staff_to_department_df
 
 
