@@ -48,7 +48,7 @@ def bucket(aws_creds, s3_resource):
             file.write("2025-05-29T11:06:18.399084")
         bucket.upload_file("tests/data/last_updated.txt", "last_updated.txt")
         # add test sales_order data to the mock bucket:
-        test_sales_order_data_1 = """{"sales_order": [
+        test_sales_order_data = """{"sales_order": [
                         {"sales_order_id": 1,
                         "created_at": "2025-05-29T11:05:00.399084",
                         "last_updated": "2025-05-29T11:05:30.399084",
@@ -60,8 +60,8 @@ def bucket(aws_creds, s3_resource):
                         "currency_id": 1,
                         "agreed_delivery_date": "2025-05-20",
                         "agreed_payment_date": "2025-05-21",
-                        "agreed_delivery_location_id": 1}]}"""
-        test_sales_order_data_2 = """{"sales_order": [
+                        "agreed_delivery_location_id": 1},
+                        
                         {"sales_order_id": 2,
                         "created_at": "2025-05-29T11:05:00.399084",
                         "last_updated": "2025-05-29T11:05:30.399084",
@@ -73,8 +73,8 @@ def bucket(aws_creds, s3_resource):
                         "currency_id": 1,
                         "agreed_delivery_date": "2025-05-20",
                         "agreed_payment_date": "2025-05-21",
-                        "agreed_delivery_location_id": 1}]}"""
-        test_sales_order_data_3 = """{"sales_order": [
+                        "agreed_delivery_location_id": 1},
+   
                         {"sales_order_id": 2,
                         "created_at": "2025-05-29T11:05:00.399084",
                         "last_updated": "2025-05-29T11:05:30.399084",
@@ -87,20 +87,9 @@ def bucket(aws_creds, s3_resource):
                         "agreed_delivery_date": "2025-05-20",
                         "agreed_payment_date": "2025-05-21",
                         "agreed_delivery_location_id": 2}]}"""
-        with open("tests/data/sales_order-2025-05-29T10:06:18.399084.json", "w") as file:
-            file.write(test_sales_order_data_1)
-        bucket.upload_file(
-            "tests/data/sales_order-2025-05-29T10:06:18.399084.json",
-            "sales_order/sales_order-2025-05-29T10:06:18.399084.json",
-        )
-        with open("tests/data/sales_order-2025-05-29T10:36:18.399084.json", "w") as file:
-            file.write(test_sales_order_data_2)
-        bucket.upload_file(
-            "tests/data/sales_order-2025-05-29T10:36:18.399084.json",
-            "sales_order/sales_order-2025-05-29T10:36:18.399084.json",
-        )
+        
         with open("tests/data/sales_order-2025-05-29T11:06:18.399084.json", "w") as file:
-            file.write(test_sales_order_data_3)
+            file.write(test_sales_order_data)
         bucket.upload_file(
             "tests/data/sales_order-2025-05-29T11:06:18.399084.json",
             "sales_order/sales_order-2025-05-29T11:06:18.399084.json",
@@ -116,15 +105,39 @@ def bucket(aws_creds, s3_resource):
                         "country": "UK",
                         "phone": "07933457899",
                         "created_at": "2025-05-29T11:05:00.399084",
+                        "last_updated": "2025-05-29T11:05:30.399084"},
+
+                        {"address_id": 2,
+                        "address_line_1": "2 Bloom Street",
+                        "address_line_2": "Clapham",
+                        "district": "Greater London",
+                        "city": "London",
+                        "postal_code": "SW13 5HP",
+                        "country": "UK",
+                        "phone": "02006850200",
+                        "created_at": "2025-05-29T11:05:00.399084",
+                        "last_updated": "2025-05-29T11:05:30.399084"},
+   
+                        {"address_id": 3,
+                        "address_line_1": "34 Park Road",
+                        "address_line_2": "Ealing",
+                        "district": "Greater London",
+                        "city": "London",
+                        "postal_code": "W5 3GH",
+                        "country": "UK",
+                        "phone": "02045675630",
+                        "created_at": "2025-05-29T11:05:00.399084",
                         "last_updated": "2025-05-29T11:05:30.399084"}
                         ]
                     }"""
+        
         with open("tests/data/address-2025-05-29T11:06:18.399084.json", "w") as file:
             file.write(test_address_data)
         bucket.upload_file(
             "tests/data/address-2025-05-29T11:06:18.399084.json",
             "address/address-2025-05-29T11:06:18.399084.json",
         )
+
         # add test counterparty data to the mock bucket:
         test_counterparty_data = """{"counterparty": [
                         {"counterparty_id": 1,

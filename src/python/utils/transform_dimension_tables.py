@@ -31,7 +31,7 @@ def get_sales_delivery_location_data():
             axis=1,
             inplace=True,
         )
-    sales_location_df.drop_duplicates()
+    sales_location_df.drop_duplicates(subset = None, keep= "first", inplace = True)
     return sales_location_df
 
 
@@ -64,13 +64,13 @@ def transform_dim_location():
             get_sales_delivery_location_data(),
             address_df,
             left_on="agreed_delivery_location_id",
-            right_on="address_id",
-            how="left"
+            right_on="address_id"
         )
         dim_location_df.rename(columns={"agreed_delivery_location_id": "location_id"}, inplace=True)
         dim_location_df.drop(["created_at", "last_updated", "address_id"], axis=1, inplace=True)
-        dim_location_df.drop_duplicates()
-        return dim_location_df 
+        dim_location_df.drop_duplicates(subset = None, keep= "first", inplace = True)
+        print(dim_location_df)
+    return dim_location_df 
     
 
 def transform_dim_counterparty():
@@ -283,7 +283,7 @@ def get_department_data():
         axis=1,
         inplace=True,
     )
-    department_df.drop_duplicates()
+    department_df.drop_duplicates(subset = None, keep= "first", inplace = True)
     return department_df
 
 
