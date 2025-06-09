@@ -121,7 +121,7 @@ def transform_dim_date(fact_sales_order):
             dim_date["day_name"] = dim_date["date_id"].dt.day_name()
             dim_date["month_name"] = dim_date["date_id"].dt.month_name()
             dim_date["quarter"] = dim_date["date_id"].dt.quarter
-
+            dim_date["date_id"] = dim_date["date_id"].dt.date
             return dim_date
         return None
     except Exception as err:

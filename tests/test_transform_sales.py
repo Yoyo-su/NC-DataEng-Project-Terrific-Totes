@@ -179,6 +179,7 @@ class TestMakeDimDate:
                 "quarter": [2, 2, 2, 2, 1, 1],
             }
         )
+        expected_dim_table["date_id"] = expected_dim_table["date_id"].dt.date
         pd.testing.assert_frame_equal(
             dim_table.sort_values(by="date_id")
             .reset_index(drop=True)
