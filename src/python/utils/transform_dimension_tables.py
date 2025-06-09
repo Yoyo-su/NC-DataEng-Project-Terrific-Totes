@@ -22,17 +22,18 @@ def get_sales_delivery_location_data():
 
     """
     files = find_files_with_specified_table_name("sales_order", "fscifa-raw-data")
-    sales_location_df = json_to_pd_dataframe(files[0], "sales_order", "fscifa-raw-data")
-    for i in range(1, len(files)):
-        additional_df = json_to_pd_dataframe(files[i], "sales_order", "fscifa-raw-data")
-        sales_location_df = pd.concat([sales_location_df, additional_df], axis=0)
-    sales_location_df.drop(
-            ["sales_order_id", "created_at", "last_updated", "design_id", "staff_id", "counterparty_id", "units_sold", "unit_price", "currency_id", "agreed_delivery_date", "agreed_payment_date"],
-            axis=1,
-            inplace=True,
-        )
-    sales_location_df.drop_duplicates(subset = None, keep= "first", inplace = True)
-    return sales_location_df
+    if files:
+        sales_location_df = json_to_pd_dataframe(files[0], "sales_order", "fscifa-raw-data")
+        for i in range(1, len(files)):
+            additional_df = json_to_pd_dataframe(files[i], "sales_order", "fscifa-raw-data")
+            sales_location_df = pd.concat([sales_location_df, additional_df], axis=0)
+        sales_location_df.drop(
+                ["sales_order_id", "created_at", "last_updated", "design_id", "staff_id", "counterparty_id", "units_sold", "unit_price", "currency_id", "agreed_delivery_date", "agreed_payment_date"],
+                axis=1,
+                inplace=True,
+            )
+        sales_location_df.drop_duplicates(subset = None, keep= "first", inplace = True)
+        return sales_location_df
 
 
 def transform_dim_location():
@@ -69,7 +70,7 @@ def transform_dim_location():
         dim_location_df.rename(columns={"agreed_delivery_location_id": "location_id"}, inplace=True)
         dim_location_df.drop(["created_at", "last_updated", "address_id"], axis=1, inplace=True)
         dim_location_df.drop_duplicates(subset = None, keep= "first", inplace = True)
-    return dim_location_df 
+        return dim_location_df 
     
 
 def transform_dim_counterparty():
@@ -273,17 +274,18 @@ def get_department_data():
     """
     global department_df
     files = find_files_with_specified_table_name("department", "fscifa-raw-data")
-    department_df = json_to_pd_dataframe(files[0], "department", "fscifa-raw-data")
-    for i in range(1, len(files)):
-        additional_df = json_to_pd_dataframe(files[i], "department", "fscifa-raw-data")
-        department_df = pd.concat([department_df, additional_df], axis=0)
-    department_df.drop(
-        ["manager", "created_at", "last_updated"],
-        axis=1,
-        inplace=True,
-    )
-    department_df.drop_duplicates(subset = None, keep= "first", inplace = True)
-    return department_df
+    if files:
+        department_df = json_to_pd_dataframe(files[0], "department", "fscifa-raw-data")
+        for i in range(1, len(files)):
+            additional_df = json_to_pd_dataframe(files[i], "department", "fscifa-raw-data")
+            department_df = pd.concat([department_df, additional_df], axis=0)
+        department_df.drop(
+            ["manager", "created_at", "last_updated"],
+            axis=1,
+            inplace=True,
+        )
+        department_df.drop_duplicates(subset = None, keep= "first", inplace = True)
+        return department_df
 
 
 def transform_dim_staff():
@@ -350,12 +352,11 @@ def transform_dim_design():
     """
     global design_df
     most_recent_file = find_most_recent_filename("design", "fscifa-raw-data")
-    if not most_recent_file:
-        return None
-    design_df = json_to_pd_dataframe(most_recent_file, "design", "fscifa-raw-data")
-    design_df.drop(
-        ["created_at", "last_updated"],
-        axis=1,
-        inplace=True,
-    )
-    return design_df
+    if most_recent_file:
+        design_df = json_to_pd_dataframe(most_recent_file, "design", "fscifa-raw-data")
+        design_df.drop(
+            ["created_at", "last_updated"],
+            axis=1,
+            inplace=True,
+        )
+        return design_df
