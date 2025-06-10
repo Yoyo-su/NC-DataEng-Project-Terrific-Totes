@@ -56,7 +56,7 @@ resource "aws_cloudwatch_metric_alarm" "lambda_transform_alarm" {
   statistic                 = "Sum"
   threshold                 = 1
   alarm_description         = "Alarm for when transform lambda fails"
-  alarm_actions = [aws_sns_topic.tranform_lambda_alerts.arn]
+  alarm_actions = [aws_sns_topic.transform_lambda_alerts.arn]
   dimensions = {
     FunctionName = var.transform_lambda
   }
