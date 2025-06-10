@@ -40,7 +40,6 @@ resource "aws_s3_object" "db_layer_object" {
   key    = "layers/db_layer.zip"
   source = "${path.module}/../packages/layers/db_layer.zip"
   etag     = filemd5(data.archive_file.db_layer_zip.output_path)
-  depends_on = [data.archive_file.db_layer_zip]
 }
 
 resource "aws_s3_object" "utils_layer_object" {
