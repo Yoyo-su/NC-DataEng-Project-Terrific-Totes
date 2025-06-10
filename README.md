@@ -128,3 +128,5 @@ Terraform variable secrets:
   - TF_VAR_dw_host
   - TF_VAR_dw_database
   - TF_VAR_dw_password
+
+Northcoders Data Engineering Bootcamp Project
