@@ -8,7 +8,9 @@ venv
 *.tfstate
 *.tfstate.*
 dependencies/
-packages/
+packages/extract*
+packages/load*
+packages/transform*
 .pgpass
 .DS.Store
 address**
@@ -16,13 +18,9 @@ payments**
 .coverage
 *.pytest_cache
 last_updated.txt
-*.zip
 tests/data/**.txt
 tests/data/**.json
 **.parquet
-
-packages/
-
 *.txt
 !requirements*.txt
 layer/
