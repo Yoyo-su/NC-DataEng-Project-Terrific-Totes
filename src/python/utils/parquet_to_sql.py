@@ -72,7 +72,7 @@ def parquet_to_sql(table_name, df):
     An Exception if any error was encountered when trying to insert into the data warehouse.
 
     """
-    
+
     conn = None
     try:
         # put dataframe column names into a list:
@@ -93,7 +93,7 @@ def parquet_to_sql(table_name, df):
                     query += f"'{value}', "
                 elif value is None:
                     query += "NULL, "
-                elif isinstance(value,datetime.date):
+                elif isinstance(value, datetime.date):
                     query += f"'{value}', "
                 else:
                     query += f"{value}, "
