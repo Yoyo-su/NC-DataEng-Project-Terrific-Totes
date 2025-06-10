@@ -335,33 +335,33 @@ def transform_dim_staff():
     most_recent_file = find_most_recent_filename("staff", "fscifa-raw-data")
     if most_recent_file:
         staff_df = json_to_pd_dataframe(most_recent_file, "staff", "fscifa-raw-data")
-    staff_df.drop(
-        ["created_at", "last_updated"],
-        axis=1,
-        inplace=True,
-    )
-    merge_staff_to_department_df = pd.merge(
-        staff_df, get_department_data(), on="department_id", how="left"
-    )
-    merge_staff_to_department_df.loc[
-        merge_staff_to_department_df["location"] == "Leds", "location"
-    ] = "Leeds"
-    merge_staff_to_department_df.drop(
-        ["department_id"],
-        axis=1,
-        inplace=True,
-    )
-    new_column_order = [
-        "staff_id",
-        "first_name",
-        "last_name",
-        "department_name",
-        "location",
-        "email_address",
-    ]
-    merge_staff_to_department_df = merge_staff_to_department_df[new_column_order]
-    print(merge_staff_to_department_df)
-    return merge_staff_to_department_df
+        staff_df.drop(
+            ["created_at", "last_updated"],
+            axis=1,
+            inplace=True,
+        )
+        merge_staff_to_department_df = pd.merge(
+            staff_df, get_department_data(), on="department_id", how="left"
+        )
+        merge_staff_to_department_df.loc[
+            merge_staff_to_department_df["location"] == "Leds", "location"
+        ] = "Leeds"
+        merge_staff_to_department_df.drop(
+            ["department_id"],
+            axis=1,
+            inplace=True,
+        )
+        new_column_order = [
+            "staff_id",
+            "first_name",
+            "last_name",
+            "department_name",
+            "location",
+            "email_address",
+        ]
+        merge_staff_to_department_df = merge_staff_to_department_df[new_column_order]
+        print(merge_staff_to_department_df)
+        return merge_staff_to_department_df
 
 
 def transform_dim_design():
