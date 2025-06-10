@@ -3,6 +3,7 @@ import pandas as pd
 import boto3
 from db.connection import connect_to_db, close_db
 import io
+import datetime
 
 
 def fetch_parquet(table_name, bucket):
@@ -69,6 +70,8 @@ def parquet_to_sql(table_name, df):
     An Exception if any error was encountered when trying to insert into the data warehouse.
 
     """
+    
+    conn = None
     try:
         # put dataframe column names into a list:
         columns = df.columns.tolist()
@@ -88,6 +91,8 @@ def parquet_to_sql(table_name, df):
                     query += f"'{value}', "
                 elif value is None:
                     query += "NULL, "
+                elif isinstance(value[0],datetime.date):
+                    query += f"'{value}', "
                 else:
                     query += f"{value}, "
             query = query[:-2] + "), ("
