@@ -68,19 +68,63 @@ We have created a BI dashboard to visualise some data insights:
 ```
 FSCIFA-project
 ├── .github
-│   ├── workflows
-│       ├── ci.yml        # CI/CD Automated deployment via Github Actions
-├── src/                  # Source code for ETL/ELT
-├── data/                 # Sample data or data schemas
-├── tests/                # Unit and integration tests
-├── terraform/            # AWS Deployment
-├── Makefile              # Automated environment setup & configuration
-├── mvp.png               # Illustration of expected minimum viable product
-├── README.md             # Project overview
-└── requirements.txt      # Third party Python modules
+│   └── workflows
+│       └── ci.yml          # CI/CD Automated deployment via Github Actions
+├── dependencies_db/        # Python dependencies for db connection
+├── src                     # Source code for ETL/ELT
+│   ├── python
+│   │   ├── db              # Python database connection functions
+│   │   └── utils           # Python utility functions
+│   ├── extract_lambda.py   # ETL - Extract lambda function
+│   ├── load_lambda.py      # ETL - Load lambda function
+│   └── transform_lambda.py # ETL - Transform lambda function
+├── tests/                  # Unit and integration tests
+│   ├── data/               # Sample data or data schemas for tests
+│   └── test*.py            # Unit and integration tests for python functions (pytest)
+├── terraform/              # AWS Deployment
+├── .gitignore              # Files not to be pushed to remote repository
+├── Makefile                # Automated environment setup & configuration
+├── mvp.png                 # Illustration of expected minimum viable product
+├── README.md               # Project overview
+├── requirements_db.txt     # Third party Python modules for db connection
+└── requirements.txt        # Third party Python modules
 ```
 
 ## 🚀 Setup & Deployment
 
-TODO
+This project uses GitHub Actions for continuous integration and deployment, the workflow automatically runs tests and deploys AWS infrastructure via Terraform.
 
+The CI/CD pipeline is triggered on:
+  - Pushes to the main branch
+  - Pull requests targeting the main branch
+
+
+### Continuous Integration  
+The run-tests job performs the following steps:
+
+ - Configures the Python environment and installs dependancies
+ - Runs python security, format and linting checks
+ - Runs pytests and checks test coverage
+
+### Terraform Deployment
+The deploy-terraform job runs only after successful tests and performs the following:
+
+- Installs Terraform
+- Runs Terraform Init, Plan & Apply
+
+
+### Required Secrets for AWS and Terraform deployment:
+
+AWS credentials secrets:
+ - DEPLOY_USER_AWS_ACCESS_KEY_ID
+ - DEPLOY_USER_AWS_SECRET_ACCESS_KEY
+
+Terraform variable secrets:
+  - TF_VAR_pg_host
+  - TF_VAR_pg_port
+  - TF_VAR_pg_user
+  - TF_VAR_pg_database
+  - TF_VAR_pg_password
+  - TF_VAR_dw_host
+  - TF_VAR_dw_database
+  - TF_VAR_dw_password
