@@ -91,7 +91,7 @@ def parquet_to_sql(table_name, df):
                     query += f"'{value}', "
                 elif value is None:
                     query += "NULL, "
-                elif isinstance(value[0],datetime.date):
+                elif isinstance(value,datetime.date):
                     query += f"'{value}', "
                 else:
                     query += f"{value}, "
