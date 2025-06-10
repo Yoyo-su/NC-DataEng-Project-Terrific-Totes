@@ -58,7 +58,7 @@ resource "aws_lambda_function" "transform_lambda" {
 
   runtime = var.python_runtime
   handler = "${var.transform_lambda}.lambda_handler"
-  timeout = 150
+  timeout = 120
 
   source_code_hash = filebase64sha256("${path.module}/../packages/${var.transform_lambda}/function.zip")
 
@@ -80,7 +80,7 @@ resource "aws_lambda_function" "load_lambda" {
 
   runtime = var.python_runtime
   handler = "${var.load_lambda}.lambda_handler"
-  timeout = 180
+  timeout = 120
 
   source_code_hash = filebase64sha256("${path.module}/../packages/${var.load_lambda}/function.zip")
 
