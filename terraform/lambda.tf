@@ -73,7 +73,7 @@ resource "aws_lambda_function" "transform_lambda" {
 # define load lambda
 resource "aws_lambda_function" "load_lambda" {
   function_name = var.load_lambda
-  role          = aws_iam_role.lambda_load_role.arn
+  role          = aws_iam_role.lambda_role.arn
 
   s3_bucket = aws_s3_object.lambda_code[var.load_lambda].bucket
   s3_key    = aws_s3_object.lambda_code[var.load_lambda].key
