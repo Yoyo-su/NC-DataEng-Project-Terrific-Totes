@@ -10,11 +10,11 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
         "Lambda Invoke Extract" : {
           "Type" : "Task",
           "Resource" : "arn:aws:states:::lambda:invoke",
-          "Output" : "{% $states.result.Payload %}",
-          "Arguments" : {
-            "FunctionName" : aws_lambda_function.extract_lambda.arn,
-            "Payload" : "{}"
+          "Parameters": {
+            "FunctionName": "${aws_lambda_function.extract_lambda.arn}",
+            "Payload": {}
           },
+          "ResultPath": "$.extractResult",
           "Retry" : [
             {
               "ErrorEquals" : [
@@ -34,11 +34,11 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
         "Lambda Invoke Transform" : {
           "Type" : "Task",
           "Resource" : "arn:aws:states:::lambda:invoke",
-          "Output" : "{% $states.result.Payload %}",
-          "Arguments" : {
-            "FunctionName" : aws_lambda_function.transform_lambda.arn,
-            "Payload" : { result : "success" }
+          "Parameters": {
+            "FunctionName": "${aws_lambda_function.transform_lambda.arn}",
+            "Payload": { result : "success" }
           },
+          "ResultPath": "$.transformResult",
           "Retry" : [
             {
               "ErrorEquals" : [
@@ -58,11 +58,17 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
           "Lambda Invoke Load": {
             "Type": "Task",
             "Resource": "arn:aws:states:::lambda:invoke",
-            "Output": "{% $states.result.Payload %}",
-            "Arguments": {
-              "FunctionName": aws_lambda_function.load_lambda.arn,
+            "Parameters": {
+              "FunctionName": "${aws_lambda_function.load_lambda.arn}",
               "Payload": { result : "success" }
             },
+            "ResultPath": "$.loadResult",
+            # "Catch": [
+            #   {
+            #     "ErrorEquals": ["States.TaskFailed"],
+            #     "Next": "ErrorHandledGracefully"
+            #   }
+            # ],
             "Retry": [
               {
                 "ErrorEquals": [
@@ -78,9 +84,13 @@ resource "aws_sfn_state_machine" "sfn_state_machine" {
               }
             ],
           "End" : true
-        }
+        },
+        # "ErrorHandledGracefully": {
+        #   "Type": "Pass",
+        #   "Result": "Handled final task failure",
+        #   "End": true
+        # }
       },
-      "QueryLanguage" : "JSONata"
   })
 
 }
