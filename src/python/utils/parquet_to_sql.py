@@ -4,6 +4,7 @@ import boto3
 from db.connection import connect_to_db, close_db
 import io
 import datetime
+from pg8000.native import DatabaseError
 
 
 def fetch_parquet(table_name, bucket):
@@ -82,31 +83,33 @@ def parquet_to_sql(table_name, df):
         values = df.values.tolist()
 
         # construct SQL query
-        query = f"INSERT INTO {table_name} ("
-        for column in columns:
-            query += f"{column}, "
-        query = query[:-2] + ") VALUES("
         for row in values:
-            for value in row:
-                if type(value) is str:
-                    value = value.replace("'", "''")
-                    query += f"'{value}', "
-                elif value is None:
-                    query += "NULL, "
-                elif isinstance(value, datetime.date):
-                    query += f"'{value}', "
-                else:
-                    query += f"{value}, "
-            query = query[:-2] + "), ("
-        query = query[:-3] + ";"
-
-        # connect to the data warehouse, and run the query
-        conn = connect_to_db()
-        conn.run(query)
-        return {"result": "success"}
-    except Exception as err:
-        print(f"Unable to run sql query: {err}")
-        raise err
+            try:
+                query = f"INSERT INTO {table_name} ("
+                for column in columns:
+                    query += f"{column}, "
+                query = query[:-2] + ") VALUES("
+                for value in row:
+                    if type(value) is str:
+                        value = value.replace("'", "''")
+                        query += f"'{value}', "
+                    elif value is None:
+                        query += "NULL, "
+                    elif isinstance(value, datetime.date):
+                        query += f"'{value}', "
+                    else:
+                        query += f"{value}, "
+                query = query[:-2] + "), ("
+                query = query[:-3] + ";"
+                # connect to the data warehouse, and run the query
+                conn = connect_to_db()
+                conn.run(query)
+            except DatabaseError as err:
+                print(f"Unable to run sql query: {err}")
+        else:
+            return {"result": "success"}
+    except Exception as error:
+        raise error
     finally:
         if conn:
             close_db(conn)
