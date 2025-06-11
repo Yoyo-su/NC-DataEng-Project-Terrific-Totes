@@ -4,7 +4,7 @@ import os
 import boto3
 from moto import mock_aws
 import pandas as pd
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, patch, MagicMock, call
 
 
 test_df = pd.DataFrame(
@@ -102,12 +102,25 @@ class TestParquetToSQL:
     @pytest.mark.it("Should run expected insert query on db connection ")
     @patch("src.python.utils.parquet_to_sql.connect_to_db")
     def test_parquet_to_sql_runs_expected_query(self, mock_connect_to_db):
-        mock_conn = Mock()
+        mock_conn = MagicMock()
         mock_conn.run.return_value = []
         mock_connect_to_db.return_value = mock_conn
         table_name = "dim_staff"
         parquet_to_sql(table_name, test_df)
         assert mock_conn.run.called  # Ensure .run() was called
-        mock_conn.run.assert_called_with(
-            "INSERT INTO dim_staff (sales_order_id, staff, counterparty_id, currency_id) VALUES(7, 'hello', 420, NULL), (1, 'wo''rld', 13, 'hi');"
-        )  # Ensure expected query was run
+        # mock_conn.run.assert_called_with(
+        #     "INSERT INTO dim_staff (sales_order_id, staff, counterparty_id, currency_id) VALUES(7, 'hello', 420, NULL);"
+        # )
+        calls = [
+            call(
+                "INSERT INTO dim_staff (sales_order_id, staff, counterparty_id, currency_id) VALUES(7, 'hello', 420, NULL);"
+            ),
+            call(
+                "INSERT INTO dim_staff (sales_order_id, staff, counterparty_id, currency_id) VALUES(1, 'wo''rld', 13, 'hi');"
+            ),
+        ]
+        mock_conn.run.assert_has_calls(calls, any_order=False)
+        # mock_conn.run.assert_called_with(
+        #     "INSERT INTO dim_staff (sales_order_id, staff, counterparty_id, currency_id) VALUES(1, 'wo''rld', 13, 'hi');"
+        # )
+        # Ensure expected query was run
