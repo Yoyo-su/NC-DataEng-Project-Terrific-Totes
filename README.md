@@ -61,9 +61,8 @@ Funny Silly Crew in Full Action
 </table>
 
 ## 🔰 Overview
-We have been approached by Terrific Totes to create a data-pipeline to Extract, Transform, and Load data from a prepared source into a data lake and warehouse hosted in AWS.
+We were approached by our client, Terrific Totes, a tote bag retailer, to create a data pipeline to Extract, Transform, and Load data on sales from their company’s operational OLTP database into a data warehouse, for ease of analysis.
 
-We will deliver a data platform that extracts data from an operational OLTP database, archives it in a data lake, and makes it available in a remodelled OLAP data warehouse.
 
 ## 🔧 Tech Stack
 - **Python 3.13** - Primary programming language
@@ -98,7 +97,7 @@ Changes to the source database will be reflected in the data warehouse within 30
 
 ## 📊 The Data
 
-The primary data source for the project is a database called `totesys` which is meant to simulate the back-end data of a commercial application. Data is inserted and updated into this database several times a day.
+The primary data source for the project is a database called `totesys`, our client's back-end operational OLTP database. Data is inserted and updated into this database several times a day.
 
 
 The data is remodelled into three overlapping star schemas. You can find the ERDs for these star schemas:
@@ -111,7 +110,7 @@ The overall structure of the resulting data warehouse is shown [here](https://db
 
 ## 👀 Visualisation
 
-We have created a BI dashboard to visualise some useful data insights:
+We have created a Power BI dashboard to visualise some useful data insights:
 
 <table>
   <tr>
