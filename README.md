@@ -1,14 +1,64 @@
 # Data Engineering Project - Terrific Totes
 
-## 🤝 Meet The Team
-Funny Silly Crew In Full Action 
-- Fidele
-- Sukanya
-- Charlotte
-- Iohane
-- Freddie
-- Alyona
+## 🤝 Meet The Team  
+Funny Silly Crew in Full Action
 
+<table>
+  <tr>
+    <td><strong>Fidele</strong><br>
+      <a href="https://github.com/fmunyaneza">
+        <img src="https://img.shields.io/badge/GitHub-000?logo=github&logoColor=white" />
+      </a><br>
+      <a href="https://www.linkedin.com/in/fidele-munyaneza-b87372328/">
+        <img src="https://img.shields.io/badge/LinkedIn-blue?logo=linkedin&logoColor=white" />
+      </a>
+    </td>
+    <td><strong>Sukanya</strong><br>
+      <a href="https://github.com/sukansasi">
+        <img src="https://img.shields.io/badge/GitHub-000?logo=github&logoColor=white" />
+      </a><br>
+      <a href="https://www.linkedin.com/in/sukanyasasi15011526">
+        <img src="https://img.shields.io/badge/LinkedIn-blue?logo=linkedin&logoColor=white" />
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Charlotte</strong><br>
+      <a href="https://github.com/CharlotteC63">
+        <img src="https://img.shields.io/badge/GitHub-000?logo=github&logoColor=white" />
+      </a><br>
+      <a href="https://www.linkedin.com/in/charlotte-campbell-15323a151/">
+        <img src="https://img.shields.io/badge/LinkedIn-blue?logo=linkedin&logoColor=white" />
+      </a>
+    </td>
+    <td><strong>Iohane</strong><br>
+      <a href="https://github.com/Yoyo-su">
+        <img src="https://img.shields.io/badge/GitHub-000?logo=github&logoColor=white" />
+      </a><br>
+      <a href="https://www.linkedin.com/in/iohane-annan-07b722a0/">
+        <img src="https://img.shields.io/badge/LinkedIn-blue?logo=linkedin&logoColor=white" />
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td><strong>Freddie</strong><br>
+      <a href="https://github.com/FreddieMoller">
+        <img src="https://img.shields.io/badge/GitHub-000?logo=github&logoColor=white" />
+      </a><br>
+      <a href="https://www.linkedin.com/in/frederick-moller-63a348202/">
+        <img src="https://img.shields.io/badge/LinkedIn-blue?logo=linkedin&logoColor=white" />
+      </a>
+    </td>
+    <td><strong>Alyona</strong><br>
+      <a href="https://github.com/DDataAly">
+        <img src="https://img.shields.io/badge/GitHub-000?logo=github&logoColor=white" />
+      </a><br>
+      <a href="https://www.linkedin.com/in/alyona-d-410554135/">
+        <img src="https://img.shields.io/badge/LinkedIn-blue?logo=linkedin&logoColor=white" />
+      </a>
+    </td>
+  </tr>
+</table>
 
 ## 🔰 Overview
 We have been approached by Terrific Totes to create a data-pipeline to Extract, Transform, and Load data from a prepared source into a data lake and warehouse hosted in AWS.
