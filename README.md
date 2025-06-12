@@ -109,9 +109,36 @@ The overall structure of the resulting data warehouse is shown [here](https://db
 
 ## 👀 Visualisation
 
-We have created a BI dashboard to visualise some data insights:
+We have created a BI dashboard to visualise some useful data insights:
 
-- TODO
+<table>
+  <tr>
+    <td>
+      <img src="https://github.com/user-attachments/assets/e1724265-ad54-47fa-a1e9-e3760c86e32c" width="100%" />
+    </td>
+    <td>
+      <img src="https://github.com/user-attachments/assets/c1d81c2f-dc07-4fcb-aa67-76c640bbb42c" width="100%" />
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img src="https://github.com/user-attachments/assets/93d74ae8-80cd-4291-8c1a-fea496fd16c0" width="100%" />
+    </td>
+    <td>
+      <img src="https://github.com/user-attachments/assets/25a69137-8f7b-49b3-ae47-5f9d17ea055b" width="100%" />
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img src="https://github.com/user-attachments/assets/945dd70f-93ea-464d-851d-d6cb8331623f" width="100%" />
+    </td>
+    <td>
+      <img src="https://github.com/user-attachments/assets/3981d214-4d0e-472c-8884-2be1f2616406" width="100%" />
+    </td>
+  </tr>
+</table>
+
+
 
 ## 📁 File Structure
 
