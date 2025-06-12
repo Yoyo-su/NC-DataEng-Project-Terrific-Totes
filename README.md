@@ -66,12 +66,14 @@ We have been approached by Terrific Totes to create a data-pipeline to Extract, 
 We will deliver a data platform that extracts data from an operational OLTP database, archives it in a data lake, and makes it available in a remodelled OLAP data warehouse.
 
 ## 🔧 Tech Stack
-- Github - Repository management, CI/CD (Github-Actions), Credentials Security (Github-Secrets)
-- AWS - RDS, Lambda, CloudWatch, S3
-- Terraform - AWS Deployment (Infrastructure as Code)
-- Python 3.12 - Primary programming language
-- Pytest - Test Driven Development (TDD)
-- PostgreSQL - Relational Database Management
+- **Python 3.13** - Primary programming language
+  - **Pytest** - Test Driven Development (TDD)
+  - **Pandas** - Data transformation
+- **Github** - Repository management, CI/CD (Github-Actions), Credentials Security (Github-Secrets)
+- **AWS** - S3, Lambda, CloudWatch, Step Functions
+- **Terraform** - AWS Deployment (Infrastructure as Code)
+- **PostgreSQL** - Relational Database Management
+- **Power BI** - Data Visualisation
 
 
 ## 🏛️ Architecture
