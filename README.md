@@ -97,13 +97,7 @@ The project is deployed automatically using infrastucture-as-code (Terraform) an
 
 The primary data source for the project is a database called `totesys`, our client's back-end operational OLTP database. Data is inserted and updated into this database several times a day.
 
-The data is remodelled into three overlapping star schemas. You can find the ERDs for these star schemas:
-
-- ["Sales" schema](https://dbdiagram.io/d/637a423fc9abfc611173f637)
-- ["Purchases" schema](https://dbdiagram.io/d/637b3e8bc9abfc61117419ee)
-- ["Payments" schema](https://dbdiagram.io/d/637b41a5c9abfc6111741ae8)
-
-The overall structure of the resulting data warehouse is shown [here](https://dbdiagram.io/d/63a19c5399cb1f3b55a27eca).
+Sales data is remodelled into a star schema, suitable for OLAP. It contains a sales_order fact table linked to 6 dimension tables containing data on date, location, staff, currency, counterparties, and design. You can find the ERD here: ["Sales" schema](https://dbdiagram.io/d/637a423fc9abfc611173f637). This forms the structure of our data warehouse, optimised for ease of analysis.
 
 ## 👀 Visualisation
 
